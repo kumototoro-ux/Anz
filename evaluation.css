@@ -1,43 +1,58 @@
 :root {
-    --primary: #1a5d1a;
-    --accent: #f39c12;
-    --bg: #f0f2f5;
+    --google-blue: #1a73e8;
+    --google-green: #34a853;
+    --google-yellow: #fbbc05;
+    --google-red: #ea4335;
+    --card-bg: #ffffff;
 }
 
-body { background: var(--bg); font-family: 'Segoe UI', sans-serif; direction: rtl; }
-.container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+body { background-color: #f1f3f4; font-family: 'Tajawal', sans-serif; direction: rtl; }
 
-.header { display: flex; align-items: center; gap: 20px; margin-bottom: 30px; }
-.back-btn { font-size: 24px; color: var(--primary); text-decoration: none; }
+.evaluation-container { padding: 40px; margin-right: 80px; }
 
-.subject-selector {
-    background: white; padding: 25px; border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 25px;
+.card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 1px 2px 0 rgba(60,64,67,.30), 0 1px 3px 1px rgba(60,64,67,.15);
 }
 
-select {
-    width: 100%; padding: 12px; border-radius: 10px;
-    border: 2px solid #ddd; font-size: 16px; margin-top: 10px;
+.card-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+
+.google-select {
+    padding: 10px 15px;
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    font-family: 'Tajawal';
+    font-size: 14px;
+    cursor: pointer;
+    background: white;
 }
 
-.stats-overview {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;
+.chart-wrapper { height: 300px; position: relative; }
+
+.motivation-banner {
+    margin-top: 25px;
+    padding: 20px;
+    border-radius: 12px;
+    background: #e8f0fe;
+    color: var(--google-blue);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-weight: 500;
+    transition: 0.5s;
 }
 
-.stat-box {
-    background: white; padding: 20px; border-radius: 15px; text-align: center;
-    border-right: 5px solid var(--primary);
+/* الأنماط الخاصة بالدرجات */
+.score-box {
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    background: #f8f9fa;
+    border-bottom: 4px solid #ddd;
 }
 
-.stat-box h3 { font-size: 28px; margin: 10px 0 0; color: var(--primary); }
-
-.charts-section {
-    background: white; padding: 20px; border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-}
-
-.hidden { display: none; }
-
-.chart-container h3 {
-    text-align: center; color: #444; margin-bottom: 20px;
-}
+.score-box.excellent { border-color: var(--google-green); background: #e6f4ea; }
+.score-box.needs-work { border-color: var(--google-red); background: #fce8e6; }
