@@ -1,60 +1,128 @@
 :root {
-    --primary: #1a5d1a;
-    --accent: #f39c12;
-    --text: #333;
+    --primary: #1a73e8;
+    --bg: #f8f9fa;
+    --card-bg: #ffffff;
+    --text-main: #202124;
+    --text-sub: #5f6368;
+    --border: #dadce0;
 }
 
 body {
-    margin: 0; padding: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background-color: #f4f7f6;
-    color: var(--text);
+    background-color: var(--bg);
+    font-family: 'Tajawal', sans-serif;
+    margin: 0;
+    display: flex;
+    direction: rtl;
+    color: var(--text-main);
 }
 
-.navbar {
-    background: var(--primary);
-    padding: 15px 5%;
-    display: flex; justify-content: space-between; align-items: center;
-    color: white;
+/* القائمة الجانبية - روح قوقل */
+.side-nav {
+    width: 80px;
+    height: 100vh;
+    background: white;
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: fixed;
+    transition: width 0.3s;
+    z-index: 100;
 }
 
-.logout-btn {
-    background: rgba(255,255,255,0.2); border: none; color: white;
-    padding: 8px 15px; border-radius: 8px; cursor: pointer;
+.side-nav:hover { width: 200px; }
+
+.nav-links {
+    list-style: none;
+    padding: 0;
+    width: 100%;
 }
 
-.welcome-section {
-    text-align: center; padding: 40px 20px;
-    background: white; border-bottom: 1px solid #ddd;
-}
-
-.welcome-section h1 { color: var(--primary); margin-bottom: 5px; }
-
-.grid-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 20px; padding: 30px 5%;
-}
-
-.menu-card {
-    background: white; border-radius: 15px; padding: 30px 10px;
-    text-align: center; text-decoration: none; color: var(--text);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    transition: transform 0.3s;
-}
-
-.menu-card:hover {
-    transform: translateY(-5px);
-    border: 1px solid var(--primary);
-}
-
-.menu-card:hover i {
-    transform: scale(1.1);
+.nav-links li a {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    color: var(--text-sub);
+    text-decoration: none;
     transition: 0.3s;
 }
 
-.menu-card i {
-    font-size: 40px; color: var(--primary); margin-bottom: 15px;
+.nav-links li.active a, .nav-links li a:hover {
+    color: var(--primary);
+    background: rgba(26, 115, 232, 0.08);
+    border-right: 4px solid var(--primary);
 }
 
-.menu-card h3 { font-size: 16px; margin: 0; }
+.nav-links li span {
+    margin-right: 20px;
+    opacity: 0;
+    transition: 0.3s;
+    white-space: nowrap;
+}
+
+.side-nav:hover .nav-links li span { opacity: 1; }
+
+/* المحتوى الرئيسي */
+.main-content {
+    margin-right: 80px;
+    padding: 40px;
+    width: 100%;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 25px;
+    margin-top: 30px;
+}
+
+/* البطاقات الاحترافية */
+.card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 20px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: 18px;
+    color: var(--primary);
+}
+
+/* Animations */
+.animate-up {
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+@keyframes fadeInUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* جدول الحصص */
+.schedule-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px;
+    border-bottom: 1px dashed #eee;
+}
+
+.subject-name { font-weight: bold; }
+.teacher-name { color: var(--text-sub); font-size: 13px; }
