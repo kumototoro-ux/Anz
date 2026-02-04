@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول | دار الهدى</title>
+    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="login-wrapper">
+        <div class="login-card">
+            <header class="login-header">
+                <div class="brand-icon">DH</div>
+                <h1>بوابة دار الهدى</h1>
+                <p>نظام مقياس التعليمي 2025–2026</p>
+            </header>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>اسم المستخدم / المعرف</label>
+                    <div class="input-field">
+                        <i class="fas fa-user-tag"></i>
+                        <input type="text" id="nationalId" placeholder="أدخل المعرف الخاص بك" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>كلمة المرور</label>
+                    <div class="input-field">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <button type="submit" id="submitBtn" class="login-btn">
+                    <span>دخول آمن</span>
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+            </form>
+
+            <footer class="login-footer">
+                <a href="https://wa.me/966500000000" target="_blank" class="help-link">
+                    <i class="fab fa-whatsapp"></i> تواجه مشكلة؟ تواصل مع الدعم
+                </a>
+            </footer>
+        </div>
+    </div>
+
+    <script type="module" src="login.js"></script>
+</body>
+</html>
