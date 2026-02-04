@@ -3,10 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const userData = JSON.parse(localStorage.getItem("user"));
 
     // 2. التحقق من وجود المستخدم
-    if (!userData) {
-        window.location.href = "../login/login.html";
-        return;
-    }
+    if (!user) { window.location.href = "login.html"; return; } // تعديل المسار
 
     // 3. قائمة بالعناصر التي نريد تحديثها (يجب أن تطابق ID في HTML واسم العمود في قوقل شيت)
     const fields = [
