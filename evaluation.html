@@ -3,61 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تقييم المواد | دار الهدى</title>
-    <link rel="stylesheet" href="evaluation.css"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>التقييمات | نظام مقياس</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="evaluation.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <a href="home.html" class="back-btn"><i class="fas fa-arrow-right"></i></a> <h2>لوحة تقييم الأداء</h2>
+
+    <main class="evaluation-container">
+        <header class="page-header animate-fade">
+            <h1>مركز التقييم الأكاديمي</h1>
+            <p>حلل أداءك، تتبع تقدمك، واصنع نجاحك</p>
         </header>
 
-        <div class="subject-selector">
-            <label>اختر المادة لتحليل الأداء:</label>
-            <select id="subjectDropdown">
-                <option value="">-- اختر مادة --</option>
-                <option value="Quran">القرآن الكريم</option>
-                <option value="Islamic">الدراسات الإسلامية</option>
-                <option value="Arabic">اللغة العربية</option>
-                <option value="Social">الدراسات الاجتماعية</option>
-                <option value="Math">الرياضيات</option>
-                <option value="Science">العلوم</option>
-                <option value="English">اللغة الإنجليزية</option>
-                <option value="Digital">المهارات الرقمية</option>
-                <option value="Art">التربية الفنية</option>
-                <option value="PE">التربية البدنية</option>
-                <option value="Life">المهارات الحياتية</option>
-                </select>
-        </div>
+        <section class="card stats-summary-card animate-slide-up">
+            <div class="card-controls">
+                <h3><i class="fas fa-chart-line"></i> التقييم العام لكل المواد</h3>
+                <select id="generalWeekSelect" class="google-select">
+                    </select>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="generalChart"></canvas>
+            </div>
+            <div id="generalFeedback" class="feedback-area"></div>
+        </section>
 
-        <div id="evaluationContent" class="hidden">
-            <div class="stats-overview">
-                <div class="stat-box">
-                    <span>متوسط الدرجات</span>
-                    <h3 id="avgGrade">0</h3>
-                </div>
-                <div class="stat-box">
-                    <span>أفضل أسبوع أداء</span>
-                    <h3 id="bestWeek">0</h3>
+        <section class="card subject-detail-card animate-slide-up" style="animation-delay: 0.2s;">
+            <div class="card-controls">
+                <h3><i class="fas fa-microscope"></i> التحليل التفصيلي للمادة</h3>
+                <div class="select-group">
+                    <select id="subjectSelect" class="google-select">
+                        <option value="quran">القرآن الكريم</option>
+                        <option value="math">الرياضيات</option>
+                        <option value="science">العلوم</option>
+                        </select>
+                    <select id="subjectWeekSelect" class="google-select"></select>
                 </div>
             </div>
-
-            <div class="charts-section">
-                <div class="chart-container">
-                    <h3>تحليل الأداء الأسبوعي (الواجبات والاختبارات)</h3>
-                    <canvas id="weeklyChart"></canvas>
+            
+            <div class="detail-grid">
+                <div class="stats-viz">
+                    <canvas id="subjectChart"></canvas>
                 </div>
+                <div class="stats-cards" id="detailedScores">
+                    </div>
             </div>
 
-            <div class="details-table-wrapper">
-                <table id="detailsTable">
-                    <thead id="tableHeader"></thead>
-                    <tbody id="tableBody"></tbody>
-                </table>
+            <div id="motivationalMessage" class="motivation-banner">
+                <i class="fas fa-lightbulb"></i>
+                <p id="motivationalText">اختر الأسبوع والمادة لعرض التحليل...</p>
             </div>
-        </div>
-    </div>
+        </section>
+    </main>
 
     <script type="module" src="evaluation.js"></script>
 </body>
