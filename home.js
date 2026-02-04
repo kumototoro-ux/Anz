@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 2. التحقق: لو حاول أحد دخول الصفحة بدون تسجيل دخول يرجعه لصفحة Login
     if (!userData) {
-        window.location.href = "../login/login.html";
+        window.location.href = "login.html"; // تم التعديل هنا
         return;
     }
 
@@ -15,6 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // 4. وظيفة تسجيل الخروج
     document.getElementById("logoutBtn").addEventListener("click", () => {
         localStorage.removeItem("user"); // مسح بيانات الطالب من الذاكرة
-        window.location.href = "../login/login.html";
+        window.location.href = "login.html"; // تم التعديل هنا
     });
 });
