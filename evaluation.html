@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تقييم المواد | دار الهدى</title>
+    <link rel="stylesheet" href="evaluation.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <header class="header">
+            <a href="../home/home.html" class="back-btn"><i class="fas fa-arrow-right"></i></a>
+            <h2>لوحة تقييم الأداء الأكاديمي</h2>
+        </header>
+
+        <div class="subject-selector">
+            <label>اختر المادة لتحليل الأداء:</label>
+            <select id="subjectDropdown">
+                <option value="">-- اختر مادة --</option>
+                <option value="Quran">القرآن الكريم</option>
+                <option value="Islamic">الدراسات الإسلامية</option>
+                <option value="Arabic">اللغة العربية</option>
+                <option value="Social">الدراسات الاجتماعية</option>
+                <option value="Math">الرياضيات</option>
+                <option value="Science">العلوم</option>
+                <option value="English">اللغة الإنجليزية</option>
+                <option value="Digital">المهارات الرقمية</option>
+                <option value="Art">التربية الفنية</option>
+                <option value="PE">التربية البدنية</option>
+                <option value="Life">المهارات الحياتية</option>
+                </select>
+        </div>
+
+        <div id="evaluationContent" class="hidden">
+            <div class="stats-overview">
+                <div class="stat-box">
+                    <span>متوسط الدرجات</span>
+                    <h3 id="avgGrade">0</h3>
+                </div>
+                <div class="stat-box">
+                    <span>أفضل أسبوع أداء</span>
+                    <h3 id="bestWeek">0</h3>
+                </div>
+            </div>
+
+            <div class="charts-section">
+                <div class="chart-container">
+                    <h3>تحليل الأداء الأسبوعي (الواجبات والاختبارات)</h3>
+                    <canvas id="weeklyChart"></canvas>
+                </div>
+            </div>
+
+            <div class="details-table-wrapper">
+                <table id="detailsTable">
+                    <thead id="tableHeader"></thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="evaluation.js"></script>
+</body>
+</html>
