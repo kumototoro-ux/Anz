@@ -3,59 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>الملف الشخصي | دار الهدى</title>
-    <link rel="stylesheet" href="profile.css"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>معلوماتي | نظام مقياس</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="profile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
-    <div class="container profile-container">
-        <header class="header">
-            <a href="home.html" class="back-btn"><i class="fas fa-arrow-right"></i></a> <h2>بيانات الطالب الشخصية</h2>
+    <nav class="side-nav">
+        </nav>
+
+    <main class="profile-container">
+        <header class="page-header animate-fade">
+            <h1>الملف الشخصي</h1>
+            <p>إدارة معلوماتك الشخصية والأكاديمية</p>
         </header>
 
-        <div class="profile-card">
-            <div class="user-avatar">
-                <i class="fas fa-user-circle"></i>
-                <h3 id="display_Name_AR">جاري التحميل...</h3>
-                <span id="display_ID" class="student-id-tag">#0000000000</span>
+        <div class="profile-card animate-slide-up">
+            <div class="profile-hero">
+                <div class="avatar-wrapper">
+                    <img src="https://ui-avatars.com/api/?name=User&background=1a73e8&color=fff&size=128" id="userAvatar" alt="Avatar">
+                    <div class="status-indicator"></div>
+                </div>
+                <h2 id="fullName">جاري التحميل...</h2>
+                <span class="student-label">طالب</span>
             </div>
 
             <div class="info-grid">
                 <div class="info-item">
-                    <label><i class="fas fa-id-card"></i> الاسم بالإنجليزي</label>
-                    <p id="display_Name_EN">-</p>
+                    <i class="fas fa-id-card"></i>
+                    <div class="info-content">
+                        <label>رقم الهوية</label>
+                        <p id="infoId">-</p>
+                    </div>
                 </div>
                 <div class="info-item">
-                    <label><i class="fas fa-birthday-cake"></i> تاريخ الميلاد</label>
-                    <p id="display_BirthDate">-</p>
+                    <i class="fas fa-school"></i>
+                    <div class="info-content">
+                        <label>الصف الدراسي</label>
+                        <p id="infoClass">-</p>
+                    </div>
                 </div>
                 <div class="info-item">
-                    <label><i class="fas fa-flag"></i> الجنسية</label>
-                    <p id="display_Nationality">-</p>
+                    <i class="fas fa-calendar-alt"></i>
+                    <div class="info-content">
+                        <label>العام الأكاديمي</label>
+                        <p id="infoYear">2026</p>
+                    </div>
                 </div>
                 <div class="info-item">
-                    <label><i class="fas fa-venus-mars"></i> الجنس</label>
-                    <p id="display_Gender">-</p>
-                </div>
-                <div class="info-item">
-                    <label><i class="fas fa-school"></i> المرحلة الدراسية</label>
-                    <p id="display_StudentLevel">-</p>
-                </div>
-                <div class="info-item">
-                    <label><i class="fas fa-chalkboard-teacher"></i> الصف</label>
-                    <p id="display_Class">-</p>
-                </div>
-                <div class="info-item">
-                    <label><i class="fas fa-calendar-alt"></i> الترم</label>
-                    <p id="display_Term">-</p>
-                </div>
-                <div class="info-item">
-                    <label><i class="fas fa-graduation-cap"></i> السنة الدراسية</label>
-                    <p id="display_AcademicYear">-</p>
+                    <i class="fas fa-phone"></i>
+                    <div class="info-content">
+                        <label>رقم التواصل المسجل</label>
+                        <p id="infoPhone">-</p>
+                    </div>
                 </div>
             </div>
+
+            <div class="profile-footer">
+                <p><i class="fas fa-info-circle"></i> إذا وجدت خطأ في بياناتك، يرجى مراجعة شؤون الطلاب.</p>
+            </div>
         </div>
-    </div>
+    </main>
 
     <script type="module" src="profile.js"></script>
 </body>
