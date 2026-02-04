@@ -1,54 +1,41 @@
-import { loginStudent } from "./api.js"; // تم التعديل هنا
+import { loginUser } from "./api.js";
+
+// --- إعدادات قابلة للتعديل بسهولة ---
+const SYSTEM_NAME = "نظام مقياس التعليمي"; // اسم النظام
+const SUPPORT_CONTACT = "9665XXXXXXXX"; // رقم التواصل
+// ----------------------------------
 
 document.addEventListener("DOMContentLoaded", () => {
+    // تحديث اسم النظام ورقم التواصل في الواجهة تلقائياً
+    if(document.getElementById("system-name")) {
+        document.getElementById("system-name").innerText = SYSTEM_NAME;
+    }
+    
     const loginForm = document.getElementById("loginForm");
-    const idInput = document.getElementById("nationalId");
-    const passInput = document.getElementById("password");
-    const submitBtn = document.getElementById("submitBtn");
-
+    
     loginForm.addEventListener("submit", async (e) => {
         e.preventDefault();
+        
+        const studentId = document.getElementById("studentId").value.trim();
+        const password = document.getElementById("password").value.trim();
+        
+        // إظهار مؤشر تحميل (Loading) بلمسة جوجل
+        const loginBtn = document.querySelector(".login-btn");
+        loginBtn.innerText = "جاري التحقق...";
+        loginBtn.disabled = true;
 
-        // جلب القيم وتنظيف الفراغات الجانبية فقط
-        const userId = idInput.value.trim();
-        const userPass = passInput.value.trim();
+        const response = await loginUser(studentId, password);
 
-        if (!userId || !userPass) return;
-
-        // تفعيل حالة التحميل
-        submitBtn.disabled = true;
-        submitBtn.querySelector('span').innerText = "جاري التحقق...";
-
-        try {
-            const result = await loginStudent(userId);
-
-            if (result.found) {
-                // التحقق من كلمة المرور (العمود Password في شيت ID)
-                // نحول القيم لنصوص لضمان صحة المقارنة مهما كان نوعها في الشيت
-                if (String(result.student.Password).trim() === userPass) {
-                    
-                    // حفظ بيانات الطالب بنجاح
-                    localStorage.setItem("user", JSON.stringify(result.student));
-                    
-                    // التوجه للرئيسية
-                    window.location.href = "home.html"; // تم التعديل هنا
-                } else {
-                    alert("⚠️ كلمة المرور غير صحيحة");
-                    resetBtn();
-                }
-            } else {
-                alert("⚠️ هذا المعرف غير مسجل في النظام");
-                resetBtn();
-            }
-        } catch (error) {
-            alert("❌ فشل الاتصال بالسيرفر، تأكد من إعدادات الـ API");
-            resetBtn();
+        if (response.found) {
+            // حفظ بيانات الطالب في المتصفح للانتقال بين الصفحات
+            localStorage.setItem("user", JSON.stringify(response.student));
+            localStorage.setItem("system_name", SYSTEM_NAME);
+            
+            window.location.href = "home.html"; // الانتقال للصفحة الرئيسية
+        } else {
+            alert("عذراً، رقم الهوية أو كلمة المرور غير صحيحة");
+            loginBtn.innerText = "دخول";
+            loginBtn.disabled = false;
         }
     });
-
-    function resetBtn() {
-        submitBtn.disabled = false;
-        submitBtn.querySelector('span').innerText = "دخول آمن";
-        passInput.value = ""; // مسح الباسورد للأمان
-    }
 });
