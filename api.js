@@ -1,51 +1,41 @@
-// shared/api.js
+// api.js - المحرك الجديد للربط مع Supabase
+const SUPABASE_URL = 'https://olxodigikqbjznuycsqf.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'; // ضع المفتاح الطويل كاملاً هنا
 
-// ⚠️ استبدل الرابط أدناه برابط الـ Web App الذي حصلت عليه من قوقل (Deploy URL)
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzTl4_1h-0iST0VUpN4gUhcJzqXqaXifClh3iyUlBsPV2-21Z6OLUqw9G27M1kxJCBQ5w/exec"; 
-
-/**
- * الدالة المركزية لجلب البيانات من أي ورقة في قوقل شيت
- */
-async function fetchData(sheetName, nationalId, action = "get") {
+// دالة عامة لجلب البيانات من أي جدول (سواء مادة أو حضور أو إشعار)
+export async function getStudentData(tableName, studentId) {
     try {
-        const url = `${SCRIPT_URL}?sheet=${sheetName}&id=${nationalId}&action=${action}`;
-        const response = await fetch(url);
+        // نستخدم student_id للبحث في كل الجداول ما عدا جدول الطلاب نستخدم id
+        const queryColumn = (tableName === 'students') ? 'id' : 'student_id';
         
-        if (!response.ok) throw new Error("Network response was not ok");
+        const url = `${SUPABASE_URL}/rest/v1/${tableName}?${queryColumn}=eq.${studentId}&select=*`;
         
-        const result = await response.json();
-        return result;
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'apikey': SUPABASE_KEY,
+                'Authorization': `Bearer ${SUPABASE_KEY}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const data = await response.json();
+        
+        if (data && data.length > 0) {
+            return { success: true, data: data[0] };
+        }
+        return { success: false, message: "لا توجد بيانات لهذا الطالب" };
     } catch (error) {
-        console.error(`خطأ في جلب بيانات من ورقة ${sheetName}:`, error);
-        return { found: false, error: true };
+        console.error("Fetch Error:", error);
+        return { success: false, error: true };
     }
 }
 
-/* =============================================
-   الوظائف المخصصة لكل صفحة
-============================================= */
-
-// 1. تسجيل الدخول والبحث عن طالب (من ورقة ID)
-export async function loginStudent(nationalId) {
-    return await fetchData("ID", nationalId, "login");
-}
-
-// 2. جلب بيانات الغياب (من ورقة AB)
-export async function getAttendance(nationalId) {
-    return await fetchData("AB", nationalId);
-}
-
-// 3. جلب بيانات مادة معينة (Quran, Math, Science, etc.)
-export async function getSubjectGrades(subjectSheet, nationalId) {
-    return await fetchData(subjectSheet, nationalId);
-}
-
-// 4. جلب إشعارات النتائج (Notice_Term1 أو Notice_Term2)
-export async function getTermNotice(termSheet, nationalId) {
-    return await fetchData(termSheet, nationalId);
-}
-
-// 5. جلب الاختبارات الشهرية (Monthly_Test)
-export async function getMonthlyTests(nationalId) {
-    return await fetchData("Monthly_Test", nationalId);
+// دالة تسجيل الدخول
+export async function loginUser(id, password) {
+    const result = await getStudentData('students', id);
+    if (result.success && result.data.password === password) {
+        return { found: true, student: result.data };
+    }
+    return { found: false };
 }
