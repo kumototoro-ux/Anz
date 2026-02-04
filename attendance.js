@@ -1,4 +1,4 @@
-import { getAttendance } from "../../shared/api.js";
+import { getAttendance } from "./api.js"; // مسار مباشر
 
 document.addEventListener("DOMContentLoaded", async () => {
     const user = JSON.parse(localStorage.getItem("user"));
