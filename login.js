@@ -1,4 +1,4 @@
-import { loginStudent } from "../../shared/api.js";
+import { loginStudent } from "./api.js"; // تم التعديل هنا
 
 document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("loginForm");
@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     localStorage.setItem("user", JSON.stringify(result.student));
                     
                     // التوجه للرئيسية
-                    window.location.href = "../home/home.html";
+                    window.location.href = "home.html"; // تم التعديل هنا
                 } else {
                     alert("⚠️ كلمة المرور غير صحيحة");
                     resetBtn();
