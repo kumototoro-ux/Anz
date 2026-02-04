@@ -2,10 +2,13 @@ document.addEventListener("DOMContentLoaded", () => {
     // 1. جلب البيانات من الذاكرة
     const userData = JSON.parse(localStorage.getItem("user"));
 
-    // 2. التحقق من وجود المستخدم
-    if (!user) { window.location.href = "login.html"; return; } // تعديل المسار
+    // 2. التحقق من وجود المستخدم (تم تصحيح اسم المتغير هنا)
+    if (!userData) { 
+        window.location.href = "login.html"; 
+        return; 
+    }
 
-    // 3. قائمة بالعناصر التي نريد تحديثها (يجب أن تطابق ID في HTML واسم العمود في قوقل شيت)
+    // 3. قائمة بالعناصر (يجب أن تطابق ID في HTML واسم العمود في قوقل شيت)
     const fields = [
         'ID', 'Name_AR', 'Name_EN', 'BirthDate', 
         'Nationality', 'Gender', 'StudentLevel', 
@@ -16,11 +19,16 @@ document.addEventListener("DOMContentLoaded", () => {
     fields.forEach(field => {
         const element = document.getElementById(`display_${field}`);
         if (element) {
-            // معالجة خاصة للتاريخ إذا ظهر بشكل غريب من قوقل شيت
             let value = userData[field];
+            
+            // معالجة خاصة للتاريخ
             if (field === 'BirthDate' && value) {
-                value = new Date(value).toLocaleDateString('ar-SA');
+                const dateObj = new Date(value);
+                if (!isNaN(dateObj)) {
+                    value = dateObj.toLocaleDateString('ar-SA');
+                }
             }
+            
             element.textContent = value || "غير متوفر";
         }
     });
