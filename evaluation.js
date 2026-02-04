@@ -7,9 +7,9 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // ⚠️ تصحيح المسار (نظام المجلد الواحد)
     if (!user) { 
-        window.location.href = "login.html"; 
-        return; 
-    }
+    window.location.href = "index.html"; // بدلاً من login.html
+    return; 
+}
 
     const dropdown = document.getElementById("subjectDropdown");
 
