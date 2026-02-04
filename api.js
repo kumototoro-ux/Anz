@@ -14,7 +14,7 @@ const SUPABASE_KEY = 'sb_publishable_g7k3Dw8Q461GUjX-9_rbrA_ilsJ8NSc';
 export async function getStudentData(tableName, studentId) {
     try {
         // تحديد العمود المستهدف: في جدول الطلاب هو id، وفي البقية هو student_id
-        const queryColumn = (tableName === 'students') ? 'id' : 'student_id';
+        const queryColumn = (tableName === 'students') ? 'ID' : 'student_id';
         
         // بناء الرابط البرمجي للطلب
         const url = `${SUPABASE_URL}/rest/v1/${tableName}?${queryColumn}=eq.${studentId}&select=*`;
