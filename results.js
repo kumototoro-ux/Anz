@@ -3,8 +3,10 @@ import { getTermNotice } from "./api.js"; // مسار مباشر
 document.addEventListener("DOMContentLoaded", () => {
     // 1. التأكد من هوية الطالب المسجل
     const user = JSON.parse(localStorage.getItem("user"));
+    
+    // ⚠️ تصحيح المسار ليتناسب مع المجلد الرئيسي (Root)
     if (!user) { 
-        window.location.href = "../login/login.html"; 
+        window.location.href = "login.html"; 
         return; 
     }
 
@@ -33,7 +35,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (result.found && result.data && result.data.Attendance !== undefined) {
             displayCertificate(result.data, termSheet);
         } else {
-            // عرض رسالة الدعم الفني في حال عدم توفر البيانات
             document.getElementById("errorMessage").classList.remove("hidden");
         }
     }
@@ -47,7 +48,6 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("currentTermTitle").textContent = 
             termSheet === "Notice_Term1" ? "إشعار نتائج الفصل الدراسي الأول" : "إشعار نتائج الفصل الدراسي الثاني";
 
-        // قائمة المواد الـ 11 الأساسية المشتركة بين الجميع
         const subjects = [
             { name: "القرآن الكريم", key: "Quran" },
             { name: "الدراسات الإسلامية", key: "Islamic" },
@@ -62,7 +62,6 @@ document.addEventListener("DOMContentLoaded", () => {
             { name: "المهارات الحياتية والأسرية", key: "Life" }
         ];
 
-        // 🌟 المنطق الذكي: إضافة التفكير الناقد فقط لطلاب الثالث متوسط
         if (user.Class === "الثالث متوسط") {
             subjects.push({ name: "التفكير الناقد", key: "Critical" });
         }
@@ -70,9 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const tbody = document.getElementById("resultsBody");
         tbody.innerHTML = "";
 
-        // معالجة البيانات لكل مادة
         subjects.forEach(sub => {
-            // جلب الدرجات مع التحقق من المسميات المختلفة (CW, Short, Oral, Final, Written)
             const cw = parseFloat(data[`${sub.key}_CW`]) || 0;
             const short = parseFloat(data[`${sub.key}_Short`]) || parseFloat(data[`${sub.key}_Oral`]) || 0;
             const final = parseFloat(data[`${sub.key}_Final`]) || parseFloat(data[`${sub.key}_Written`]) || 0;
@@ -92,12 +89,10 @@ document.addEventListener("DOMContentLoaded", () => {
             tbody.innerHTML += row;
         });
 
-        // تحديث الغياب والسلوك في أسفل الشهادة
         document.getElementById("certAttendance").textContent = data.Attendance || "0";
         document.getElementById("certBehavior").textContent = data.Behavior || "0";
     }
 
-    // دالة تحديد التقدير
     function getGrade(score) {
         if (score >= 95) return "ممتاز مرتفع";
         if (score >= 90) return "ممتاز";
