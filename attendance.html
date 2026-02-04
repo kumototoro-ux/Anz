@@ -3,58 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>الحضور والغياب | دار الهدى</title>
-    <link rel="stylesheet" href="attendance.css"> 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>الحضور والغياب | نظام مقياس</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="attendance.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <a href="home.html" class="back-btn"><i class="fas fa-arrow-right"></i></a> 
-            <h2>سجل الحضور والغياب</h2>
+
+    <main class="attendance-container">
+        <header class="page-header animate-fade">
+            <h1>سجل الانضباط المدرسي</h1>
+            <p>متابعة دقيقة لحضورك وحصصك الدراسية</p>
         </header>
 
-        <div class="stats-grid">
-            <div class="stat-card best">
-                <i class="fas fa-trophy"></i>
-                <div class="stat-info">
-                    <span>أفضل أسبوع</span> 
-                    <h3 id="bestWeek">-</h3>
+        <section class="card stats-main-card animate-slide-up">
+            <div class="card-header">
+                <h3><i class="fas fa-chart-area"></i> مؤشر الحضور التراكمي</h3>
+                <div class="legend">
+                    <span class="legend-item"><span class="dot attendance"></span> حضور</span>
+                    <span class="legend-item"><span class="dot absence"></span> غياب</span>
                 </div>
             </div>
-            
-            <div class="stat-card worst">
-                <i class="fas fa-exclamation-circle"></i>
-                <div class="stat-info">
-                    <span>أقل أسبوع حضور</span>
-                    <h3 id="worstWeek">-</h3>
-                </div>
+            <div class="chart-container">
+                <canvas id="attendanceLineChart"></canvas>
             </div>
+            <div class="total-summary" id="totalSummaryText">
+                </div>
+        </section>
 
-            <div class="stat-card total-absent">
-                <i class="fas fa-user-clock"></i>
-                <div class="stat-info">
-                    <span>إجمالي الحصص الغائبة</span>
-                    <h3 id="totalAbsent">-</h3>
+        <section class="card last-week-card animate-slide-up" style="animation-delay: 0.2s;">
+            <div class="card-header">
+                <h3><i class="fas fa-calendar-day"></i> تفاصيل آخر أسبوع مُقيّم</h3>
+                <span id="lastWeekLabel" class="week-tag">الأسبوع --</span>
+            </div>
+            <div class="attendance-details-grid">
+                <div class="circular-progress-wrapper">
+                    <div class="circular-progress" id="progressCircle">
+                        <span id="attendancePercent">0%</span>
+                    </div>
+                    <p>نسبة حضور الأسبوع</p>
+                </div>
+                <div class="detailed-stats">
+                    <div class="stat-box">
+                        <span class="val" id="presentHolidays">0</span>
+                        <span class="lbl">حصص حضور</span>
+                    </div>
+                    <div class="stat-box warning">
+                        <span class="val" id="absentHolidays">0</span>
+                        <span class="lbl">حصص غياب</span>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <div class="attendance-table-wrapper">
-            <table class="attendance-table">
-                <thead>
-                    <tr>
-                        <th>الأسبوع</th>
-                        <th>عدد حصص الحضور</th>
-                        <th>عدد حصص الغياب</th>
-                        <th>الحالة</th>
-                    </tr>
-                </thead>
-                <tbody id="attendanceBody">
-                    </tbody>
-            </table>
-        </div>
-    </div>
+        </section>
+    </main>
 
     <script type="module" src="attendance.js"></script>
 </body>
