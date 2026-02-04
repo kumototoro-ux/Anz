@@ -1,61 +1,142 @@
 /* login.css */
+
+:root {
+    --google-blue: #1a73e8;
+    --google-gray: #5f6368;
+    --bg-color: #f8f9fa;
+    --card-shadow: 0 1px 3px rgba(60,64,67, 0.3), 0 4px 8px rgba(60,64,67, 0.15);
+    --input-border: #dadce0;
+}
+
 body {
-    background-color: #f0f2f5; /* لون خلفية هادئ */
+    background-color: var(--bg-color);
     font-family: 'Tajawal', sans-serif;
-    direction: rtl;
+    margin: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
+    direction: rtl;
+}
+
+.login-wrapper {
+    width: 100%;
+    max-width: 450px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* قسم العنوان والشعار */
+.login-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.system-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--google-blue);
+    display: block;
+    margin-bottom: 8px;
+}
+
+.welcome-text {
+    color: var(--google-gray);
+    font-size: 16px;
     margin: 0;
 }
 
+/* بطاقة تسجيل الدخول */
 .login-card {
     background: #ffffff;
-    padding: 2.5rem;
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.05); /* ظلال ناعمة */
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
     width: 100%;
-    max-width: 380px;
-    text-align: center;
-    border-top: 5px solid #1a73e8; /* خط أزرق بالأعلى كنمط نظام نور */
+    box-sizing: border-box;
+    border-top: 6px solid var(--google-blue); /* لمسة نظام نور */
 }
 
-.system-logo {
-    color: #1a73e8;
-    font-size: 1.5rem;
-    font-weight: 800;
-    margin-bottom: 1.5rem;
+/* تنسيق حقول الإدخال */
+.input-group {
+    margin-bottom: 20px;
+    text-align: right;
+}
+
+.input-group label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #202124;
+    font-size: 14px;
 }
 
 input {
     width: 100%;
-    padding: 12px;
-    margin-bottom: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-sizing: border-box; /* لمنع خروج الإدخال عن الصندوق */
-    transition: 0.3s;
+    padding: 13px 15px;
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
 }
 
 input:focus {
-    border-color: #1a73e8;
     outline: none;
-    box-shadow: 0 0 0 3px rgba(26,115,232,0.1);
+    border-color: var(--google-blue);
+    box-shadow: 0 0 0 2px rgba(26,115,232,0.2);
 }
 
+/* زر الدخول */
 .login-btn {
     width: 100%;
     padding: 12px;
-    background-color: #1a73e8;
+    background-color: var(--google-blue);
     color: white;
     border: none;
-    border-radius: 8px;
-    font-size: 1rem;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 500;
     cursor: pointer;
-    font-weight: bold;
+    margin-top: 10px;
+    transition: background 0.2s;
 }
 
 .login-btn:hover {
-    background-color: #1557b0;
+    background-color: #1765cc;
+    box-shadow: 0 1px 2px rgba(60,64,67, 0.3);
+}
+
+.login-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* تذييل البطاقة */
+.login-footer {
+    margin-top: 24px;
+    text-align: center;
+    font-size: 14px;
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+}
+
+.support-link {
+    color: var(--google-blue);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.support-link:hover {
+    text-decoration: underline;
+}
+
+/* حقوق النشر */
+.main-footer {
+    margin-top: 30px;
+    color: #70757a;
+    font-size: 12px;
+    text-align: center;
 }
