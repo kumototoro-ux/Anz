@@ -1,105 +1,91 @@
-import { getSubjectGrades } from "./api.js"; // مسار مباشر - صحيح
+import { getStudentData } from "./api.js";
 
-let myChart = null;
+let generalChart, subjectChart;
 
 document.addEventListener("DOMContentLoaded", () => {
-    const user = JSON.parse(localStorage.getItem("user"));
+    initSelectors();
+    loadGeneralData(); // تحميل التقييم العام افتراضياً
     
-    // ⚠️ تصحيح المسار (نظام المجلد الواحد)
-    if (!user) { 
-    window.location.href = "index.html"; // بدلاً من login.html
-    return; 
-}
-
-    const dropdown = document.getElementById("subjectDropdown");
-
-    // 1. فلترة مادة التفكير الناقد (فقط لثالث متوسط)
-    // تأكد أن الاسم في الشيت مطابق لـ "الثالث متوسط"
-    if (user.Class === "الثالث متوسط") {
-        const option = document.createElement("option");
-        option.value = "Critical";
-        option.text = "التفكير الناقد";
-        dropdown.add(option);
-    }
-
-    dropdown.addEventListener("change", async (e) => {
-        const subject = e.target.value;
-        if (!subject) {
-            document.getElementById("evaluationContent").classList.add("hidden");
-            return;
-        }
-
-        const result = await getSubjectGrades(subject, user.ID);
-        if (result.found) {
-            processAndDisplayData(subject, result.data);
-        } else {
-            alert("لم يتم العثور على درجات لهذه المادة");
-        }
-    });
+    document.getElementById("subjectWeekSelect").addEventListener("change", loadSubjectDetail);
+    document.getElementById("subjectSelect").addEventListener("change", loadSubjectDetail);
 });
 
-function processAndDisplayData(subject, data) {
-    document.getElementById("evaluationContent").classList.remove("hidden");
-    
-    let weeks = [1, 2, 3, 4, 5, 6]; 
-    let homeworks = [];
-    let quizzes = [];
-    let labels = weeks.map(w => `الأسبوع ${w}`);
-
-    weeks.forEach(w => {
-        // الربط مع مسميات الأعمدة في قوقل شيت (مثال: HW_1, QZ_1)
-        let hw = parseFloat(data[`HW_${w}`]);
-        let qz = (subject === "Quran") ? parseFloat(data[`save_${w}`]) : parseFloat(data[`QZ_${w}`]);
-        
-        homeworks.push(!isNaN(hw) ? hw : 0);
-        quizzes.push(!isNaN(qz) ? qz : 0);
-    });
-
-    renderChart(labels, homeworks, quizzes, subject === "Quran" ? "درجات الحفظ" : "درجات الاختبارات");
-    updateStats(homeworks, quizzes);
-}
-
-function renderChart(labels, hwData, qzData, qzLabel) {
-    const ctx = document.getElementById('weeklyChart').getContext('2d');
-    if (myChart) myChart.destroy(); 
-
-    myChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [
-                {
-                    label: 'الواجبات',
-                    data: hwData,
-                    borderColor: '#1a5d1a',
-                    backgroundColor: 'rgba(26, 93, 26, 0.1)',
-                    fill: true,
-                    tension: 0.4
-                },
-                {
-                    label: qzLabel,
-                    data: qzData,
-                    borderColor: '#f39c12',
-                    backgroundColor: 'rgba(243, 156, 18, 0.1)',
-                    fill: true,
-                    tension: 0.4
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false, // مضاف لتحسين العرض في الجوال
-            plugins: { legend: { position: 'top' } },
-            scales: { y: { min: 0, max: 5 } }
+// تعبئة الأسابيع من 1 لـ 12
+function initSelectors() {
+    const selects = ["generalWeekSelect", "subjectWeekSelect"];
+    selects.forEach(id => {
+        const el = document.getElementById(id);
+        for(let i=1; i<=12; i++) {
+            el.innerHTML += `<option value="${i}">الأسبوع ${i}</option>`;
         }
     });
 }
 
-function updateStats(hw, qz) {
-    const total = [...hw, ...qz].filter(v => v > 0); // نحسب المتوسط فقط للدرجات المدخلة فعلياً
-    const avg = total.length > 0 ? (total.reduce((a, b) => a + b, 0) / total.length) : 0;
-    document.getElementById("avgGrade").textContent = avg.toFixed(1);
+// دالة تحليل الرسائل التشجيعية (ذكاء اصطناعي بسيط)
+function getMotivation(score, type) {
+    if (score >= 4.5) return "مذهل! أنت بطل هذا الأسبوع في " + type + ". استمر في التحليق!";
+    if (score >= 3.5) return "أداء رائع في " + type + ". قليل من التركيز وتصل للدرجة الكاملة.";
+    if (score > 0) return "بداية جيدة في " + type + ". ثق بنفسك وحاول مرة أخرى لتتحسن.";
+    return "لم يتم رصد تقييم بعد. استعد جيداً!";
+}
+
+async function loadSubjectDetail() {
+    const user = JSON.parse(localStorage.getItem("user"));
+    const subject = document.getElementById("subjectSelect").value;
+    const week = document.getElementById("subjectWeekSelect").value;
     
-    const maxVal = Math.max(...(total.length > 0 ? total : [0]));
-    document.getElementById("bestWeek").textContent = maxVal > 0 ? `درجة ${maxVal}` : "لا يوجد";
+    const res = await getStudentData(subject, user.id);
+    
+    if (res.success) {
+        const data = res.data;
+        let scores = [];
+        let labels = [];
+
+        // المنطق الخاص بالقرآن الكريم
+        if (subject === 'quran') {
+            const pr = week <= 6 ? data.PR_1 : data.PR_2;
+            scores = [pr, data[`HW_${week}`], data[`read_${week}`], data[`Taj_${week}`], data[`save_${week}`]];
+            labels = ["المشاركة", "الواجب", "القراءة", "التجويد", "الحفظ"];
+        } else {
+            // بقية المواد
+            const pr = week <= 6 ? data.PR_1 : data.PR_2;
+            scores = [pr, data[`HW_${week}`], data[`QZ_${week}`]];
+            labels = ["المشاركة", "الواجب", "الاختبار القصير"];
+        }
+
+        renderSubjectChart(labels, scores);
+        updateMotivationalMessage(scores, labels);
+    }
+}
+
+function renderSubjectChart(labels, scores) {
+    const ctx = document.getElementById('subjectChart').getContext('2d');
+    if (subjectChart) subjectChart.destroy();
+
+    subjectChart = new Chart(ctx, {
+        type: 'radar', // رادار شارت يعطي شكلاً رهيباً للتقييم
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'مستوى الأداء',
+                data: scores,
+                backgroundColor: 'rgba(26, 115, 232, 0.2)',
+                borderColor: '#1a73e8',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            scales: { r: { max: 5, min: 0, ticks: { stepSize: 1 } } },
+            plugins: { legend: { display: false } }
+        }
+    });
+}
+
+function updateMotivationalMessage(scores, labels) {
+    const avg = scores.filter(s => s != null).reduce((a,b) => a+b, 0) / scores.length;
+    const textEl = document.getElementById("motivationalText");
+    const banner = document.getElementById("motivationalMessage");
+    
+    textEl.innerText = getMotivation(avg, "هذه المادة");
+    banner.style.background = avg >= 4 ? "#e6f4ea" : "#e8f0fe";
 }
