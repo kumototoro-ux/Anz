@@ -1,41 +1,46 @@
+// login.js
 import { loginUser } from "./api.js";
 
-// --- إعدادات قابلة للتعديل بسهولة ---
-const SYSTEM_NAME = "نظام مقياس التعليمي"; // اسم النظام
-const SUPPORT_CONTACT = "9665XXXXXXXX"; // رقم التواصل
-// ----------------------------------
+// متغيرات سهلة التعديل
+const CONFIG = {
+    systemName: "نظام مقياس التعليمي",
+    contact: "9665XXXXXXXX"
+};
 
 document.addEventListener("DOMContentLoaded", () => {
-    // تحديث اسم النظام ورقم التواصل في الواجهة تلقائياً
-    if(document.getElementById("system-name")) {
-        document.getElementById("system-name").innerText = SYSTEM_NAME;
-    }
-    
+    // تعبئة البيانات الأساسية
+    document.getElementById("system-name").innerText = CONFIG.systemName;
+    document.getElementById("support-number").innerText = CONFIG.contact;
+
     const loginForm = document.getElementById("loginForm");
-    
+
     loginForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         
-        const studentId = document.getElementById("studentId").value.trim();
-        const password = document.getElementById("password").value.trim();
+        const id = document.getElementById("studentId").value;
+        const pass = document.getElementById("password").value;
         
-        // إظهار مؤشر تحميل (Loading) بلمسة جوجل
-        const loginBtn = document.querySelector(".login-btn");
-        loginBtn.innerText = "جاري التحقق...";
-        loginBtn.disabled = true;
+        const btn = document.querySelector(".login-btn");
+        btn.innerText = "جاري الدخول...";
+        btn.disabled = true;
 
-        const response = await loginUser(studentId, password);
-
-        if (response.found) {
-            // حفظ بيانات الطالب في المتصفح للانتقال بين الصفحات
-            localStorage.setItem("user", JSON.stringify(response.student));
-            localStorage.setItem("system_name", SYSTEM_NAME);
+        try {
+            const response = await loginUser(id, pass);
             
-            window.location.href = "home.html"; // الانتقال للصفحة الرئيسية
-        } else {
-            alert("عذراً، رقم الهوية أو كلمة المرور غير صحيحة");
-            loginBtn.innerText = "دخول";
-            loginBtn.disabled = false;
+            if (response.found) {
+                // حفظ بيانات الطالب في الجلسة
+                localStorage.setItem("user", JSON.stringify(response.student));
+                // الانتقال للصفحة الرئيسية
+                window.location.href = "home.html";
+            } else {
+                alert("تأكد من بيانات الدخول");
+                btn.innerText = "دخول";
+                btn.disabled = false;
+            }
+        } catch (error) {
+            console.error("Login error:", error);
+            btn.innerText = "دخول";
+            btn.disabled = false;
         }
     });
 });
