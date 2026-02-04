@@ -1,4 +1,4 @@
-import { getSubjectGrades } from "../../shared/api.js";
+import { getSubjectGrades } from "./api.js"; // مسار مباشر
 
 let myChart = null;
 
