@@ -4,38 +4,81 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>الرئيسية | نظام مقياس</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="home.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
-    <nav class="navbar">
-        <div class="logo">دار الهدى</div>
-        <button id="logoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> خروج</button>
+    <nav class="side-nav">
+        <div class="nav-logo">م</div>
+        <ul class="nav-links">
+            <li class="active"><a href="home.html"><i class="fas fa-home"></i><span>الرئيسية</span></a></li>
+            <li><a href="profile.html"><i class="fas fa-user-circle"></i><span>معلوماتي</span></a></li>
+            <li><a href="evaluation.html"><i class="fas fa-star"></i><span>المواد</span></a></li>
+            <li><a href="attendance.html"><i class="fas fa-calendar-check"></i><span>الغياب</span></a></li>
+            <li><a href="results.html"><i class="fas fa-poll-h"></i><span>النتائج</span></a></li>
+        </ul>
+        <div class="nav-logout" id="logoutBtn">
+            <i class="fas fa-sign-out-alt"></i>
+        </div>
     </nav>
 
-    <header class="welcome-section">
-        <h1 id="welcomeMessage">أهلاً بك، ...</h1>
-        <p id="studentInfo">الصف: ... | الترم: ...</p>
-    </header>
+    <main class="main-content">
+        <header class="home-header">
+            <div class="user-info">
+                <h1 id="welcomeMessage">مرحباً، جاري التحميل...</h1>
+                <p id="currentDateText"></p>
+            </div>
+            <div class="system-badge">نظام مقياس التعليمي</div>
+        </header>
 
-    <main class="grid-container">
-        <a href="profile.html" class="menu-card">
-    <i class="fas fa-user-graduate"></i>
-    <h3>معلوماتي</h3>
-</a>
-<a href="attendance.html" class="menu-card">
-    <i class="fas fa-calendar-check"></i>
-    <h3>الحضور والغياب</h3>
-</a>
-<a href="evaluation.html" class="menu-card">
-    <i class="fas fa-star"></i>
-    <h3>تقييم المواد</h3>
-</a>
-<a href="results.html" class="menu-card">
-    <i class="fas fa-file-invoice"></i>
-    <h3>النتائج</h3>
-</a>
+        <div class="dashboard-grid">
+            
+            <div class="card schedule-card animate-up">
+                <div class="card-header">
+                    <h3><i class="fas fa-clock"></i> جدول حصص اليوم</h3>
+                    <span class="day-badge" id="dayName"></span>
+                </div>
+                <div id="scheduleContainer" class="card-body">
+                    </div>
+            </div>
+
+            <div class="card calendar-card animate-up">
+                <div class="card-header">
+                    <h3><i class="fas fa-calendar-alt"></i> التقويم الدراسي</h3>
+                    <span id="weekNumber" class="week-badge">الأسبوع ..</span>
+                </div>
+                <div id="calendarContainer" class="card-body">
+                    </div>
+            </div>
+
+            <div class="card mini-stats-card animate-up">
+                <div class="card-header">
+                    <h3><i class="fas fa-user-times"></i> ملخص الغياب</h3>
+                </div>
+                <div class="stats-content">
+                    <div class="stat-item">
+                        <span class="stat-label">أيام الغياب</span>
+                        <span class="stat-value warning" id="absentCount">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">أيام التأخر</span>
+                        <span class="stat-value info" id="lateCount">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card exam-card animate-up">
+                <div class="card-header">
+                    <h3><i class="fas fa-file-signature"></i> جدول الاختبارات</h3>
+                </div>
+                <div class="card-body empty-state">
+                    <p>سيتم إدراج الجدول قريباً...</p>
+                </div>
+            </div>
+
+        </div>
     </main>
 
     <script type="module" src="home.js"></script>
