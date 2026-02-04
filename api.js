@@ -1,7 +1,7 @@
 // shared/api.js
 
 // ⚠️ استبدل الرابط أدناه برابط الـ Web App الذي حصلت عليه من قوقل (Deploy URL)
-const SCRIPT_URL = "https://script.google.com/macros/s/XXXXX/exec"; 
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzTl4_1h-0iST0VUpN4gUhcJzqXqaXifClh3iyUlBsPV2-21Z6OLUqw9G27M1kxJCBQ5w/exec"; 
 
 /**
  * الدالة المركزية لجلب البيانات من أي ورقة في قوقل شيت
