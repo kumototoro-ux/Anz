@@ -3,50 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تسجيل الدخول | دار الهدى</title>
-    <link rel="stylesheet" href="login.css"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>تسجيل الدخول | نظام مقياس</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="login.css">
 </head>
 <body>
-    
+
     <div class="login-wrapper">
+        <div class="login-header">
+            <div class="logo-container">
+                <span id="system-name" class="system-title">نظام مقياس التعليمي</span>
+            </div>
+            <p class="welcome-text">مرحباً بك، يرجى تسجيل الدخول لمتابعة بياناتك</p>
+        </div>
+
         <div class="login-card">
-            <header class="login-header">
-                <div class="brand-icon">DH</div>
-                <h1>بوابة دار الهدى</h1>
-                <p>نظام مقياس التعليمي 2025–2026</p>
-            </header>
-
             <form id="loginForm">
-                <div class="form-group">
-                    <label>اسم المستخدم / المعرف</label>
-                    <div class="input-field">
-                        <i class="fas fa-user-tag"></i>
-                        <input type="text" id="nationalId" placeholder="أدخل المعرف الخاص بك" required>
-                    </div>
+                <div class="input-group">
+                    <label for="studentId">رقم الهوية / الإقامة</label>
+                    <input type="text" id="studentId" name="studentId" placeholder="1XXXXXXXXX" required autocomplete="username">
                 </div>
 
-                <div class="form-group">
-                    <label>كلمة المرور</label>
-                    <div class="input-field">
-                        <i class="fas fa-lock"></i>
-                        <input type="password" id="password" placeholder="••••••••" required>
-                    </div>
+                <div class="input-group">
+                    <label for="password">كلمة المرور</label>
+                    <input type="password" id="password" name="password" placeholder="••••••••" required autocomplete="current-password">
                 </div>
 
-                <button type="submit" id="submitBtn" class="login-btn">
-                    <span>دخول آمن</span>
-                    <i class="fas fa-arrow-left"></i>
+                <button type="submit" class="login-btn" id="loginBtn">
+                    <span>دخول</span>
                 </button>
             </form>
 
-            <footer class="login-footer">
-                <a href="https://wa.me/966500000000" target="_blank" class="help-link">
-                    <i class="fab fa-whatsapp"></i> تواجه مشكلة؟ تواصل مع الدعم
-                </a>
-            </footer>
+            <div class="login-footer">
+                <p>هل تواجه مشكلة في الدخول؟</p>
+                <a href="#" class="support-link">تواصل مع الدعم الفني: <span id="support-number"></span></a>
+            </div>
         </div>
+
+        <footer class="main-footer">
+            <p>&copy; 2026 جميع الحقوق محفوظة لـ <span class="brand-name">نظام مقياس</span></p>
+        </footer>
     </div>
 
+    <script type="module" src="api.js"></script>
     <script type="module" src="login.js"></script>
 </body>
 </html>
