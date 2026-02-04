@@ -126,3 +126,40 @@ body {
 
 .subject-name { font-weight: bold; }
 .teacher-name { color: var(--text-sub); font-size: 13px; }
+
+/* تأثير الظهور المتدرج للحصص */
+.animate-fade {
+    animation: fadeInRight 0.5s ease-in-out forwards;
+    opacity: 0;
+}
+
+@keyframes fadeInRight {
+    from { transform: translateX(20px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* تصميم اليوم الحالي في التقويم */
+.cal-day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    border-radius: 8px;
+    background: #f1f3f4;
+}
+
+.active-day {
+    background: var(--primary) !important;
+    color: white !important;
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(26,115,232,0.3);
+}
+
+.time-badge {
+    background: #e8f0fe;
+    color: var(--primary);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+}
