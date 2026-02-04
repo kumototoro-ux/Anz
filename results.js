@@ -1,106 +1,52 @@
-import { getTermNotice } from "./api.js"; // مسار مباشر
+import { getStudentData } from "./api.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. التأكد من هوية الطالب المسجل
     const user = JSON.parse(localStorage.getItem("user"));
-    
-    // ⚠️ تصحيح المسار ليتناسب مع المجلد الرئيسي (Root)
-    if (!user) { 
-    window.location.href = "index.html"; // بدلاً من login.html
-    return; 
+    document.getElementById("userGreeting").innerText = `مرحباً، ${user.name_ar}`;
+
+    const buttons = document.querySelectorAll(".term-btn");
+    buttons.forEach(btn => {
+        btn.addEventListener("click", () => fetchResults(btn.getAttribute("data-term"), user.id));
+    });
+});
+
+async function fetchResults(tableName, studentId) {
+    // إخفاء الأقسام السابقة
+    document.getElementById("certificateArea").classList.add("hide");
+    document.getElementById("errorArea").classList.add("hide");
+
+    const res = await getStudentData(tableName, studentId);
+
+    if (res.success && res.data) {
+        showCertificate(res.data, tableName);
+    } else {
+        document.getElementById("errorArea").classList.remove("hide");
+    }
 }
 
-    const termButtons = document.querySelectorAll(".term-btn");
+function showCertificate(data, term) {
+    const tbody = document.getElementById("resultsBody");
+    tbody.innerHTML = "";
     
-    // تحميل الفصل الأول تلقائياً عند فتح الصفحة
-    loadResults("Notice_Term1");
+    document.getElementById("certTermName").innerText = (term === "notice_term1") ? "الفصل الدراسي الأول" : "الفصل الدراسي الثاني";
 
-    // التنقل بين الفصل الأول والثاني
-    termButtons.forEach(btn => {
-        btn.addEventListener("click", (e) => {
-            termButtons.forEach(b => b.classList.remove("active"));
-            e.target.classList.add("active");
-            loadResults(e.target.dataset.term);
-        });
+    // تصفية الأعمدة لعرض المواد فقط (تجنب id و student_id)
+    const entries = Object.entries(data);
+    let total = 0;
+    let count = 0;
+
+    entries.forEach(([key, value]) => {
+        if (key !== "id" && key !== "student_id" && key !== "created_at") {
+            tbody.innerHTML += `<tr><td>${key}</td><td>${value || 'لم ترصد'}</td></tr>`;
+            if(!isNaN(value)) {
+                total += parseFloat(value);
+                count++;
+            }
+        }
     });
 
-    // دالة جلب البيانات من Google Sheets
-    async function loadResults(termSheet) {
-        document.getElementById("certificate").classList.add("hidden");
-        document.getElementById("errorMessage").classList.add("hidden");
-
-        const result = await getTermNotice(termSheet, user.ID);
-
-        // نتحقق من وجود بيانات (الاعتماد على وجود قيمة في خانة الحضور كدليل على الرصد)
-        if (result.found && result.data && result.data.Attendance !== undefined) {
-            displayCertificate(result.data, termSheet);
-        } else {
-            document.getElementById("errorMessage").classList.remove("hidden");
-        }
-    }
-
-    // دالة بناء الشهادة وعرض المواد
-    function displayCertificate(data, termSheet) {
-        document.getElementById("certificate").classList.remove("hidden");
-        document.getElementById("certName").textContent = user.Name_AR;
-        document.getElementById("certId").textContent = user.ID;
-        document.getElementById("certClass").textContent = user.Class;
-        document.getElementById("currentTermTitle").textContent = 
-            termSheet === "Notice_Term1" ? "إشعار نتائج الفصل الدراسي الأول" : "إشعار نتائج الفصل الدراسي الثاني";
-
-        const subjects = [
-            { name: "القرآن الكريم", key: "Quran" },
-            { name: "الدراسات الإسلامية", key: "Islamic" },
-            { name: "اللغة العربية", key: "Arabic" },
-            { name: "الدراسات الاجتماعية", key: "Social" },
-            { name: "الرياضيات", key: "Math" },
-            { name: "العلوم", key: "Science" },
-            { name: "اللغة الإنجليزية", key: "English" },
-            { name: "المهارات الرقمية", key: "Digital" },
-            { name: "التربية الفنية", key: "Art" },
-            { name: "التربية البدنية والصحية", key: "PE" },
-            { name: "المهارات الحياتية والأسرية", key: "Life" }
-        ];
-
-        if (user.Class === "الثالث متوسط") {
-            subjects.push({ name: "التفكير الناقد", key: "Critical" });
-        }
-
-        const tbody = document.getElementById("resultsBody");
-        tbody.innerHTML = "";
-
-        subjects.forEach(sub => {
-            const cw = parseFloat(data[`${sub.key}_CW`]) || 0;
-            const short = parseFloat(data[`${sub.key}_Short`]) || parseFloat(data[`${sub.key}_Oral`]) || 0;
-            const final = parseFloat(data[`${sub.key}_Final`]) || parseFloat(data[`${sub.key}_Written`]) || 0;
-            
-            const total = cw + short + final;
-
-            const row = `
-                <tr>
-                    <td class="subject-name">${sub.name}</td>
-                    <td>${cw}</td>
-                    <td>${short}</td>
-                    <td>${final}</td>
-                    <td class="total-cell">${total}</td>
-                    <td class="grade-cell">${getGrade(total)}</td>
-                </tr>
-            `;
-            tbody.innerHTML += row;
-        });
-
-        document.getElementById("certAttendance").textContent = data.Attendance || "0";
-        document.getElementById("certBehavior").textContent = data.Behavior || "0";
-    }
-
-    function getGrade(score) {
-        if (score >= 95) return "ممتاز مرتفع";
-        if (score >= 90) return "ممتاز";
-        if (score >= 85) return "جيد جداً مرتفع";
-        if (score >= 80) return "جيد جداً";
-        if (score >= 75) return "جيد مرتفع";
-        if (score >= 70) return "جيد";
-        if (score >= 60) return "مقبول";
-        return "ضعيف";
-    }
-});
+    document.getElementById("totalScore").innerText = total;
+    document.getElementById("averageScore").innerText = count > 0 ? (total / count).toFixed(2) : "-";
+    
+    document.getElementById("certificateArea").classList.remove("hide");
+}
