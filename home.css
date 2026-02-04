@@ -48,6 +48,11 @@ body {
     border: 1px solid var(--primary);
 }
 
+.menu-card:hover i {
+    transform: scale(1.1);
+    transition: 0.3s;
+}
+
 .menu-card i {
     font-size: 40px; color: var(--primary); margin-bottom: 15px;
 }
