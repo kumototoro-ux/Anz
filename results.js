@@ -1,4 +1,4 @@
-import { getTermNotice } from "../../shared/api.js";
+import { getTermNotice } from "./api.js"; // مسار مباشر
 
 document.addEventListener("DOMContentLoaded", () => {
     // 1. التأكد من هوية الطالب المسجل
