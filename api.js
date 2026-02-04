@@ -1,22 +1,22 @@
 /**
- * api.js - المحرك المركزي للربط مع Supabase
- * مبرمج ليتناسب مع: الدخول، الرئيسية، المواد، الغياب، والنتائج.
+ * api.js - المحرك المركزي لنظام مقياس التعليمي
+ * يربط بين واجهات المستخدم وقاعدة بيانات Supabase
  */
 
-// api.js
-const SUPABASE_URL = 'https://olxodigikqbjznuycsqf.supabase.co'; // الرابط الذي أرسلته صح
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9seG9kaWdpa3FianpudXljc3FmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDcxNj...'; // المفتاح الطويل جداً
+// إعدادات الربط بناءً على صورك السابقة
+const SUPABASE_URL = 'https://olxodigikqbjznuycsqf.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_g7k3Dw8Q461GUjX-9_rbrA_ilsJ8NSc';
+
 /**
- * دالة عامة لجلب بيانات الطالب من أي جدول
- * @param {string} tableName - اسم الجدول في Supabase (مثلاً: math, attendance, notice_term1)
- * @param {string} studentId - رقم هوية الطالب
+ * دالة جلب البيانات الشاملة
+ * تعمل مع كل جداول النظام (students, attendance, math, quran, notice_term1, etc.)
  */
 export async function getStudentData(tableName, studentId) {
     try {
-        // في جدول الطلاب العمود اسمه id، في بقية الجداول اسمه student_id
+        // تحديد العمود المستهدف: في جدول الطلاب هو id، وفي البقية هو student_id
         const queryColumn = (tableName === 'students') ? 'id' : 'student_id';
         
-        // بناء الرابط مع فلتر رقم الهوية
+        // بناء الرابط البرمجي للطلب
         const url = `${SUPABASE_URL}/rest/v1/${tableName}?${queryColumn}=eq.${studentId}&select=*`;
         
         const response = await fetch(url, {
@@ -29,32 +29,49 @@ export async function getStudentData(tableName, studentId) {
             }
         });
 
-        if (!response.ok) throw new Error("فشل الاتصال بقاعدة البيانات");
+        if (!response.ok) {
+            throw new Error(`خطأ في استجابة الخادم: ${response.status}`);
+        }
 
         const data = await response.json();
         
+        // التحقق من وجود بيانات
         if (data && data.length > 0) {
             return { success: true, data: data[0] };
+        } else {
+            return { success: false, message: "لم يتم العثور على سجلات لهذا الطالب" };
         }
-        return { success: false, message: "لم يتم العثور على سجلات" };
 
     } catch (error) {
-        console.error(`خطأ في الجدول ${tableName}:`, error);
-        return { success: false, error: error.message };
+        console.error(`[API Error] Table: ${tableName} | Error:`, error);
+        return { success: false, error: true, message: error.message };
     }
 }
 
 /**
- * دالة تسجيل الدخول - تتحقق من وجود الطالب وكلمة مروره
+ * دالة تسجيل الدخول
+ * تتحقق من مطابقة رقم الهوية وكلمة المرور من جدول students
  */
-export async function loginUser(id, password) {
-    const result = await getStudentData('students', id);
-    
-    if (result.success) {
-        // التحقق من كلمة المرور (يفضل أن تكون الحروف متطابقة تماماً)
-        if (String(result.data.password) === String(password)) {
-            return { found: true, student: result.data };
+export async function loginUser(studentId, password) {
+    try {
+        const result = await getStudentData('students', studentId);
+        
+        if (result.success) {
+            // مقارنة كلمة المرور (تحويل للكل لنص لضمان المطابقة)
+            if (String(result.data.password) === String(password)) {
+                return { found: true, student: result.data };
+            }
         }
+        return { found: false, message: "بيانات الدخول غير صحيحة" };
+        
+    } catch (error) {
+        console.error("Login process error:", error);
+        return { found: false, error: true };
     }
-    return { found: false };
 }
+
+/**
+ * ملاحظة أمنية:
+ * المفتاح المستخدم هو Publishable Key وهو آمن للاستخدام في المتصفح (Browser)
+ * طالما أن سياسات RLS في Supabase مضبوطة بشكل صحيح.
+ */
