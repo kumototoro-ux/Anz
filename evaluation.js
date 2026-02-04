@@ -1,14 +1,20 @@
-import { getSubjectGrades } from "./api.js"; // مسار مباشر
+import { getSubjectGrades } from "./api.js"; // مسار مباشر - صحيح
 
 let myChart = null;
 
 document.addEventListener("DOMContentLoaded", () => {
     const user = JSON.parse(localStorage.getItem("user"));
-    if (!user) { window.location.href = "../login/login.html"; return; }
+    
+    // ⚠️ تصحيح المسار (نظام المجلد الواحد)
+    if (!user) { 
+        window.location.href = "login.html"; 
+        return; 
+    }
 
     const dropdown = document.getElementById("subjectDropdown");
 
     // 1. فلترة مادة التفكير الناقد (فقط لثالث متوسط)
+    // تأكد أن الاسم في الشيت مطابق لـ "الثالث متوسط"
     if (user.Class === "الثالث متوسط") {
         const option = document.createElement("option");
         option.value = "Critical";
@@ -18,11 +24,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     dropdown.addEventListener("change", async (e) => {
         const subject = e.target.value;
-        if (!subject) return;
+        if (!subject) {
+            document.getElementById("evaluationContent").classList.add("hidden");
+            return;
+        }
 
         const result = await getSubjectGrades(subject, user.ID);
         if (result.found) {
             processAndDisplayData(subject, result.data);
+        } else {
+            alert("لم يتم العثور على درجات لهذه المادة");
         }
     });
 });
@@ -30,15 +41,15 @@ document.addEventListener("DOMContentLoaded", () => {
 function processAndDisplayData(subject, data) {
     document.getElementById("evaluationContent").classList.remove("hidden");
     
-    let weeks = [1, 2, 3, 4, 5, 6]; // الأسابيع الحالية
+    let weeks = [1, 2, 3, 4, 5, 6]; 
     let homeworks = [];
     let quizzes = [];
-    let labels = weeks.map(w => `أسبوع ${w}`);
+    let labels = weeks.map(w => `الأسبوع ${w}`);
 
     weeks.forEach(w => {
-        // جمع الواجبات والاختبارات (تجاهل القيم الفارغة أو غير المدخلة)
+        // الربط مع مسميات الأعمدة في قوقل شيت (مثال: HW_1, QZ_1)
         let hw = parseFloat(data[`HW_${w}`]);
-        let qz = subject === "Quran" ? parseFloat(data[`save_${w}`]) : parseFloat(data[`QZ_${w}`]);
+        let qz = (subject === "Quran") ? parseFloat(data[`save_${w}`]) : parseFloat(data[`QZ_${w}`]);
         
         homeworks.push(!isNaN(hw) ? hw : 0);
         quizzes.push(!isNaN(qz) ? qz : 0);
@@ -50,7 +61,7 @@ function processAndDisplayData(subject, data) {
 
 function renderChart(labels, hwData, qzData, qzLabel) {
     const ctx = document.getElementById('weeklyChart').getContext('2d');
-    if (myChart) myChart.destroy(); // حذف الرسم القديم قبل رسم جديد
+    if (myChart) myChart.destroy(); 
 
     myChart = new Chart(ctx, {
         type: 'line',
@@ -77,6 +88,7 @@ function renderChart(labels, hwData, qzData, qzLabel) {
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false, // مضاف لتحسين العرض في الجوال
             plugins: { legend: { position: 'top' } },
             scales: { y: { min: 0, max: 5 } }
         }
@@ -84,10 +96,10 @@ function renderChart(labels, hwData, qzData, qzLabel) {
 }
 
 function updateStats(hw, qz) {
-    const total = [...hw, ...qz];
-    const avg = total.reduce((a, b) => a + b, 0) / total.length;
+    const total = [...hw, ...qz].filter(v => v > 0); // نحسب المتوسط فقط للدرجات المدخلة فعلياً
+    const avg = total.length > 0 ? (total.reduce((a, b) => a + b, 0) / total.length) : 0;
     document.getElementById("avgGrade").textContent = avg.toFixed(1);
     
-    const maxVal = Math.max(...total);
+    const maxVal = Math.max(...(total.length > 0 ? total : [0]));
     document.getElementById("bestWeek").textContent = maxVal > 0 ? `درجة ${maxVal}` : "لا يوجد";
 }
