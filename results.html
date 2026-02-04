@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إشعار الدرجات | دار الهدى</title>
+    <link rel="stylesheet" href="results.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="container">
+        <header class="no-print">
+            <a href="../home/home.html" class="back-btn"><i class="fas fa-arrow-right"></i> العودة للرئيسية</a>
+            <div class="term-switcher">
+                <button class="term-btn active" data-term="Notice_Term1">الفصل الأول</button>
+                <button class="term-btn" data-term="Notice_Term2">الفصل الثاني</button>
+            </div>
+        </header>
+
+        <div id="errorMessage" class="error-card hidden">
+            <i class="fas fa-info-circle"></i>
+            <p>نعتذر، لم يتم رصد درجاتك لهذا الفصل حتى الآن.</p>
+            <a href="https://wa.me/966500000000" target="_blank" class="whatsapp-btn">
+                <i class="fab fa-whatsapp"></i> تواصل مع الدعم الفني
+            </a>
+        </div>
+
+        <div id="certificate" class="certificate-paper hidden">
+            <div class="cert-header">
+                <div class="school-info">
+                    <h3>المملكة العربية السعودية</h3>
+                    <h4>مدرسة دار الهدى الأهلية</h4>
+                    <p>نظام مقياس التعليمي</p>
+                </div>
+                <div class="cert-title">
+                    <h2>إشعار درجات الطالب</h2>
+                    <p id="currentTermTitle">الفصل الدراسي الأول</p>
+                </div>
+            </div>
+
+            <div class="student-meta">
+                <p><strong>اسم الطالب:</strong> <span id="certName">-</span></p>
+                <p><strong>رقم الهوية:</strong> <span id="certId">-</span></p>
+                <p><strong>الصف:</strong> <span id="certClass">-</span></p>
+            </div>
+
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th>المادة الدراسية</th>
+                        <th>أعمال السنة</th>
+                        <th>الاختبار القصير</th>
+                        <th>الاختبار النهائي</th>
+                        <th>المجموع</th>
+                        <th>التقدير</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsBody">
+                    </tbody>
+            </table>
+
+            <div class="cert-footer">
+                <div class="summary">
+                    <p>المواظبة: <span id="certAttendance">-</span></p>
+                    <p>السلوك: <span id="certBehavior">-</span></p>
+                </div>
+                <div class="stamp">
+                    <p>ختم الإدارة</p>
+                    <div class="circle-stamp">DH</div>
+                </div>
+            </div>
+            
+            <button class="print-btn no-print" onclick="window.print()"><i class="fas fa-print"></i> طباعة الشهادة</button>
+        </div>
+    </div>
+
+    <script type="module" src="results.js"></script>
+</body>
+</html>
