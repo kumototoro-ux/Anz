@@ -1,28 +1,74 @@
-:root { --primary: #1a5d1a; --gold: #c5a021; }
-body { background: #525659; font-family: 'Segoe UI', serif; direction: rtl; padding: 20px; }
+/* results.css */
+body { background-color: #f1f3f4; font-family: 'Tajawal', sans-serif; direction: rtl; }
 
-.term-switcher { background: white; padding: 10px; border-radius: 50px; display: inline-flex; gap: 5px; }
-.term-btn { border: none; padding: 10px 20px; border-radius: 50px; cursor: pointer; background: none; }
-.term-btn.active { background: var(--primary); color: white; }
+.results-container { padding: 40px; text-align: center; }
 
-/* تصميم الشهادة الورقية */
-.certificate-paper {
-    background: white; width: 210mm; min-height: 297mm; padding: 20mm;
-    margin: 20px auto; box-shadow: 0 0 20px rgba(0,0,0,0.5); position: relative;
-    border: 15px double var(--primary); outline: 2px solid var(--gold);
+.selection-box { margin: 30px 0; display: flex; justify-content: center; gap: 20px; }
+
+.term-btn {
+    padding: 15px 30px;
+    border: none;
+    background: white;
+    color: #1a73e8;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: 0.3s;
 }
 
-.cert-header { display: flex; justify-content: space-between; border-bottom: 2px solid var(--primary); padding-bottom: 20px; margin-bottom: 20px; }
-.cert-title h2 { color: var(--primary); font-size: 28px; margin: 0; }
+.term-btn:hover { background: #1a73e8; color: white; transform: translateY(-3px); }
 
-.student-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 30px; background: #f9f9f9; padding: 15px; border-radius: 10px; }
+/* تصميم الشهادة */
+.certificate-wrapper { margin-top: 40px; animation: zoomIn 0.5s ease; }
 
-.results-table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
-.results-table th { background: #eee; border: 1px solid #ccc; padding: 10px; font-size: 14px; }
-.results-table td { border: 1px solid #ccc; padding: 10px; text-align: center; }
-.total-cell { font-weight: bold; background: #f0fff0; }
+.certificate-card {
+    background: white;
+    padding: 50px;
+    border: 2px solid #eee;
+    max-width: 800px;
+    margin: 0 auto;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    position: relative;
+}
 
-.error-card { background: white; padding: 40px; border-radius: 20px; text-align: center; max-width: 500px; margin: 50px auto; }
-.whatsapp-btn { display: inline-block; background: #25d366; color: white; padding: 15px 30px; border-radius: 50px; text-decoration: none; margin-top: 20px; }
+.results-table { width: 100%; border-collapse: collapse; margin-top: 30px; }
+.results-table th, .results-table td {
+    padding: 15px;
+    border: 1px solid #eee;
+    text-align: right;
+}
+.results-table th { background-color: #f8f9fa; color: #1a73e8; }
 
-@media print { .no-print { display: none; } body { background: white; padding: 0; } .certificate-paper { margin: 0; box-shadow: none; width: 100%; } }
+.cert-summary {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid #1a73e8;
+}
+
+/* رسالة الخطأ */
+.error-card {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    max-width: 400px;
+    margin: 40px auto;
+}
+.error-card i { font-size: 50px; color: #ea4335; margin-bottom: 20px; }
+
+.whatsapp-btn {
+    display: inline-block;
+    margin-top: 20px;
+    background: #25d366;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.hide { display: none; }
+@keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
