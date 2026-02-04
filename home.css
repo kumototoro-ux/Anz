@@ -1,0 +1,55 @@
+:root {
+    --primary: #1a5d1a;
+    --accent: #f39c12;
+    --text: #333;
+}
+
+body {
+    margin: 0; padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f4f7f6;
+    color: var(--text);
+}
+
+.navbar {
+    background: var(--primary);
+    padding: 15px 5%;
+    display: flex; justify-content: space-between; align-items: center;
+    color: white;
+}
+
+.logout-btn {
+    background: rgba(255,255,255,0.2); border: none; color: white;
+    padding: 8px 15px; border-radius: 8px; cursor: pointer;
+}
+
+.welcome-section {
+    text-align: center; padding: 40px 20px;
+    background: white; border-bottom: 1px solid #ddd;
+}
+
+.welcome-section h1 { color: var(--primary); margin-bottom: 5px; }
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px; padding: 30px 5%;
+}
+
+.menu-card {
+    background: white; border-radius: 15px; padding: 30px 10px;
+    text-align: center; text-decoration: none; color: var(--text);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    transition: transform 0.3s;
+}
+
+.menu-card:hover {
+    transform: translateY(-5px);
+    border: 1px solid var(--primary);
+}
+
+.menu-card i {
+    font-size: 40px; color: var(--primary); margin-bottom: 15px;
+}
+
+.menu-card h3 { font-size: 16px; margin: 0; }
