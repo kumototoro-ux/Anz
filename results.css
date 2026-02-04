@@ -1,0 +1,28 @@
+:root { --primary: #1a5d1a; --gold: #c5a021; }
+body { background: #525659; font-family: 'Segoe UI', serif; direction: rtl; padding: 20px; }
+
+.term-switcher { background: white; padding: 10px; border-radius: 50px; display: inline-flex; gap: 5px; }
+.term-btn { border: none; padding: 10px 20px; border-radius: 50px; cursor: pointer; background: none; }
+.term-btn.active { background: var(--primary); color: white; }
+
+/* تصميم الشهادة الورقية */
+.certificate-paper {
+    background: white; width: 210mm; min-height: 297mm; padding: 20mm;
+    margin: 20px auto; box-shadow: 0 0 20px rgba(0,0,0,0.5); position: relative;
+    border: 15px double var(--primary); outline: 2px solid var(--gold);
+}
+
+.cert-header { display: flex; justify-content: space-between; border-bottom: 2px solid var(--primary); padding-bottom: 20px; margin-bottom: 20px; }
+.cert-title h2 { color: var(--primary); font-size: 28px; margin: 0; }
+
+.student-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 30px; background: #f9f9f9; padding: 15px; border-radius: 10px; }
+
+.results-table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
+.results-table th { background: #eee; border: 1px solid #ccc; padding: 10px; font-size: 14px; }
+.results-table td { border: 1px solid #ccc; padding: 10px; text-align: center; }
+.total-cell { font-weight: bold; background: #f0fff0; }
+
+.error-card { background: white; padding: 40px; border-radius: 20px; text-align: center; max-width: 500px; margin: 50px auto; }
+.whatsapp-btn { display: inline-block; background: #25d366; color: white; padding: 15px 30px; border-radius: 50px; text-decoration: none; margin-top: 20px; }
+
+@media print { .no-print { display: none; } body { background: white; padding: 0; } .certificate-paper { margin: 0; box-shadow: none; width: 100%; } }
