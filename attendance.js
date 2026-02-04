@@ -5,9 +5,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     
     // ⚠️ تصحيح الخطأ: تم تغيير المسار ليناسب المجلد الواحد
     if (!user) { 
-        window.location.href = "login.html"; 
-        return; 
-    }
+    window.location.href = "index.html"; // بدلاً من login.html
+    return; 
+}
 
     const tbody = document.getElementById("attendanceBody");
     const result = await getAttendance(user.ID);
