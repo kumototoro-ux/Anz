@@ -1,35 +1,21 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. جلب البيانات من الذاكرة
+    // جلب بيانات الطالب المخزنة
     const userData = JSON.parse(localStorage.getItem("user"));
 
-    // 2. التحقق من وجود المستخدم (تم تصحيح اسم المتغير هنا)
-    if (!user) { 
-    window.location.href = "index.html"; // بدلاً من login.html
-    return; 
-}
+    if (!userData) {
+        window.location.href = "index.html";
+        return;
+    }
 
-    // 3. قائمة بالعناصر (يجب أن تطابق ID في HTML واسم العمود في قوقل شيت)
-    const fields = [
-        'ID', 'Name_AR', 'Name_EN', 'BirthDate', 
-        'Nationality', 'Gender', 'StudentLevel', 
-        'Class', 'Term', 'AcademicYear'
-    ];
+    // تعبئة البيانات في الصفحة
+    document.getElementById("fullName").innerText = userData.name_ar || "اسم الطالب";
+    document.getElementById("infoId").innerText = userData.id;
+    document.getElementById("infoClass").innerText = userData.class || "غير محدد";
+    document.getElementById("infoYear").innerText = userData.academic_year || "2026";
+    document.getElementById("infoPhone").innerText = userData.phone || "لا يوجد رقم مسجل";
 
-    // 4. توزيع البيانات تلقائياً
-    fields.forEach(field => {
-        const element = document.getElementById(`display_${field}`);
-        if (element) {
-            let value = userData[field];
-            
-            // معالجة خاصة للتاريخ
-            if (field === 'BirthDate' && value) {
-                const dateObj = new Date(value);
-                if (!isNaN(dateObj)) {
-                    value = dateObj.toLocaleDateString('ar-SA');
-                }
-            }
-            
-            element.textContent = value || "غير متوفر";
-        }
-    });
+    // تحديث الصورة الرمزية بالحروف الأولى من الاسم
+    const avatarImg = document.getElementById("userAvatar");
+    const initials = userData.name_ar ? userData.name_ar.split(' ').map(n => n[0]).join('') : "U";
+    avatarImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.name_ar)}&background=1a73e8&color=fff&size=128`;
 });
