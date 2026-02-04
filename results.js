@@ -6,9 +6,9 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // ⚠️ تصحيح المسار ليتناسب مع المجلد الرئيسي (Root)
     if (!user) { 
-        window.location.href = "login.html"; 
-        return; 
-    }
+    window.location.href = "index.html"; // بدلاً من login.html
+    return; 
+}
 
     const termButtons = document.querySelectorAll(".term-btn");
     
