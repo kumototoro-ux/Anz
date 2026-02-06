@@ -235,43 +235,64 @@ body {
     to { transform: translateY(0); opacity: 1; }
 }
 
-/* تنسيقات خاصة بالجوال فقط */
+/* تنسيقات الجوال الشاملة */
 @media (max-width: 768px) {
-    
-    /* 1. ضبط الحاوية الرئيسية لتكون مرنة */
-    .main-content {
-        padding: 15px !important;
-        margin-right: 0 !important; /* إلغاء الهامش لأن القائمة مخفية */
+    /* إخفاء القائمة الجانبية خارج الشاشة */
+    .side-nav {
+        position: fixed;
+        right: -100%; /* مخفية لليمين */
+        top: 0;
+        width: 280px !important;
+        height: 100vh;
+        background: white;
+        z-index: 1000;
+        transition: 0.3s ease-in-out;
+        box-shadow: -5px 0 15px rgba(0,0,0,0.1);
     }
 
-    /* 2. جعل الكروت تأخذ العرض الكامل مع مسافة بينها */
-    .dashboard-grid, .stats-container {
+    /* إظهار القائمة عند إضافة كلاس active */
+    .side-nav.active {
+        right: 0 !important;
+    }
+
+    /* توسيع المحتوى الرئيسي ليأخذ كامل الشاشة */
+    .main-content {
+        margin-right: 0 !important;
+        padding: 70px 15px 20px 15px !important; /* مساحة علوية للشريط الجديد */
+        width: 100% !important;
+    }
+
+    /* جعل الكروت عمودية ومنظمة */
+    .dashboard-grid {
         display: flex;
         flex-direction: column;
-        gap: 15px;
+        gap: 20px;
     }
 
-    /* 3. تصغير حجم الخط للعناوين الكبيرة */
-    h2 {
-        font-size: 1.4rem !important;
-        text-align: center;
+    /* تعديل الهيدر (الترحيب) ليكون أصغر */
+    .header-content h1 {
+        font-size: 1.2rem !important;
+        margin-bottom: 5px;
     }
 
-    /* 4. تحسين شكل كروت المواد لتبدو أنيقة في الجوال */
-    .subject-mini-card {
-        width: 100% !important;
-        margin-bottom: 10px;
+    /* تحسين شكل التقويم الدراسي في الجوال ليقبل التمرير */
+    #calendarContainer {
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 10px;
+    }
+    
+    .cal-day {
+        min-width: 70px;
     }
 
-    /* 5. ضبط القائمة الجانبية عند التفعيل */
-    .side-nav.active {
-        width: 260px !important;
-        right: 0 !important;
-        z-index: 9999;
-    }
-
-    /* 6. منع تداخل النصوص في كروت الغياب */
-    .week-stat {
-        padding: 10px !important;
+    /* طبقة التظليل خلف القائمة */
+    #sidebarOverlay.active {
+        display: block;
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 999;
     }
 }
