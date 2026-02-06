@@ -195,3 +195,66 @@ body {
     from { transform: translateY(20px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
 }
+
+/* تنسيق بطاقات المواد المطور */
+.subject-mini-card {
+    background: #ffffff;
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid #edf2f7;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* تأثير عند مرور الماوس */
+.subject-mini-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    border-color: var(--primary);
+}
+
+.subject-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sub-name-ar {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #4a5568;
+}
+
+.sub-grade-val {
+    font-weight: 800;
+    color: var(--primary);
+}
+
+/* شريط تقدم صغير داخل كل مادة */
+.progress-bar-sub {
+    height: 6px;
+    background: #edf2f7;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-fill-sub {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), #63b3ed);
+    border-radius: 3px;
+    transition: width 1s ease-in-out;
+}
+
+/* تحسين شكل بطاقة الغياب الأسبوعية */
+.week-stat {
+    padding: 8px;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.week-stat:hover {
+    background: #f7fafc;
+}
