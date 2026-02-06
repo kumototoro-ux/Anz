@@ -274,3 +274,29 @@ body {
         display: none !important; /* إخفاء كلمة طالب أو البريد الإلكتروني في الجوال */
     }
 }
+
+@media (max-width: 768px) {
+    .app-title-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* توسيط النصوص */
+        flex-grow: 1;
+    }
+
+    .app-name {
+        font-weight: 800;
+        font-size: 0.9rem;
+        color: var(--primary);
+    }
+
+    #mobileUserName {
+        font-size: 0.8rem;
+        color: var(--text-sub);
+        font-weight: 600;
+    }
+
+    .user-avatar-mobile {
+        font-size: 1.5rem;
+        color: var(--text-sub);
+    }
+}
