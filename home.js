@@ -18,11 +18,23 @@ document.addEventListener("DOMContentLoaded", async () => {
     const welcomeMsg = document.getElementById("welcomeMessage");
     if(welcomeMsg) welcomeMsg.innerText = `مرحباً بك، ${userData.Name_AR || 'الطالب'}`;
 
-    // 3. مصفوفة المواد (حسب جداولك في Supabase)
-    const subjectTables = [
-        'Arabic', 'Art', 'Critical', 'Digital', 'English', 'Islamic', 
-        'Life', 'Math', 'PE', 'Quran', 'Science', 'Social'
-    ];
+    // 3. قاموس تعريب أسماء المواد (للعرض فقط)
+    const subjectNamesAr = {
+        'Arabic': 'اللغة العربية',
+        'Art': 'التربية الفنية',
+        'Critical': 'التفكير الناقد',
+        'Digital': 'المهارات الرقمية',
+        'English': 'اللغة الإنجليزية',
+        'Islamic': 'الدراسات الإسلامية',
+        'Life': 'المهارات الحياتية',
+        'Math': 'الرياضيات',
+        'PE': 'التربية البدنية',
+        'Quran': 'القرآن الكريم',
+        'Science': 'العلوم',
+        'Social': 'الدراسات الاجتماعية'
+    };
+
+    const subjectTables = Object.keys(subjectNamesAr);
 
     // --- دالة حساب درجات المواد ---
     const calcGrade = (tableName, data) => {
@@ -60,22 +72,20 @@ document.addEventListener("DOMContentLoaded", async () => {
                     totalAtt += attended;
                     totalAbs += absent;
 
-                    // إنشاء أشرطة الرسم البياني
                     chartHTML += `
-                        <div class="week-stat" style="margin-bottom: 10px;">
+                        <div class="week-stat" style="margin-bottom: 12px; padding: 5px; border-radius: 8px; transition: background 0.3s;">
                             <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:4px;">
-                                <span>الأسبوع ${i}</span>
-                                <span style="font-weight:bold;">${attended} ح / 15</span>
+                                <span style="color: #5f6368;">الأسبوع ${i}</span>
+                                <span style="font-weight:bold; color: #202124;">${attended} ح / 15</span>
                             </div>
                             <div style="height:8px; background:#eee; border-radius:4px; overflow:hidden; display:flex;">
-                                <div style="width:${(attended/15)*100}%; background:#4CAF50;"></div>
-                                <div style="width:${(absent/15)*100}%; background:#f44336;"></div>
+                                <div style="width:${(attended/15)*100}%; background: linear-gradient(90deg, #34a853, #2ecc71);"></div>
+                                <div style="width:${(absent/15)*100}%; background: #ea4335;"></div>
                             </div>
                         </div>
                     `;
                 }
             }
-            // تحديث البطاقة في HTML
             const attEl = document.getElementById("totalAttendanceSessions");
             const absEl = document.getElementById("totalAbsenceSessions");
             const chartContainer = document.getElementById("attendanceChart");
@@ -90,7 +100,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         let totalAllGrades = 0;
         let subjectsFound = 0;
 
-        // تنظيف الحاوية قبل الإضافة
         if (subjectsContainer) subjectsContainer.innerHTML = '';
 
         for (const subject of subjectTables) {
@@ -101,12 +110,18 @@ document.addEventListener("DOMContentLoaded", async () => {
                 totalAllGrades += grade;
                 subjectsFound++;
 
-                // إضافة البطاقة تلقائياً للواجهة
                 if (subjectsContainer) {
+                    // تم إضافة شريط تقدم ملون لكل بطاقة مادة
                     subjectsContainer.innerHTML += `
-                        <div class="subject-mini-card" style="background:#fff; padding:12px; border-radius:10px; border:1px solid #eee; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
-                            <div style="font-size:0.75rem; color:#888; margin-bottom:5px;">${subject}</div>
-                            <div style="font-size:1.1rem; font-weight:800; color:#34495e;">${grade.toFixed(1)}%</div>
+                        <div class="subject-mini-card animate-up" 
+                             onclick="window.location.href='evaluation.html?subject=${subject}'">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                                <span style="font-size:0.9rem; font-weight:700; color:#4a5568;">${subjectNamesAr[subject]}</span>
+                                <span style="font-weight:800; color:#1a73e8;">${grade.toFixed(1)}%</span>
+                            </div>
+                            <div style="height:6px; background:#edf2f7; border-radius:3px; overflow:hidden;">
+                                <div style="width:${grade}%; height:100%; background:linear-gradient(90deg, #1a73e8, #63b3ed); transition: width 1s ease-in-out;"></div>
+                            </div>
                         </div>
                     `;
                 }
@@ -147,12 +162,12 @@ function renderDailySchedule() {
     ];
 
     container.innerHTML = schedule.map(item => `
-        <div class="schedule-item" style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #eee;">
+        <div class="schedule-item animate-fade" style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid #eee;">
             <div class="sub-info">
                 <div style="font-weight:700; color:#2c3e50;">${item.subject}</div>
                 <div style="font-size:0.8rem; color:#7f8c8d;">${item.teacher}</div>
             </div>
-            <div style="background:#e8f4fd; color:#3498db; padding:4px 10px; border-radius:20px; font-size:0.8rem;">${item.time}</div>
+            <div class="time-badge">${item.time}</div>
         </div>
     `).join('');
 }
@@ -171,7 +186,7 @@ function renderAcademicCalendar() {
 
     weekContainer.innerHTML = `<div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:5px; text-align:center;">
         ${days.map(d => `
-            <div style="padding:10px 5px; border-radius:8px; ${d.current ? 'background:#3498db; color:#fff;' : 'background:#f8f9fa;'}">
+            <div class="cal-day ${d.current ? 'active-day' : ''}">
                 <div style="font-size:0.7rem;">${d.name}</div>
                 <div style="font-size:0.8rem; font-weight:bold;">${d.date}</div>
             </div>
