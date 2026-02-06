@@ -21,19 +21,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // 2. طلب البيانات من الجداول (تأكد من مطابقة حالة الأحرف لأسماء الجداول في Supabase)
     try {
-        const [attendanceRes, mathRes, scienceRes] = await Promise.all([
-            getStudentData('Attendance', studentId), 
-            getStudentData('Math', studentId),
-            getStudentData('Science', studentId)
-        ]);
-        
-        console.log("تم جلب البيانات بنجاح:", { attendanceRes, mathRes });
-        // هنا تكمل منطق عرض البيانات في البطاقات...
-        
-    } catch (error) {
-        console.error("فشل في جلب بيانات اللوحة الرئيسية:", error);
-    }
-});
+    const [attendanceRes, mathRes, scienceRes] = await Promise.all([
+        getStudentData('AB', studentId),      // جدول الغياب عندك اسمه AB (حسب الصورة)
+        getStudentData('Math', studentId),    // أول حرف كبير
+        getStudentData('Science', studentId)  // أول حرف كبير
+    ]);
+    
+    console.log("تم جلب البيانات بنجاح من الجداول المحددة");
+} catch (error) {
+    console.error("خطأ في أسماء الجداول:", error);
+}
 
 // دالة لتحديث الوقت والتاريخ (روح قوقل)
 function updateDateTime() {
