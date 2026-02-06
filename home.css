@@ -248,3 +248,29 @@ body {
     }
     .sidebar-overlay.active { display: block !important; }
 }
+
+@media (max-width: 768px) {
+    /* إظهار اسم الطالب في الجوال */
+    .user-info h1 {
+        display: block !important;
+        font-size: 1.2rem !important; /* تصغير الخط ليناسب شاشة الجوال */
+        color: var(--primary);
+        margin: 0;
+        white-space: nowrap; /* منع نزول الاسم لسطر جديد */
+    }
+
+    /* إذا كنت تضع الاسم داخل القائمة الجانبية أيضاً */
+    .nav-logo {
+        display: block !important;
+        text-align: center;
+        width: 100%;
+        padding: 15px 0;
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .user-info p { 
+        display: none !important; /* إخفاء كلمة طالب أو البريد الإلكتروني في الجوال */
+    }
+}
