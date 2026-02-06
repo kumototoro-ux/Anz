@@ -19,11 +19,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     if(welcomeMsg) welcomeMsg.innerText = `مرحباً بك، ${userData.Name_AR || 'الطالب'}`;
 
     // مصفوفة بأسماء كافة الجداول للمواد الـ 12 كما هي في Supabase
-    const subjectTables = [
-        'Math', 'Science', 'Arabic', 'English', 'Islamic', 
-        'Social', 'Quran', 'Physics', 'Chemistry', 'Biology', 
-        'Computer', 'History'
-    ];
+   // مصفوفة المواد مطابقة تماماً لأسماء الجداول في الصورة
+const subjectTables = [
+    'Arabic', 
+    'Art', 
+    'Critical', // التفكير الناقد (ثالث متوسط)
+    'Digital', 
+    'English', 
+    'Islamic', 
+    'Life',    // المهارات الحياتية
+    'Math', 
+    'PE',      // التربية البدنية
+    'Quran', 
+    'Science', 
+    'Social'
+];
 
     // --- 2. دوال الحساب الذكية ---
     const calcGrade = (tableName, data) => {
