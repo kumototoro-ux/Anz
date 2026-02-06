@@ -5,48 +5,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>الرئيسية | نظام مقياس</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="home.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="home.css">
 </head>
 <body>
+
+    <div class="mobile-app-bar">
+        <div class="app-bar-container">
+            <button id="menuToggle" class="menu-icon-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="app-title-wrapper">
+                <span class="app-name">نظام مقياس</span>
+                <span class="app-subtitle">لوحة الطالب</span>
+            </div>
+            <div class="user-avatar-mobile">
+                <i class="fas fa-user-circle"></i>
+            </div>
+        </div>
+    </div>
+
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
     <nav class="side-nav">
         <div class="nav-logo">م</div>
         <ul class="nav-links">
-            <li class="active"><a href="home.html"><i class="fas fa-home"></i><span>الرئيسية</span></a></li>
-            <li><a href="profile.html"><i class="fas fa-user-circle"></i><span>معلوماتي</span></a></li>
-            <li><a href="evaluation.html"><i class="fas fa-star"></i><span>المواد</span></a></li>
-            <li><a href="attendance.html"><i class="fas fa-calendar-check"></i><span>الغياب</span></a></li>
-            <li><a href="results.html"><i class="fas fa-poll-h"></i><span>النتائج</span></a></li>
+            <li class="active">
+                <a href="home.html">
+                    <i class="fas fa-home"></i>
+                    <span>الرئيسية</span>
+                </a>
+            </li>
+            <li>
+                <a href="profile.html">
+                    <i class="fas fa-user-circle"></i>
+                    <span>معلوماتي</span>
+                </a>
+            </li>
+            <li>
+                <a href="evaluation.html">
+                    <i class="fas fa-star"></i>
+                    <span>المواد</span>
+                </a>
+            </li>
+            <li>
+                <a href="attendance.html">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>الغياب</span>
+                </a>
+            </li>
+            <li>
+                <a href="results.html">
+                    <i class="fas fa-poll-h"></i>
+                    <span>النتائج</span>
+                </a>
+            </li>
         </ul>
         <div class="nav-logout" id="logoutBtn">
             <i class="fas fa-sign-out-alt"></i>
+            <span>تسجيل الخروج</span>
         </div>
     </nav>
 
     <main class="main-content">
+        
         <header class="home-header">
             <div class="user-info">
                 <h1 id="welcomeMessage">مرحباً، جاري التحميل...</h1>
                 <p id="currentDateText"></p>
             </div>
             <div class="system-badge">نظام مقياس التعليمي</div>
-            <div class="mobile-app-bar">
-    <div class="app-bar-container">
-        <button id="menuToggle" class="menu-icon-btn">
-            <i class="fas fa-bars"></i>
-        </button>
-        <div class="app-title-wrapper">
-            <span class="app-name">نظام مقياس</span>
-            <span class="app-subtitle">لوحة الطالب</span>
-        </div>
-        <div class="user-avatar-mobile">
-            <i class="fas fa-user-circle"></i>
-        </div>
-    </div>
-</div>
-
-<div id="sidebarOverlay" class="sidebar-overlay"></div>
         </header>
 
         <div class="dashboard-grid">
@@ -56,7 +84,8 @@
                     <h3><i class="fas fa-clock"></i> جدول حصص اليوم</h3>
                     <span class="day-badge" id="dayName"></span>
                 </div>
-                <div id="scheduleContainer" class="card-body"></div>
+                <div id="scheduleContainer" class="card-body">
+                    </div>
             </div>
 
             <div class="card mini-stats-card animate-up">
@@ -73,29 +102,30 @@
                         <span class="stat-value warning" id="totalAbsenceSessions">0</span>
                     </div>
                 </div>
-                <hr>
-                <div class="card-header" style="padding-top: 10px;">
-                    <h4 style="font-size: 0.9rem;">بيانات الحضور الأسبوعية (من 15 حصة)</h4>
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+                <div class="card-header" style="padding: 0;">
+                    <h4 style="font-size: 0.85rem; color: var(--text-sub);">بيانات الحضور الأسبوعية</h4>
                 </div>
-                <div id="attendanceChart" class="card-body" style="max-height: 200px; overflow-y: auto;">
+                <div id="attendanceChart" class="card-body" style="max-height: 180px; overflow-y: auto; margin-top: 10px;">
                     </div>
             </div>
 
             <div class="card animate-up">
                 <div class="card-header">
                     <h3><i class="fas fa-chart-line"></i> التقييم العام للمواد</h3>
-                    <span id="generalGrade" class="week-badge" style="background: #4CAF50;">--%</span>
+                    <span id="generalGrade" style="background: var(--success); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; font-weight: bold;">--%</span>
                 </div>
-                <div id="subjectsGradesContainer" class="card-body" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div id="subjectsGradesContainer" class="card-body">
                     </div>
             </div>
 
             <div class="card calendar-card animate-up">
                 <div class="card-header">
                     <h3><i class="fas fa-calendar-alt"></i> التقويم الدراسي</h3>
-                    <span id="weekNumber" class="week-badge">الأسبوع ..</span>
+                    <span id="weekNumber" style="color: var(--text-sub); font-size: 0.85rem; font-weight: bold;">الأسبوع ..</span>
                 </div>
-                <div id="calendarContainer" class="card-body"></div>
+                <div id="calendarContainer" class="card-body">
+                    </div>
             </div>
 
         </div>
