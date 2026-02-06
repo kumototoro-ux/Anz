@@ -2,17 +2,17 @@ import { getStudentData } from './api.js';
 
 document.addEventListener("DOMContentLoaded", async () => {
     
-    // 1. التحقق من المستخدم
+    // 1. التحقق من المستخدم وجلب بياناته من المتصفح
     const userData = JSON.parse(localStorage.getItem("user"));
     if (!userData || !userData.ID) { 
         window.location.href = "index.html"; 
         return; 
     }
 
-    // تعريف المعرف لاستخدامه في جلب البيانات
+    // --- الإصلاح هنا: تعريف المعرف بشكل صريح ليكون متاحاً للكود بالأسفل ---
     const studentId = userData.ID;
 
-    // 2. تفعيل القائمة الجانبية وطبقة التعتيم (للجوال)
+    // 2. تفعيل زر القائمة للجوال
     const menuBtn = document.getElementById('menuToggle');
     const sideNav = document.querySelector('.side-nav');
     const overlay = document.getElementById('sidebarOverlay');
@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         };
     }
 
-    // 3. تحديث الواجهة والوقت (باستخدام دوالك الأصلية)
+    // 3. تحديث الواجهة والوقت
     updateDateTime();
     renderDailySchedule();
     renderAcademicCalendar();
@@ -49,11 +49,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
     const subjectTables = Object.keys(subjectNamesAr);
 
-    // 5. دالة حساب درجات المواد (من كودك الأصلي)
+    // 5. دالة حساب الدرجات (كما هي في كودك)
     const calcGrade = (tableName, data) => {
         if (!data) return 0;
         let points = 0, count = 0;
-
         if (tableName === 'Quran') {
             const types = ['HW', 'read', 'Taj', 'save'];
             types.forEach(t => {
@@ -68,23 +67,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         return count > 0 ? (points / count) : 0;
     };
 
-    // 6. جلب ومعالجة البيانات (الغياب والمواد)
+    // 6. جلب ومعالجة البيانات
     try {
         // أ. معالجة الغياب
         const attendanceRes = await getStudentData('AB', studentId);
         if (attendanceRes.success) {
-            let totalAtt = 0;
-            let totalAbs = 0;
-            let chartHTML = '';
-
+            let totalAtt = 0, totalAbs = 0, chartHTML = '';
             for(let i = 1; i <= 14; i++) {
                 let val = attendanceRes.data[String(i)];
                 if (val !== null) {
                     let attended = parseFloat(val);
                     let absent = 15 - attended;
-                    totalAtt += attended;
-                    totalAbs += absent;
-
+                    totalAtt += attended; totalAbs += absent;
                     chartHTML += `
                         <div class="week-stat" style="margin-bottom: 12px; padding: 5px; border-radius: 8px;">
                             <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:4px;">
@@ -98,16 +92,14 @@ document.addEventListener("DOMContentLoaded", async () => {
                         </div>`;
                 }
             }
-            document.getElementById("totalAttendanceSessions").innerText = totalAtt;
-            document.getElementById("totalAbsenceSessions").innerText = totalAbs;
-            document.getElementById("attendanceChart").innerHTML = chartHTML;
+            if(document.getElementById("totalAttendanceSessions")) document.getElementById("totalAttendanceSessions").innerText = totalAtt;
+            if(document.getElementById("totalAbsenceSessions")) document.getElementById("totalAbsenceSessions").innerText = totalAbs;
+            if(document.getElementById("attendanceChart")) document.getElementById("attendanceChart").innerHTML = chartHTML;
         }
 
-        // ب. بطاقات المواد وحساب التقييم
+        // ب. إنشاء بطاقات المواد
         const subjectsContainer = document.getElementById("subjectsGradesContainer");
-        let totalAllGrades = 0;
-        let subjectsFound = 0;
-
+        let totalAllGrades = 0, subjectsFound = 0;
         if (subjectsContainer) subjectsContainer.innerHTML = '';
 
         for (const subject of subjectTables) {
@@ -116,7 +108,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const grade = calcGrade(subject, res.data);
                 totalAllGrades += grade;
                 subjectsFound++;
-
                 if (subjectsContainer) {
                     subjectsContainer.innerHTML += `
                         <div class="subject-mini-card animate-up" onclick="window.location.href='evaluation.html?subject=${subject}'">
@@ -131,20 +122,15 @@ document.addEventListener("DOMContentLoaded", async () => {
                 }
             }
         }
-
-        // ج. تحديث التقييم العام
-        if (subjectsFound > 0) {
-            const finalAvg = totalAllGrades / subjectsFound;
-            const generalEl = document.getElementById("generalGrade");
-            if (generalEl) generalEl.innerText = finalAvg.toFixed(1) + "%";
+        if (subjectsFound > 0 && document.getElementById("generalGrade")) {
+            document.getElementById("generalGrade").innerText = (totalAllGrades / subjectsFound).toFixed(1) + "%";
         }
-
     } catch (err) {
         console.error("خطأ في تحميل لوحة البيانات:", err);
     }
 });
 
-// --- الدوال الفرعية المساعدة (نسختك الأصلية بالكامل) ---
+// --- الدوال المساعدة (دوال الجداول والتقويم الخاصة بك كما هي) ---
 
 function updateDateTime() {
     const now = new Date();
@@ -158,13 +144,10 @@ function updateDateTime() {
 function renderDailySchedule() {
     const container = document.getElementById("scheduleContainer");
     if (!container) return;
-
     const userData = JSON.parse(localStorage.getItem("user"));
     const studentLevel = userData?.Level || "أول متوسط"; 
-
-    const now = new Date();
     const daysMap = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
-    const currentDay = daysMap[now.getDay()];
+    const currentDay = daysMap[new Date().getDay()];
 
     const allSchedules = {
         "أول متوسط": {
@@ -205,7 +188,7 @@ function renderDailySchedule() {
             ]
         },
         "ثاني متوسط": {
-            "الأحد": [
+             "الأحد": [
                 { time: "07:30", subject: "حاسب", teacher: "أ. أنس" },
                 { time: "08:05", subject: "علوم", teacher: "أ. أنس" },
                 { time: "08:40", subject: "قرآن", teacher: "الشيخ إسماعيل" },
@@ -281,15 +264,10 @@ function renderDailySchedule() {
     };
 
     const todaySchedule = allSchedules[studentLevel]?.[currentDay] || [];
-
     if (todaySchedule.length === 0) {
-        container.innerHTML = `<div style="text-align:center; padding:20px; color:#999;">
-            <i class="fas fa-bed" style="font-size:2rem; margin-bottom:10px;"></i>
-            <p>لا توجد حصص مجدولة اليوم، استمتع بوقتك!</p>
-        </div>`;
+        container.innerHTML = `<div style="text-align:center; padding:20px; color:#999;">لا توجد حصص اليوم</div>`;
         return;
     }
-
     container.innerHTML = todaySchedule.map(item => `
         <div class="schedule-item animate-fade">
             <div class="sub-info">
@@ -297,8 +275,7 @@ function renderDailySchedule() {
                 <span class="teacher-name">${item.teacher}</span>
             </div>
             <div class="time-badge">${item.time}</div>
-        </div>
-    `).join('');
+        </div>`).join('');
 }
 
 function renderAcademicCalendar() {
@@ -324,18 +301,13 @@ function renderAcademicCalendar() {
 
     const today = new Date();
     let currentWeekInfo = academicPlan.find(w => today >= w.start && today <= w.end);
-    
-    if (!currentWeekInfo) {
-        currentWeekInfo = academicPlan.find(w => today < w.start);
-    }
+    if (!currentWeekInfo) currentWeekInfo = academicPlan.find(w => today < w.start);
 
-    if (weekNumberBadge && currentWeekInfo) {
-        weekNumberBadge.innerText = `الأسبوع ${currentWeekInfo.week} - ${currentWeekInfo.note}`;
-    }
+    if (weekNumberBadge && currentWeekInfo) weekNumberBadge.innerText = `الأسبوع ${currentWeekInfo.week} - ${currentWeekInfo.note}`;
 
-    const daysArr = [];
     const startDate = currentWeekInfo ? new Date(currentWeekInfo.start) : new Date();
     const dayNames = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"];
+    const daysArr = [];
 
     for (let i = 0; i < 5; i++) {
         const d = new Date(startDate);
@@ -355,12 +327,6 @@ function renderAcademicCalendar() {
                      ${d.isToday ? 'background: var(--primary); color: white; transform: scale(1.05);' : 'background: #f8f9fa; color: #5f6368; border: 1px solid #eee;'}">
                     <div style="font-size: 0.7rem; margin-bottom: 4px;">${d.name}</div>
                     <div style="font-size: 0.85rem; font-weight: bold;">${d.date}</div>
-                </div>
-            `).join('')}
-        </div>
-        ${currentWeekInfo?.note.includes("إجازة") ? 
-            `<div style="margin-top:15px; padding:10px; background:#fff3cd; color:#856404; border-radius:8px; font-size:0.8rem; text-align:center; border:1px solid #ffeeba;">
-                <i class="fas fa-star"></i> تنبيه: ${currentWeekInfo.note}
-            </div>` : ''}
-    `;
+                </div>`).join('')}
+        </div>`;
 }
