@@ -369,19 +369,36 @@ function renderAcademicCalendar() {
 }
 
 // تفاعل القائمة الجانبية في الجوال
-const menuToggle = document.getElementById('menuToggle');
-const sideNav = document.querySelector('.side-nav');
+// تشغيل القائمة الجانبية في الجوال
+document.addEventListener("DOMContentLoaded", () => {
+    const menuBtn = document.getElementById('menuToggle');
+    const sideNav = document.querySelector('.side-nav');
+    const overlay = document.getElementById('sidebarOverlay');
 
-if (menuToggle) {
-    menuToggle.addEventListener('click', (e) => {
-        sideNav.classList.toggle('active');
-        e.stopPropagation(); // منع إغلاق القائمة فوراً
-    });
-}
+    if (menuBtn && sideNav && overlay) {
+        // فتح القائمة
+        menuBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // منع انتشار الحدث
+            sideNav.classList.add('active');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden'; // منع التمرير في الخلفية
+        });
 
-// إغلاق القائمة عند النقر في أي مكان خارجها
-document.addEventListener('click', () => {
-    if (sideNav.classList.contains('active')) {
-        sideNav.classList.remove('active');
+        // إغلاق القائمة عند النقر على الخلفية المعتمة
+        overlay.addEventListener('click', () => {
+            sideNav.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = ''; 
+        });
+
+        // إغلاق القائمة عند النقر على أي رابط بداخلها
+        const navLinks = sideNav.querySelectorAll('a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                sideNav.classList.remove('active');
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        });
     }
 });
