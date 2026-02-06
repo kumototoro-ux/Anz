@@ -6,73 +6,69 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const studentId = userData.ID;
 
-    // --- أولاً: دوال الحساب الذكية ---
+    // مصفوفة بأسماء كافة الجداول للمواد الـ 12 كما هي في Supabase
+    const subjectTables = [
+        'Math', 'Science', 'Arabic', 'English', 'Islamic', 
+        'Social', 'Quran', 'Physics', 'Chemistry', 'Biology', 
+        'Computer', 'History' // تأكد من مطابقة هذه الأسماء لأسماء جداولك
+    ];
 
-    // حساب المواد العامة (رياضيات، علوم، إلخ)
-    const calcGeneralGrade = (data) => {
+    // --- دوال الحساب الذكية ---
+
+    const calcGrade = (tableName, data) => {
         if (!data) return 0;
         let points = 0, count = 0;
-        // جمع PR (1-2), HW (1-12), QZ (1-12)
-        const keys = ['PR_1','PR_2', ...Array.from({length:12}, (_,i)=>`HW_${i+1}`), ...Array.from({length:12}, (_,i)=>`QZ_${i+1}`)];
-        keys.forEach(k => { if(data[k] !== null) { points += parseFloat(data[k]); count++; } });
+
+        // إذا كانت المادة هي القرآن، نستخدم توزيعة القرآن الخاصة
+        if (tableName === 'Quran') {
+            const types = ['HW', 'read', 'Taj', 'save'];
+            types.forEach(t => {
+                for(let i=1; i<=12; i++) {
+                    if(data[`${t}_${i}`] !== null) { points += parseFloat(data[`${t}_${i}`]); count++; }
+                }
+            });
+        } else {
+            // بقية المواد (PR, HW, QZ)
+            const keys = ['PR_1','PR_2', ...Array.from({length:12}, (_,i)=>`HW_${i+1}`), ...Array.from({length:12}, (_,i)=>`QZ_${i+1}`)];
+            keys.forEach(k => { if(data[k] !== null) { points += parseFloat(data[k]); count++; } });
+        }
         return count > 0 ? (points / count) : 0;
     };
-
-    // حساب القرآن (HW, read, Taj, save, PR)
-    const calcQuranGrade = (data) => {
-        if (!data) return 0;
-        let points = 0, count = 0;
-        const types = ['HW', 'read', 'Taj', 'save'];
-        types.forEach(t => {
-            for(let i=1; i<=12; i++) {
-                let val = data[`${t}_${i}`];
-                if(val !== null) { points += parseFloat(val); count++; }
-            }
-        });
-        // إضافة المشاركة
-        if(data.PR_1 !== null) { points += data.PR_1; count++; }
-        if(data.PR_2 !== null) { points += data.PR_2; count++; }
-        return count > 0 ? (points / count) : 0;
-    };
-
-    // حساب الغياب من جدول AB (الأسابيع 1-14)
-    const calcAbsence = (data) => {
-        if (!data) return 0;
-        let total = 0;
-        for(let i=1; i<=14; i++) { if(data[String(i)] !== null) total += parseFloat(data[String(i)]); }
-        return total;
-    };
-
-    // --- ثانياً: جلب البيانات وعرضها ---
 
     try {
-        const [math, quran, science, attendance] = await Promise.all([
-            getStudentData('Math', studentId),
-            getStudentData('Quran', studentId),
-            getStudentData('Science', studentId),
-            getStudentData('AB', studentId)
-        ]);
-
-        // عرض الغياب
-        if (attendance.success) document.getElementById("absentCount").innerText = calcAbsence(attendance.data);
-
-        // عرض الرياضيات
-        let mGrade = 0;
-        if (math.success) {
-            mGrade = calcGeneralGrade(math.data);
-            document.getElementById("mathGrade").innerText = mGrade.toFixed(1) + "%";
+        // 1. جلب بيانات الغياب أولاً
+        const attendance = await getStudentData('AB', studentId);
+        if (attendance.success) {
+            let totalAbs = 0;
+            for(let i=1; i<=14; i++) { if(attendance.data[String(i)] !== null) totalAbs += parseFloat(attendance.data[String(i)]); }
+            const el = document.getElementById("absentCount");
+            if(el) el.innerText = totalAbs;
         }
 
-        // عرض القرآن
-        let qGrade = 0;
-        if (quran.success) {
-            qGrade = calcQuranGrade(quran.data);
-            document.getElementById("quranGrade").innerText = qGrade.toFixed(1) + "%";
+        // 2. جلب وحساب كافة المواد الـ 12 في حلقة واحدة
+        let totalAllSubjects = 0;
+        let subjectsFound = 0;
+
+        for (const subject of subjectTables) {
+            const res = await getStudentData(subject, studentId);
+            if (res.success) {
+                const grade = calcGrade(subject, res.data);
+                
+                // تحديث العنصر في HTML (مثلاً id="Math_Grade")
+                const gradeEl = document.getElementById(`${subject}_Grade`);
+                if (gradeEl) gradeEl.innerText = grade.toFixed(1) + "%";
+                
+                totalAllSubjects += grade;
+                subjectsFound++;
+            }
         }
 
-        // التقييم العام (متوسط المواد)
-        const generalAvg = (mGrade + qGrade) / 2; // أضف بقية المواد في المعادلة
-        document.getElementById("generalGrade").innerText = generalAvg.toFixed(1) + "%";
+        // 3. حساب التقييم العام لكافة المواد
+        if (subjectsFound > 0) {
+            const finalAvg = totalAllSubjects / subjectsFound;
+            const generalEl = document.getElementById("generalGrade");
+            if (generalEl) generalEl.innerText = finalAvg.toFixed(1) + "%";
+        }
 
     } catch (err) { console.error("Error loading dashboard:", err); }
 });
