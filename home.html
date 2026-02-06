@@ -40,7 +40,37 @@
                     <h3><i class="fas fa-clock"></i> جدول حصص اليوم</h3>
                     <span class="day-badge" id="dayName"></span>
                 </div>
-                <div id="scheduleContainer" class="card-body">
+                <div id="scheduleContainer" class="card-body"></div>
+            </div>
+
+            <div class="card mini-stats-card animate-up">
+                <div class="card-header">
+                    <h3><i class="fas fa-user-check"></i> ملخص حصص الفصل</h3>
+                </div>
+                <div class="stats-content">
+                    <div class="stat-item">
+                        <span class="stat-label">حصص الحضور</span>
+                        <span class="stat-value info" id="totalAttendanceSessions">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">حصص الغياب</span>
+                        <span class="stat-value warning" id="totalAbsenceSessions">0</span>
+                    </div>
+                </div>
+                <hr>
+                <div class="card-header" style="padding-top: 10px;">
+                    <h4 style="font-size: 0.9rem;">بيانات الحضور الأسبوعية (من 15 حصة)</h4>
+                </div>
+                <div id="attendanceChart" class="card-body" style="max-height: 200px; overflow-y: auto;">
+                    </div>
+            </div>
+
+            <div class="card animate-up">
+                <div class="card-header">
+                    <h3><i class="fas fa-chart-line"></i> التقييم العام للمواد</h3>
+                    <span id="generalGrade" class="week-badge" style="background: #4CAF50;">--%</span>
+                </div>
+                <div id="subjectsGradesContainer" class="card-body" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                     </div>
             </div>
 
@@ -49,33 +79,7 @@
                     <h3><i class="fas fa-calendar-alt"></i> التقويم الدراسي</h3>
                     <span id="weekNumber" class="week-badge">الأسبوع ..</span>
                 </div>
-                <div id="calendarContainer" class="card-body">
-                    </div>
-            </div>
-
-            <div class="card mini-stats-card animate-up">
-                <div class="card-header">
-                    <h3><i class="fas fa-user-times"></i> ملخص الغياب</h3>
-                </div>
-                <div class="stats-content">
-                    <div class="stat-item">
-                        <span class="stat-label">أيام الغياب</span>
-                        <span class="stat-value warning" id="absentCount">0</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">أيام التأخر</span>
-                        <span class="stat-value info" id="lateCount">0</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card exam-card animate-up">
-                <div class="card-header">
-                    <h3><i class="fas fa-file-signature"></i> جدول الاختبارات</h3>
-                </div>
-                <div class="card-body empty-state">
-                    <p>سيتم إدراج الجدول قريباً...</p>
-                </div>
+                <div id="calendarContainer" class="card-body"></div>
             </div>
 
         </div>
