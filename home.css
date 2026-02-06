@@ -1,4 +1,4 @@
-/* الإعدادات الأساسية التي قدمتها */
+/* --- 1. الإعدادات العامة والألوان --- */
 :root {
     --primary: #1a73e8;
     --bg: #f8f9fa;
@@ -11,6 +11,10 @@
     --warning: #fbbc04;
 }
 
+* {
+    box-sizing: border-box;
+}
+
 body {
     background-color: var(--bg);
     font-family: 'Tajawal', sans-serif;
@@ -18,9 +22,10 @@ body {
     display: flex;
     direction: rtl;
     color: var(--text-main);
+    overflow-x: hidden;
 }
 
-/* القائمة الجانبية */
+/* --- 2. القائمة الجانبية (للكمبيوتر) --- */
 .side-nav {
     width: 80px;
     height: 100vh;
@@ -30,25 +35,36 @@ body {
     flex-direction: column;
     align-items: center;
     position: fixed;
+    right: 0;
+    top: 0;
     transition: width 0.3s;
     z-index: 100;
 }
 
-.side-nav:hover { width: 200px; }
+.side-nav:hover { width: 220px; }
+
+.nav-logo {
+    padding: 20px;
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--primary);
+}
 
 .nav-links {
     list-style: none;
     padding: 0;
     width: 100%;
+    margin-top: 20px;
 }
 
 .nav-links li a {
     display: flex;
     align-items: center;
-    padding: 20px;
+    padding: 15px 25px;
     color: var(--text-sub);
     text-decoration: none;
     transition: 0.3s;
+    white-space: nowrap;
 }
 
 .nav-links li.active a, .nav-links li a:hover {
@@ -57,358 +73,164 @@ body {
     border-right: 4px solid var(--primary);
 }
 
+.nav-links li i {
+    font-size: 20px;
+    min-width: 30px;
+}
+
 .nav-links li span {
-    margin-right: 20px;
+    margin-right: 15px;
     opacity: 0;
     transition: 0.3s;
-    white-space: nowrap;
 }
 
 .side-nav:hover .nav-links li span { opacity: 1; }
 
-/* المحتوى الرئيسي */
+.nav-logout {
+    margin-top: auto;
+    padding: 20px;
+    cursor: pointer;
+    color: var(--danger);
+}
+
+/* --- 3. المحتوى الرئيسي --- */
 .main-content {
     margin-right: 80px;
-    padding: 40px;
+    padding: 30px;
     width: calc(100% - 80px);
+    transition: margin 0.3s;
 }
 
+.home-header {
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.user-info h1 { margin: 0; font-size: 1.8rem; }
+.user-info p { color: var(--text-sub); margin-top: 5px; }
+
+/* --- 4. لوحة الصناديق (Grid) --- */
 .dashboard-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 25px;
-    margin-top: 30px;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
 }
 
-/* البطاقات */
 .card {
     background: var(--card-bg);
-    border-radius: 12px;
+    border-radius: 16px;
     border: 1px solid var(--border);
     padding: 20px;
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    transition: 0.3s;
 }
 
 .card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 15px;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
-.card-header h3 {
-    margin: 0;
-    font-size: 18px;
-    color: var(--primary);
-}
+.card-header h3 { font-size: 1rem; color: var(--primary); margin: 0; }
 
-/* --- الإضافات الجديدة لتحسين عرض المواد والغياب --- */
-
-/* حاوية المواد الـ 12 */
+/* --- 5. تنسيق المواد والغياب --- */
 #subjectsGradesContainer {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* عرض مادتين في كل صف */
+    grid-template-columns: 1fr 1fr;
     gap: 12px;
 }
 
 .subject-mini-card {
-    transition: all 0.2s;
-    border: 1px solid transparent;
-}
-
-.subject-mini-card:hover {
-    border-color: var(--primary);
-    background-color: #fff;
-    transform: scale(1.02);
-}
-
-/* ملخص الإحصائيات (الحصص) */
-.stats-content {
-    display: flex;
-    justify-content: space-around;
-    padding: 10px 0;
-}
-
-.stat-item {
-    text-align: center;
-}
-
-.stat-label {
-    display: block;
-    font-size: 13px;
-    color: var(--text-sub);
-    margin-bottom: 5px;
-}
-
-.stat-value {
-    font-size: 24px;
-    font-weight: 800;
-}
-
-.stat-value.info { color: var(--success); } /* حضور */
-.stat-value.warning { color: var(--danger); } /* غياب */
-
-/* حاوية الرسم البياني للحصص */
-#attendanceChart {
-    scrollbar-width: thin;
-    scrollbar-color: var(--border) transparent;
-    padding-right: 5px;
-}
-
-#attendanceChart::-webkit-scrollbar {
-    width: 4px;
-}
-
-#attendanceChart::-webkit-scrollbar-thumb {
-    background: var(--border);
-    border-radius: 10px;
-}
-
-/* التجاوب مع الجوال */
-@media (max-width: 768px) {
-    .main-content {
-        margin-right: 0;
-        padding: 20px;
-    }
-    .side-nav {
-        display: none; /* إخفاء القائمة في الجوال الصغير جداً أو تحويلها لأسفل */
-    }
-    #subjectsGradesContainer {
-        grid-template-columns: 1fr; /* مادة واحدة في الصف في الجوال */
-    }
-}
-
-/* الأنميشن */
-.animate-up {
-    animation: fadeInUp 0.6s ease-out forwards;
-    opacity: 0;
-}
-
-@keyframes fadeInUp {
-    from { transform: translateY(20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
-
-/* تنسيق بطاقات المواد المطور */
-.subject-mini-card {
-    background: #ffffff;
-    padding: 15px;
+    background: #f8f9fa;
+    padding: 12px;
     border-radius: 12px;
-    border: 1px solid #edf2f7;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid #eee;
     cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
 }
 
-/* تأثير عند مرور الماوس */
-.subject-mini-card:hover {
-    transform: translateY(-5px) scale(1.02);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-    border-color: var(--primary);
+.subject-mini-card:hover { border-color: var(--primary); transform: translateY(-2px); }
+
+.stats-content { display: flex; justify-content: space-around; padding: 10px; }
+.stat-item { text-align: center; }
+.stat-value { font-size: 1.5rem; font-weight: 800; display: block; }
+.stat-value.info { color: var(--success); }
+.stat-value.warning { color: var(--danger); }
+
+/* --- 6. تنسيق الجوال (Responsive) --- */
+
+/* إخفاء شريط الجوال في الكمبيوتر */
+@media (min-width: 769px) {
+    .mobile-app-bar, .sidebar-overlay { display: none !important; }
 }
 
-.subject-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.sub-name-ar {
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: #4a5568;
-}
-
-.sub-grade-val {
-    font-weight: 800;
-    color: var(--primary);
-}
-
-/* شريط تقدم صغير داخل كل مادة */
-.progress-bar-sub {
-    height: 6px;
-    background: #edf2f7;
-    border-radius: 3px;
-    overflow: hidden;
-}
-
-.progress-fill-sub {
-    height: 100%;
-    background: linear-gradient(90deg, var(--primary), #63b3ed);
-    border-radius: 3px;
-    transition: width 1s ease-in-out;
-}
-
-/* تحسين شكل بطاقة الغياب الأسبوعية */
-.week-stat {
-    padding: 8px;
-    border-radius: 8px;
-    transition: background 0.2s;
-}
-
-.week-stat:hover {
-    background: #f7fafc;
-}
-
-/* زر الجوال والهيدر العلوي */
-.mobile-header {
-    display: none;
-    align-items: center;
-    padding: 15px;
-    background: white;
-    border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-}
-
+/* تعديلات الشاشات الصغيرة */
 @media (max-width: 768px) {
-    .mobile-header { display: flex; gap: 15px; }
-    
-    /* تحويل القائمة الجانبية إلى Drawer مخفي */
-    .side-nav {
-        transform: translateX(100%); /* إخفاء لجهة اليمين */
-        width: 250px !important;
-        height: 100vh;
-        position: fixed;
-        right: 0;
+    .mobile-app-bar {
+        display: block !important;
+        background: white;
+        padding: 12px 20px;
+        position: sticky;
         top: 0;
-        transition: transform 0.3s ease-in-out;
-        box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+        z-index: 1001;
+        border-bottom: 1px solid var(--border);
     }
 
-    /* عندما تفتح القائمة */
-    .side-nav.active {
-        transform: translateX(0);
+    .app-bar-container { display: flex; align-items: center; gap: 15px; }
+    
+    .menu-icon-btn { 
+        background: none; border: none; font-size: 1.4rem; color: var(--text-sub); 
     }
 
-    .nav-links li span {
-        opacity: 1 !important; /* النص يظهر دائماً في الجوال */
-        margin-right: 15px !important;
-    }
+    .app-name { font-weight: 800; color: var(--primary); font-size: 1.1rem; }
 
-    /* ضبط المحتوى الرئيسي */
-    .main-content {
-        margin-right: 0 !important;
-        padding: 15px !important;
-        width: 100% !important;
-    }
-
-    /* ترتيب الصناديق بشكل طولي */
-    .dashboard-grid {
-        grid-template-columns: 1fr !important;
-        gap: 20px !important;
-    }
-
-    #subjectsGradesContainer {
-        grid-template-columns: 1fr !important;
-    }
-
-    /* زر القائمة */
-    .menu-btn {
-        background: none;
-        border: none;
-        font-size: 1.5rem;
-        color: var(--primary);
-        cursor: pointer;
-    }
-}
-
-/* --- تجميل هيدر الجوال (Google Style) --- */
-.mobile-app-bar {
-    display: none; /* يظهر في الجوال فقط */
-    background: #ffffff;
-    padding: 10px 16px;
-    border-bottom: 1px solid #f1f3f4;
-    position: sticky;
-    top: 0;
-    z-index: 1001;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-.app-bar-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-}
-
-.menu-icon-btn {
-    background: none;
-    border: none;
-    font-size: 20px;
-    color: #5f6368;
-    padding: 8px;
-    cursor: pointer;
-    border-radius: 50%;
-    transition: background 0.2s;
-}
-
-.menu-icon-btn:active { background: #f1f3f4; }
-
-.app-title-wrapper {
-    flex-grow: 1;
-    margin-right: 15px;
-    display: flex;
-    flex-direction: column;
-}
-
-.app-name {
-    font-weight: 800;
-    color: var(--primary);
-    font-size: 1.1rem;
-}
-
-.app-subtitle {
-    font-size: 0.7rem;
-    color: #70757a;
-}
-
-/* طبقة التعتيم الخلفية */
-.sidebar-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.4);
-    z-index: 1002;
-}
-
-/* تعديلات القائمة الجانبية للجوال */
-@media (max-width: 768px) {
-    .mobile-app-bar { display: block; }
-
+    /* القائمة الجانبية في الجوال */
     .side-nav {
-        position: fixed;
-        right: -280px; /* مخفية تماماً خارج الشاشة */
+        display: flex !important;
+        position: fixed !important;
+        right: -280px; /* مخفية يميناً */
         top: 0;
         width: 280px !important;
         height: 100vh;
-        z-index: 1003;
-        transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* حركة ناعمة */
-        transform: none !important;
-        box-shadow: -5px 0 20px rgba(0,0,0,0.15);
+        z-index: 2000;
+        transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: -10px 0 25px rgba(0,0,0,0.1);
     }
 
-    .side-nav.active {
-        right: 0 !important; /* تظهر عند إضافة كلاس active */
-    }
+    .side-nav.active { right: 0 !important; }
 
-    .sidebar-overlay.active { display: block; }
+    .side-nav:hover { width: 280px; } /* منع تغيير الحجم في الجوال */
     
+    .nav-links li span { opacity: 1 !important; }
+
+    /* طبقة التعتيم */
+    .sidebar-overlay {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 1999;
+        display: none;
+    }
+    .sidebar-overlay.active { display: block !important; }
+
+    /* ضبط المساحات */
     .main-content {
         margin-right: 0 !important;
-        padding-top: 10px !important;
+        width: 100% !important;
+        padding: 15px !important;
     }
+
+    .home-header { display: none !important; } /* إخفاء هيدر الكمبيوتر */
+
+    .dashboard-grid { grid-template-columns: 1fr !important; }
+    
+    #subjectsGradesContainer { grid-template-columns: 1fr !important; }
+}
+
+/* أنيميشن */
+.animate-up { animation: fadeInUp 0.5s ease forwards; opacity: 0; }
+@keyframes fadeInUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }
