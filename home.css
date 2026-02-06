@@ -158,7 +158,7 @@ body {
 .stat-value.info { color: var(--success); }
 .stat-value.warning { color: var(--danger); }
 
-/* --- 6. تنسيق الجوال (التصحيح النهائي) --- */
+/* --- 6. تنسيق الجوال (التصحيح النهائي المعتمد) --- */
 
 /* إخفاء شريط الجوال في الكمبيوتر */
 @media (min-width: 769px) {
@@ -172,7 +172,7 @@ body {
         display: block !important;
         background: white;
         padding: 12px 20px;
-        position: fixed; /* تغيير لـ fixed لضمان ثباته */
+        position: fixed;
         top: 0; right: 0; left: 0;
         z-index: 1001;
         border-bottom: 1px solid var(--border);
@@ -181,10 +181,10 @@ body {
     .app-bar-container { display: flex; align-items: center; justify-content: space-between; }
     .menu-icon-btn { background: none; border: none; font-size: 1.4rem; color: var(--text-sub); cursor: pointer; }
 
-    /* 2. القائمة الجانبية (إخفاء كامل خارج الشاشة) */
+    /* 2. القائمة الجانبية في الجوال */
     .side-nav {
         position: fixed !important;
-        right: -285px !important; /* دفعها تماماً لليمين */
+        right: -285px !important; 
         top: 0;
         width: 280px !important;
         height: 100vh;
@@ -192,19 +192,40 @@ body {
         transition: right 0.3s ease-in-out;
         box-shadow: -10px 0 25px rgba(0,0,0,0.1);
         display: flex !important;
+        align-items: flex-start; /* لتبدأ العناصر من اليمين */
     }
 
-    /* تظهر فقط عند إضافة كلاس active بالـ JS */
     .side-nav.active { right: 0 !important; }
 
-    /* 3. المحتوى الرئيسي (إزالة الهامش الأيمن) */
+    /* إظهار النصوص دائماً وتنسيقها في الجوال */
+    .nav-links li span {
+        opacity: 1 !important;
+        visibility: visible !important;
+        display: inline-block !important;
+        margin-right: 15px; /* مسافة بين النص والأيقونة */
+    }
+
+    .nav-links li a {
+        justify-content: flex-start;
+        padding: 15px 25px;
+        width: 100%;
+    }
+
+    .nav-links li i {
+        font-size: 22px;
+        min-width: 30px;
+        text-align: center;
+        color: var(--primary); /* تلوين الأيقونات لتبدو أوضح */
+    }
+
+    /* 3. المحتوى الرئيسي */
     .main-content {
         margin-right: 0 !important;
         width: 100% !important;
-        padding: 80px 15px 20px 15px !important; /* 80px لترك مساحة للشريط العلوي */
+        padding: 80px 15px 20px 15px !important; 
     }
 
-    /* 4. ترتيب العناصر والكروت */
+    /* 4. ترتيب الكروت */
     .dashboard-grid { 
         display: flex !important;
         flex-direction: column !important;
@@ -212,23 +233,12 @@ body {
     }
 
     #subjectsGradesContainer { 
-        grid-template-columns: 1fr !important; /* مادة واحدة في السطر */
+        grid-template-columns: 1fr !important; 
     }
 
-    .home-header { display: none !important; } /* إخفاء الترحيب القديم */
+    .home-header { display: none !important; }
 
-    /* 5. التقويم الدراسي (إصلاح تداخل الأيام) */
-    #calendarContainer > div {
-        display: flex !important;
-        overflow-x: auto !important; /* تمرير عرضي */
-        gap: 10px;
-        padding-bottom: 10px;
-    }
-    .cal-day {
-        min-width: 90px !important; /* ضمان مساحة لكل يوم */
-    }
-
-    /* 6. طبقة التعتيم */
+    /* 5. طبقة التعتيم */
     .sidebar-overlay {
         position: fixed;
         top: 0; left: 0; right: 0; bottom: 0;
