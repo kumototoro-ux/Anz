@@ -153,19 +153,145 @@ function updateDateTime() {
 
 function renderDailySchedule() {
     const container = document.getElementById("scheduleContainer");
-    if(!container) return;
+    if (!container) return;
 
-    const schedule = [
-        { time: "08:00 ص", subject: "الرياضيات", teacher: "أ. محمد علي" },
-        { time: "09:00 ص", subject: "اللغة العربية", teacher: "أ. أحمد سالم" },
-        { time: "10:00 ص", subject: "العلوم", teacher: "أ. فهد منصور" }
-    ];
+    const userData = JSON.parse(localStorage.getItem("user"));
+    // ملاحظة: تأكد أن "Level" مخزن في Supabase بنفس المسمى (أول متوسط، ثاني متوسط، ثالث متوسط)
+    const studentLevel = userData?.Level || "أول متوسط"; 
 
-    container.innerHTML = schedule.map(item => `
-        <div class="schedule-item animate-fade" style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid #eee;">
+    const now = new Date();
+    const daysMap = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
+    const currentDay = daysMap[now.getDay()];
+
+    const allSchedules = {
+        "أول متوسط": {
+            "الأحد": [
+                { time: "07:30", subject: "علوم", teacher: "أ. أنس" },
+                { time: "08:05", subject: "قرآن", teacher: "الشيخ إسماعيل" },
+                { time: "08:40", subject: "حاسب", teacher: "أ. أنس" },
+                { time: "09:15", subject: "لغة عربية", teacher: "أ. خالد" },
+                { time: "10:20", subject: "مهارات حياتية", teacher: "أ. خالد" }
+            ],
+            "الاثنين": [
+                { time: "07:30", subject: "رياضيات", teacher: "أ. أنس" },
+                { time: "08:05", subject: "توحيد", teacher: "الشيخ إسماعيل" },
+                { time: "08:40", subject: "إنجليزي", teacher: "أ. أنس" },
+                { time: "09:15", subject: "لغة عربية", teacher: "أ. خالد" },
+                { time: "10:20", subject: "بدنية", teacher: "أ. أنس" }
+            ],
+            "الثلاثاء": [
+                { time: "07:30", subject: "رياضيات", teacher: "أ. أنس" },
+                { time: "08:05", subject: "تفسير", teacher: "الشيخ إسماعيل" },
+                { time: "08:40", subject: "إنجليزي", teacher: "أ. أنس" },
+                { time: "09:15", subject: "لغة عربية", teacher: "أ. خالد" },
+                { time: "10:20", subject: "تربية فنية", teacher: "أ. أنس" }
+            ],
+            "الأربعاء": [
+                { time: "07:30", subject: "رياضيات", teacher: "أ. أنس" },
+                { time: "08:05", subject: "حديث", teacher: "الشيخ إسماعيل" },
+                { time: "08:40", subject: "تقييم إنجليزي", teacher: "أ. أنس" },
+                { time: "09:15", subject: "اجتماعيات", teacher: "أ. خالد" },
+                { time: "10:20", subject: "تقييم فنية", teacher: "أ. أنس" }
+            ],
+            "الخميس": [
+                { time: "07:30", subject: "تقييم رياضيات", teacher: "أ. أنس" },
+                { time: "08:05", subject: "فقه", teacher: "الشيخ إسماعيل" },
+                { time: "08:40", subject: "تقييم مهارات رقمية", teacher: "أ. أنس" },
+                { time: "09:15", subject: "اجتماعيات", teacher: "أ. خالد" },
+                { time: "10:20", subject: "تقييم بدنية", teacher: "أ. أنس" }
+            ]
+        },
+        "ثاني متوسط": {
+            "الأحد": [
+                { time: "07:30", subject: "حاسب", teacher: "أ. أنس" },
+                { time: "08:05", subject: "علوم", teacher: "أ. أنس" },
+                { time: "08:40", subject: "قرآن", teacher: "الشيخ إسماعيل" },
+                { time: "09:15", subject: "مهارات حياتية", teacher: "أ. خالد" },
+                { time: "10:20", subject: "لغة عربية", teacher: "أ. خالد" }
+            ],
+            "الاثنين": [
+                { time: "07:30", subject: "إنجليزي", teacher: "أ. أنس" },
+                { time: "08:05", subject: "رياضيات", teacher: "أ. أنس" },
+                { time: "08:40", subject: "توحيد", teacher: "الشيخ إسماعيل" },
+                { time: "09:15", subject: "بدنية", teacher: "أ. أنس" },
+                { time: "10:20", subject: "لغة عربية", teacher: "أ. خالد" }
+            ],
+            "الثلاثاء": [
+                { time: "07:30", subject: "إنجليزي", teacher: "أ. أنس" },
+                { time: "08:05", subject: "رياضيات", teacher: "أ. أنس" },
+                { time: "08:40", subject: "تفسير", teacher: "الشيخ إسماعيل" },
+                { time: "09:15", subject: "تربية فنية", teacher: "أ. أنس" },
+                { time: "10:20", subject: "لغة عربية", teacher: "أ. خالد" }
+            ],
+            "الأربعاء": [
+                { time: "07:30", subject: "تقييم إنجليزي", teacher: "أ. أنس" },
+                { time: "08:05", subject: "رياضيات", teacher: "أ. أنس" },
+                { time: "08:40", subject: "حديث", teacher: "الشيخ إسماعيل" },
+                { time: "09:15", subject: "تقييم فنية", teacher: "أ. أنس" },
+                { time: "10:20", subject: "اجتماعيات", teacher: "أ. خالد" }
+            ],
+            "الخميس": [
+                { time: "07:30", subject: "تقييم مهارات رقمية", teacher: "أ. أنس" },
+                { time: "08:05", subject: "تقييم رياضيات", teacher: "أ. أنس" },
+                { time: "08:40", subject: "فقه", teacher: "الشيخ إسماعيل" },
+                { time: "09:15", subject: "تقييم بدنية", teacher: "أ. أنس" },
+                { time: "10:20", subject: "اجتماعيات", teacher: "أ. خالد" }
+            ]
+        },
+        "ثالث متوسط": {
+            "الأحد": [
+                { time: "07:30", subject: "قرآن", teacher: "الشيخ إسماعيل" },
+                { time: "08:05", subject: "حاسب", teacher: "أ. أنس" },
+                { time: "08:40", subject: "علوم", teacher: "أ. أنس" },
+                { time: "09:15", subject: "مهارات حياتية", teacher: "أ. خالد" },
+                { time: "11:00", subject: "لغة عربية", teacher: "أ. خالد" }
+            ],
+            "الاثنين": [
+                { time: "07:30", subject: "توحيد", teacher: "الشيخ إسماعيل" },
+                { time: "08:05", subject: "إنجليزي", teacher: "أ. أنس" },
+                { time: "08:40", subject: "رياضيات", teacher: "أ. أنس" },
+                { time: "09:15", subject: "بدنية", teacher: "أ. أنس" },
+                { time: "11:00", subject: "لغة عربية", teacher: "أ. خالد" }
+            ],
+            "الثلاثاء": [
+                { time: "07:30", subject: "تفسير", teacher: "الشيخ إسماعيل" },
+                { time: "08:05", subject: "إنجليزي", teacher: "أ. أنس" },
+                { time: "08:40", subject: "رياضيات", teacher: "أ. أنس" },
+                { time: "09:15", subject: "تربية فنية", teacher: "أ. أنس" },
+                { time: "11:00", subject: "لغة عربية", teacher: "أ. خالد" }
+            ],
+            "الأربعاء": [
+                { time: "07:30", subject: "حديث", teacher: "الشيخ إسماعيل" },
+                { time: "08:05", subject: "تقييم إنجليزي", teacher: "أ. أنس" },
+                { time: "08:40", subject: "رياضيات", teacher: "أ. أنس" },
+                { time: "09:15", subject: "تقييم فنية", teacher: "أ. أنس" },
+                { time: "11:00", subject: "اجتماعيات", teacher: "أ. خالد" }
+            ],
+            "الخميس": [
+                { time: "07:30", subject: "فقه", teacher: "الشيخ إسماعيل" },
+                { time: "08:05", subject: "تقييم مهارات رقمية", teacher: "أ. أنس" },
+                { time: "08:40", subject: "تقييم رياضيات", teacher: "أ. أنس" },
+                { time: "09:15", subject: "تقييم بدنية", teacher: "أ. أنس" },
+                { time: "11:00", subject: "اجتماعيات", teacher: "أ. خالد" }
+            ]
+        }
+    };
+
+    const todaySchedule = allSchedules[studentLevel]?.[currentDay] || [];
+
+    if (todaySchedule.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:20px; color:#999;">
+            <i class="fas fa-bed" style="font-size:2rem; margin-bottom:10px;"></i>
+            <p>لا توجد حصص مجدولة اليوم، استمتع بوقتك!</p>
+        </div>`;
+        return;
+    }
+
+    container.innerHTML = todaySchedule.map(item => `
+        <div class="schedule-item animate-fade">
             <div class="sub-info">
-                <div style="font-weight:700; color:#2c3e50;">${item.subject}</div>
-                <div style="font-size:0.8rem; color:#7f8c8d;">${item.teacher}</div>
+                <span class="subject-name">${item.subject}</span>
+                <span class="teacher-name">${item.teacher}</span>
             </div>
             <div class="time-badge">${item.time}</div>
         </div>
@@ -174,22 +300,70 @@ function renderDailySchedule() {
 
 function renderAcademicCalendar() {
     const weekContainer = document.getElementById("calendarContainer");
+    const weekNumberBadge = document.getElementById("weekNumber"); // تأكد من وجود هذا ID في HTML بجانب كلمة "التقويم"
     if(!weekContainer) return;
 
-    const days = [
-        { name: "الأحد", date: "1 فبراير" },
-        { name: "الاثنين", date: "2 فبراير" },
-        { name: "الثلاثاء", date: "3 فبراير" },
-        { name: "الأربعاء", date: "4 فبراير", current: true },
-        { name: "الخميس", date: "5 فبراير" }
+    // 1. قاعدة بيانات التقويم الدراسي للفصل الثاني 2026
+    const academicPlan = [
+        { week: 1, start: new Date('2026-01-25'), end: new Date('2026-01-29'), note: "يوم دراسي" },
+        { week: 2, start: new Date('2026-02-01'), end: new Date('2026-02-05'), note: "يوم دراسي" },
+        { week: 3, start: new Date('2026-02-08'), end: new Date('2026-02-12'), note: "يوم دراسي" },
+        { week: 4, start: new Date('2026-02-15'), end: new Date('2026-02-19'), note: "يوم دراسي" },
+        { week: 5, start: new Date('2026-02-22'), end: new Date('2026-02-26'), note: "يوم دراسي" },
+        { week: 6, start: new Date('2026-03-01'), end: new Date('2026-03-05'), note: "يوم دراسي" },
+        { week: 7, start: new Date('2026-03-08'), end: new Date('2026-03-12'), note: "بداية إجازة رمضان" },
+        { week: 8, start: new Date('2026-03-29'), end: new Date('2026-04-02'), note: "الاختبارات الشهرية" },
+        { week: 9, start: new Date('2026-04-05'), end: new Date('2026-04-09'), note: "يوم دراسي" },
+        { week: 10, start: new Date('2026-04-12'), end: new Date('2026-04-16'), note: "يوم دراسي" },
+        { week: 11, start: new Date('2026-04-19'), end: new Date('2026-04-23'), note: "يوم دراسي" },
+        { week: 12, start: new Date('2026-04-26'), end: new Date('2026-05-01'), note: "يوم دراسي" },
+        { week: 13, start: new Date('2026-05-03'), end: new Date('2026-05-07'), note: "الاختبارات النهائية" }
     ];
 
-    weekContainer.innerHTML = `<div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:5px; text-align:center;">
-        ${days.map(d => `
-            <div class="cal-day ${d.current ? 'active-day' : ''}">
-                <div style="font-size:0.7rem;">${d.name}</div>
-                <div style="font-size:0.8rem; font-weight:bold;">${d.date}</div>
-            </div>
-        `).join('')}
-    </div>`;
+    const today = new Date();
+    
+    // 2. البحث عن الأسبوع الحالي
+    let currentWeekInfo = academicPlan.find(w => today >= w.start && today <= w.end);
+    
+    // إذا كنا في عطلة نهاية الأسبوع، ابحث عن الأسبوع القادم
+    if (!currentWeekInfo) {
+        currentWeekInfo = academicPlan.find(w => today < w.start);
+    }
+
+    if (weekNumberBadge && currentWeekInfo) {
+        weekNumberBadge.innerText = `الأسبوع ${currentWeekInfo.week} - ${currentWeekInfo.note}`;
+    }
+
+    // 3. توليد أيام الأسبوع الخمسة للعرض (الأحد - الخميس)
+    const daysArr = [];
+    const startDate = currentWeekInfo ? new Date(currentWeekInfo.start) : new Date();
+    const dayNames = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"];
+
+    for (let i = 0; i < 5; i++) {
+        const d = new Date(startDate);
+        d.setDate(startDate.getDate() + i);
+        daysArr.push({
+            name: dayNames[i],
+            date: d.toLocaleDateString('ar-SA', { day: 'numeric', month: 'long' }),
+            isToday: d.toDateString() === today.toDateString()
+        });
+    }
+
+    // 4. رسم التقويم في HTML
+    weekContainer.innerHTML = `
+        <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:8px;">
+            ${daysArr.map(d => `
+                <div class="cal-day ${d.isToday ? 'active-day' : ''}" 
+                     style="padding: 10px 5px; border-radius: 12px; text-align: center; transition: 0.3s; 
+                     ${d.isToday ? 'background: var(--primary); color: white; transform: scale(1.05); shadow: 0 4px 10px rgba(0,0,0,0.1);' : 'background: #f8f9fa; color: #5f6368; border: 1px solid #eee;'}">
+                    <div style="font-size: 0.7rem; margin-bottom: 4px;">${d.name}</div>
+                    <div style="font-size: 0.85rem; font-weight: bold;">${d.date}</div>
+                </div>
+            `).join('')}
+        </div>
+        ${currentWeekInfo?.note.includes("إجازة") ? 
+            `<div style="margin-top:15px; padding:10px; background:#fff3cd; color:#856404; border-radius:8px; font-size:0.8rem; text-align:center; border:1px solid #ffeeba;">
+                <i class="fas fa-star"></i> تنبيه: ${currentWeekInfo.note}
+            </div>` : ''}
+    `;
 }
