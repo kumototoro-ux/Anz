@@ -258,3 +258,67 @@ body {
 .week-stat:hover {
     background: #f7fafc;
 }
+
+/* زر الجوال والهيدر العلوي */
+.mobile-header {
+    display: none;
+    align-items: center;
+    padding: 15px;
+    background: white;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+@media (max-width: 768px) {
+    .mobile-header { display: flex; gap: 15px; }
+    
+    /* تحويل القائمة الجانبية إلى Drawer مخفي */
+    .side-nav {
+        transform: translateX(100%); /* إخفاء لجهة اليمين */
+        width: 250px !important;
+        height: 100vh;
+        position: fixed;
+        right: 0;
+        top: 0;
+        transition: transform 0.3s ease-in-out;
+        box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+    }
+
+    /* عندما تفتح القائمة */
+    .side-nav.active {
+        transform: translateX(0);
+    }
+
+    .nav-links li span {
+        opacity: 1 !important; /* النص يظهر دائماً في الجوال */
+        margin-right: 15px !important;
+    }
+
+    /* ضبط المحتوى الرئيسي */
+    .main-content {
+        margin-right: 0 !important;
+        padding: 15px !important;
+        width: 100% !important;
+    }
+
+    /* ترتيب الصناديق بشكل طولي */
+    .dashboard-grid {
+        grid-template-columns: 1fr !important;
+        gap: 20px !important;
+    }
+
+    #subjectsGradesContainer {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* زر القائمة */
+    .menu-btn {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: var(--primary);
+        cursor: pointer;
+    }
+}
