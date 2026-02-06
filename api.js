@@ -10,7 +10,7 @@ export async function getStudentData(tableName, studentId) {
     try {
         // بما أن الهوية ID في كل الجداول كما ذكرت:
         const queryColumn = 'ID'; 
-        const url = `${SUPABASE_URL}/rest/v1/${tableName}?${queryColumn}=eq.${studentId}&select=*`;
+        const url = `${SUPABASE_URL}/rest/v1/${tableName}?ID=eq.${studentId}&select=*`;
         
         const response = await fetch(url, {
             method: 'GET',
