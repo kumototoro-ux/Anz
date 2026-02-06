@@ -234,3 +234,44 @@ body {
     from { transform: translateY(20px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
 }
+
+/* تنسيقات خاصة بالجوال فقط */
+@media (max-width: 768px) {
+    
+    /* 1. ضبط الحاوية الرئيسية لتكون مرنة */
+    .main-content {
+        padding: 15px !important;
+        margin-right: 0 !important; /* إلغاء الهامش لأن القائمة مخفية */
+    }
+
+    /* 2. جعل الكروت تأخذ العرض الكامل مع مسافة بينها */
+    .dashboard-grid, .stats-container {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    /* 3. تصغير حجم الخط للعناوين الكبيرة */
+    h2 {
+        font-size: 1.4rem !important;
+        text-align: center;
+    }
+
+    /* 4. تحسين شكل كروت المواد لتبدو أنيقة في الجوال */
+    .subject-mini-card {
+        width: 100% !important;
+        margin-bottom: 10px;
+    }
+
+    /* 5. ضبط القائمة الجانبية عند التفعيل */
+    .side-nav.active {
+        width: 260px !important;
+        right: 0 !important;
+        z-index: 9999;
+    }
+
+    /* 6. منع تداخل النصوص في كروت الغياب */
+    .week-stat {
+        padding: 10px !important;
+    }
+}
