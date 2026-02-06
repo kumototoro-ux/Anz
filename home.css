@@ -158,141 +158,83 @@ body {
 .stat-value.info { color: var(--success); }
 .stat-value.warning { color: var(--danger); }
 
-/* --- 6. تنسيق الجوال (Responsive) --- */
+/* --- 6. تنسيق الجوال (التصحيح النهائي) --- */
 
 /* إخفاء شريط الجوال في الكمبيوتر */
 @media (min-width: 769px) {
     .mobile-app-bar, .sidebar-overlay { display: none !important; }
 }
 
-/* تعديلات الشاشات الصغيرة */
+/* إعدادات الجوال الموحدة */
 @media (max-width: 768px) {
+    /* 1. الشريط العلوي */
     .mobile-app-bar {
         display: block !important;
         background: white;
         padding: 12px 20px;
-        position: sticky;
-        top: 0;
+        position: fixed; /* تغيير لـ fixed لضمان ثباته */
+        top: 0; right: 0; left: 0;
         z-index: 1001;
         border-bottom: 1px solid var(--border);
     }
 
-    .app-bar-container { display: flex; align-items: center; gap: 15px; }
-    
-    .menu-icon-btn { 
-        background: none; border: none; font-size: 1.4rem; color: var(--text-sub); 
-    }
+    .app-bar-container { display: flex; align-items: center; justify-content: space-between; }
+    .menu-icon-btn { background: none; border: none; font-size: 1.4rem; color: var(--text-sub); cursor: pointer; }
 
-    .app-name { font-weight: 800; color: var(--primary); font-size: 1.1rem; }
-
-    /* القائمة الجانبية في الجوال */
+    /* 2. القائمة الجانبية (إخفاء كامل خارج الشاشة) */
     .side-nav {
-        display: flex !important;
         position: fixed !important;
-        right: -280px; /* مخفية يميناً */
+        right: -285px !important; /* دفعها تماماً لليمين */
         top: 0;
         width: 280px !important;
         height: 100vh;
         z-index: 2000;
-        transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: right 0.3s ease-in-out;
         box-shadow: -10px 0 25px rgba(0,0,0,0.1);
+        display: flex !important;
     }
 
+    /* تظهر فقط عند إضافة كلاس active بالـ JS */
     .side-nav.active { right: 0 !important; }
 
-    .side-nav:hover { width: 280px; } /* منع تغيير الحجم في الجوال */
-    
-    .nav-links li span { opacity: 1 !important; }
+    /* 3. المحتوى الرئيسي (إزالة الهامش الأيمن) */
+    .main-content {
+        margin-right: 0 !important;
+        width: 100% !important;
+        padding: 80px 15px 20px 15px !important; /* 80px لترك مساحة للشريط العلوي */
+    }
 
-    /* طبقة التعتيم */
+    /* 4. ترتيب العناصر والكروت */
+    .dashboard-grid { 
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 15px;
+    }
+
+    #subjectsGradesContainer { 
+        grid-template-columns: 1fr !important; /* مادة واحدة في السطر */
+    }
+
+    .home-header { display: none !important; } /* إخفاء الترحيب القديم */
+
+    /* 5. التقويم الدراسي (إصلاح تداخل الأيام) */
+    #calendarContainer > div {
+        display: flex !important;
+        overflow-x: auto !important; /* تمرير عرضي */
+        gap: 10px;
+        padding-bottom: 10px;
+    }
+    .cal-day {
+        min-width: 90px !important; /* ضمان مساحة لكل يوم */
+    }
+
+    /* 6. طبقة التعتيم */
     .sidebar-overlay {
         position: fixed;
         top: 0; left: 0; right: 0; bottom: 0;
         background: rgba(0,0,0,0.5);
-        z-index: 1999;
+        z-index: 1500;
         display: none;
     }
     .sidebar-overlay.active { display: block !important; }
-
-    /* ضبط المساحات */
-    .main-content {
-        margin-right: 0 !important;
-        width: 100% !important;
-        padding: 15px !important;
-    }
-
-    .home-header { display: none !important; } /* إخفاء هيدر الكمبيوتر */
-
-    .dashboard-grid { grid-template-columns: 1fr !important; }
-    
-    #subjectsGradesContainer { grid-template-columns: 1fr !important; }
-}
-
-/* أنيميشن */
-.animate-up { animation: fadeInUp 0.5s ease forwards; opacity: 0; }
-@keyframes fadeInUp {
-    from { transform: translateY(20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
-
-/* تنسيقات الجوال الشاملة */
-@media (max-width: 768px) {
-    /* إخفاء القائمة الجانبية خارج الشاشة */
-    .side-nav {
-        position: fixed;
-        right: -100%; /* مخفية لليمين */
-        top: 0;
-        width: 280px !important;
-        height: 100vh;
-        background: white;
-        z-index: 1000;
-        transition: 0.3s ease-in-out;
-        box-shadow: -5px 0 15px rgba(0,0,0,0.1);
-    }
-
-    /* إظهار القائمة عند إضافة كلاس active */
-    .side-nav.active {
-        right: 0 !important;
-    }
-
-    /* توسيع المحتوى الرئيسي ليأخذ كامل الشاشة */
-    .main-content {
-        margin-right: 0 !important;
-        padding: 70px 15px 20px 15px !important; /* مساحة علوية للشريط الجديد */
-        width: 100% !important;
-    }
-
-    /* جعل الكروت عمودية ومنظمة */
-    .dashboard-grid {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
-
-    /* تعديل الهيدر (الترحيب) ليكون أصغر */
-    .header-content h1 {
-        font-size: 1.2rem !important;
-        margin-bottom: 5px;
-    }
-
-    /* تحسين شكل التقويم الدراسي في الجوال ليقبل التمرير */
-    #calendarContainer {
-        overflow-x: auto;
-        white-space: nowrap;
-        padding-bottom: 10px;
-    }
-    
-    .cal-day {
-        min-width: 70px;
-    }
-
-    /* طبقة التظليل خلف القائمة */
-    #sidebarOverlay.active {
-        display: block;
-        position: fixed;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
-        background: rgba(0,0,0,0.5);
-        z-index: 999;
-    }
 }
