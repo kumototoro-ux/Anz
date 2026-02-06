@@ -2,7 +2,9 @@ import { getStudentData } from "./api.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
     // 1. جلب بيانات الطالب من التخزين المحلي (المحفوظة عند الدخول)
-    const user = JSON.parse(localStorage.getItem("user"));
+    // ابحث عن هذا السطر في home.js وعدله هكذا:
+const user = JSON.parse(localStorage.getItem("user"));
+const studentId = user.ID; // استخدام ID الكبير
     if (!user) {
         window.location.href = "index.html";
         return;
