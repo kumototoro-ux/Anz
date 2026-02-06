@@ -331,3 +331,17 @@ function renderAcademicCalendar() {
                 </div>`).join('')}
         </div>`;
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    // 1. افترضنا أن الاسم مخزن في LocalStorage أو متغير
+    const fullName = localStorage.getItem("userName") || "الطالب الزائر"; 
+
+    // 2. استخراج الاسم الأول فقط
+    const firstName = fullName.split(' ')[0];
+
+    // 3. تحديث النص في الجوال
+    const mobileNameElement = document.getElementById('mobileUserName');
+    if (mobileNameElement) {
+        mobileNameElement.innerText = firstName;
+    }
+});
