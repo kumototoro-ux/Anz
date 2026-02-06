@@ -367,3 +367,21 @@ function renderAcademicCalendar() {
             </div>` : ''}
     `;
 }
+
+// تفاعل القائمة الجانبية في الجوال
+const menuToggle = document.getElementById('menuToggle');
+const sideNav = document.querySelector('.side-nav');
+
+if (menuToggle) {
+    menuToggle.addEventListener('click', (e) => {
+        sideNav.classList.toggle('active');
+        e.stopPropagation(); // منع إغلاق القائمة فوراً
+    });
+}
+
+// إغلاق القائمة عند النقر في أي مكان خارجها
+document.addEventListener('click', () => {
+    if (sideNav.classList.contains('active')) {
+        sideNav.classList.remove('active');
+    }
+});
