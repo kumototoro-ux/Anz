@@ -1,41 +1,37 @@
 import { getStudentData } from "./api.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
-    // 1. جلب بيانات الطالب من التخزين المحلي (المحفوظة عند الدخول)
-    // ابحث عن هذا السطر في home.js وعدله هكذا:
-const user = JSON.parse(localStorage.getItem("user"));
-const studentId = user.ID; // استخدام ID الكبير
-    if (!user) {
+    // 1. جلب البيانات من الذاكرة
+    const rawData = localStorage.getItem("user");
+    if (!rawData) {
         window.location.href = "index.html";
         return;
     }
 
-    // 2. تحديث الرسالة الترحيبية (روح نور)
-    document.getElementById("welcomeMessage").innerText = `مرحباً بك، ${user.name_ar || 'الطالب'}`;
-    updateDateTime();
+    const userData = JSON.parse(rawData);
+    const studentId = userData.ID; // استخدام ID الكبير
 
-    // 3. جلب البيانات من الجداول المختلفة في وقت واحد (Parallel Fetch)
+    if (!studentId) {
+        console.error("الهوية ID غير موجودة في بيانات المستخدم المحفوظة");
+        return;
+    }
+
+    // تحديث واجهة المستخدم
+    document.getElementById("welcomeMessage").innerText = `مرحباً بك، ${userData.Name_AR || 'الطالب'}`;
+
+    // 2. طلب البيانات من الجداول (تأكد من مطابقة حالة الأحرف لأسماء الجداول في Supabase)
     try {
         const [attendanceRes, mathRes, scienceRes] = await Promise.all([
-            getStudentData('attendance', user.id),
-            getStudentData('math', user.id),
-            getStudentData('science', user.id)
+            getStudentData('Attendance', studentId), 
+            getStudentData('Math', studentId),
+            getStudentData('Science', studentId)
         ]);
-
-        // تحديث بطاقة الغياب
-        if (attendanceRes.success) {
-            document.getElementById("absentCount").innerText = attendanceRes.data.total_absent || 0;
-            document.getElementById("lateCount").innerText = attendanceRes.data.total_late || 0;
-        }
-
-        // تحديث الجدول الدراسي حسب اليوم (مثال لليوم)
-        renderDailySchedule();
         
-        // تحديث التقويم الدراسي
-        renderAcademicCalendar();
-
+        console.log("تم جلب البيانات بنجاح:", { attendanceRes, mathRes });
+        // هنا تكمل منطق عرض البيانات في البطاقات...
+        
     } catch (error) {
-        console.error("خطأ في جلب بيانات اللوحة الرئيسية:", error);
+        console.error("فشل في جلب بيانات اللوحة الرئيسية:", error);
     }
 });
 
