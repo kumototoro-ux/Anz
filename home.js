@@ -1,36 +1,50 @@
 import { getStudentData } from "./api.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
-    // 1. جلب البيانات من الذاكرة
+    // 1. جلب بيانات الطالب من التخزين المحلي
     const rawData = localStorage.getItem("user");
     if (!rawData) {
-        window.location.href = "index.html";
+        window.location.href = "index.html"; // العودة للدخول إذا لم توجد بيانات
         return;
     }
 
     const userData = JSON.parse(rawData);
-    const studentId = userData.ID; // استخدام ID الكبير
+    const studentId = userData.ID; // استخدام ID الكبير كما في قاعدة بياناتك
 
-    if (!studentId) {
-        console.error("الهوية ID غير موجودة في بيانات المستخدم المحفوظة");
-        return;
-    }
+    // تحديث رسالة الترحيب والاسم في الواجهة
+    const welcomeMsg = document.getElementById("welcomeMessage");
+    if(welcomeMsg) welcomeMsg.innerText = `مرحباً بك، ${userData.Name_AR || 'الطالب'}`;
 
-    // تحديث واجهة المستخدم
-    document.getElementById("welcomeMessage").innerText = `مرحباً بك، ${userData.Name_AR || 'الطالب'}`;
-
-    // 2. طلب البيانات من الجداول (تأكد من مطابقة حالة الأحرف لأسماء الجداول في Supabase)
+    // 2. طلب البيانات من الجداول (لاحظ مطابقة الحروف الكبيرة تماماً لصورك)
     try {
-    const [attendanceRes, mathRes, scienceRes] = await Promise.all([
-        getStudentData('AB', studentId),      // جدول الغياب عندك اسمه AB (حسب الصورة)
-        getStudentData('Math', studentId),    // أول حرف كبير
-        getStudentData('Science', studentId)  // أول حرف كبير
-    ]);
-    
-    console.log("تم جلب البيانات بنجاح من الجداول المحددة");
-} catch (error) {
-    console.error("خطأ في أسماء الجداول:", error);
-}
+        const [attendanceRes, mathRes, scienceRes] = await Promise.all([
+            getStudentData('AB', studentId),      // جدول الغياب اسمه AB
+            getStudentData('Math', studentId),    // أول حرف كبير
+            getStudentData('Science', studentId)  // أول حرف كبير
+        ]);
+
+        console.log("تمت عملية جلب البيانات بنجاح");
+
+        // 3. عرض البيانات في البطاقات
+        // عرض الغياب
+        if (attendanceRes.success) {
+            const absentDays = attendanceRes.data.absent_days || 0; 
+            document.getElementById("absentCount").innerText = absentDays;
+        }
+
+        // عرض درجات المواد في اللوحة الرئيسية
+        if (mathRes.success) {
+            document.getElementById("mathGrade").innerText = mathRes.data.Total || 'ن/أ';
+        }
+
+        if (scienceRes.success) {
+            document.getElementById("scienceGrade").innerText = scienceRes.data.Total || 'ن/أ';
+        }
+
+    } catch (error) {
+        console.error("حدث خطأ أثناء تحميل بيانات الصفحة الرئيسية:", error);
+    }
+}); // إغلاق دالة DOMContentLoaded - هذا القوس هو الذي كان مفقوداً غالباً
 
 // دالة لتحديث الوقت والتاريخ (روح قوقل)
 function updateDateTime() {
