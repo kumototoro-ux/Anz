@@ -1,14 +1,33 @@
 import { getStudentData } from './api.js';
 
 document.addEventListener("DOMContentLoaded", async () => {
-    // 1. التحقق من وجود المستخدم
+    
+    // 1. التحقق من المستخدم (الكود الحالي)
     const userData = JSON.parse(localStorage.getItem("user"));
     if (!userData || !userData.ID) { 
         window.location.href = "index.html"; 
         return; 
     }
 
-    const studentId = userData.ID;
+    // 2. تفعيل زر القائمة للجوال (قمنا بنقله هنا)
+    const menuBtn = document.getElementById('menuToggle');
+    const sideNav = document.querySelector('.side-nav');
+    const overlay = document.getElementById('sidebarOverlay');
+
+    if (menuBtn && sideNav && overlay) {
+        menuBtn.onclick = (e) => {
+            e.stopPropagation();
+            sideNav.classList.add('active');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        };
+
+        overlay.onclick = () => {
+            sideNav.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        };
+    }
 
     // 2. تحديث الواجهة والوقت
     updateDateTime();
@@ -367,38 +386,3 @@ function renderAcademicCalendar() {
             </div>` : ''}
     `;
 }
-
-// تفاعل القائمة الجانبية في الجوال
-// تشغيل القائمة الجانبية في الجوال
-document.addEventListener("DOMContentLoaded", () => {
-    const menuBtn = document.getElementById('menuToggle');
-    const sideNav = document.querySelector('.side-nav');
-    const overlay = document.getElementById('sidebarOverlay');
-
-    if (menuBtn && sideNav && overlay) {
-        // فتح القائمة
-        menuBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // منع انتشار الحدث
-            sideNav.classList.add('active');
-            overlay.classList.add('active');
-            document.body.style.overflow = 'hidden'; // منع التمرير في الخلفية
-        });
-
-        // إغلاق القائمة عند النقر على الخلفية المعتمة
-        overlay.addEventListener('click', () => {
-            sideNav.classList.remove('active');
-            overlay.classList.remove('active');
-            document.body.style.overflow = ''; 
-        });
-
-        // إغلاق القائمة عند النقر على أي رابط بداخلها
-        const navLinks = sideNav.querySelectorAll('a');
-        navLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                sideNav.classList.remove('active');
-                overlay.classList.remove('active');
-                document.body.style.overflow = '';
-            });
-        });
-    }
-});
