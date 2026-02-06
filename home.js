@@ -16,34 +16,37 @@ document.addEventListener("DOMContentLoaded", async () => {
     if(welcomeMsg) welcomeMsg.innerText = `مرحباً بك، ${userData.Name_AR || 'الطالب'}`;
 
     // 2. طلب البيانات من الجداول (لاحظ مطابقة الحروف الكبيرة تماماً لصورك)
-    try {
-        const [attendanceRes, mathRes, scienceRes] = await Promise.all([
-            getStudentData('AB', studentId),      // جدول الغياب اسمه AB
-            getStudentData('Math', studentId),    // أول حرف كبير
-            getStudentData('Science', studentId)  // أول حرف كبير
-        ]);
+    // home.js داخل دالة DOMContentLoaded
+try {
+    const [attendanceRes, mathRes, scienceRes] = await Promise.all([
+        getStudentData('AB', studentId), 
+        getStudentData('Math', studentId),
+        getStudentData('Science', studentId)
+    ]);
 
-        console.log("تمت عملية جلب البيانات بنجاح");
-
-        // 3. عرض البيانات في البطاقات
-        // عرض الغياب
-        if (attendanceRes.success) {
-            const absentDays = attendanceRes.data.absent_days || 0; 
-            document.getElementById("absentCount").innerText = absentDays;
-        }
-
-        // عرض درجات المواد في اللوحة الرئيسية
-        if (mathRes.success) {
-            document.getElementById("mathGrade").innerText = mathRes.data.Total || 'ن/أ';
-        }
-
-        if (scienceRes.success) {
-            document.getElementById("scienceGrade").innerText = scienceRes.data.Total || 'ن/أ';
-        }
-
-    } catch (error) {
-        console.error("حدث خطأ أثناء تحميل بيانات الصفحة الرئيسية:", error);
+    // عرض الغياب من جدول AB
+    if (attendanceRes.success) {
+        console.log("محتوى جدول الغياب:", attendanceRes.data);
+        // تأكد من اسم عمود الغياب في Supabase (مثلاً Absent أو Total_Absence)
+        const absentValue = attendanceRes.data.Absent || attendanceRes.data.absent_days || 0;
+        document.getElementById("absentCount").innerText = absentValue;
     }
+
+    // حساب التقييم العام (متوسط كافة المواد)
+    let grades = [];
+    if (mathRes.success) grades.push(parseFloat(mathRes.data.Total || 0));
+    if (scienceRes.success) grades.push(parseFloat(scienceRes.data.Total || 0));
+    // أضف أي مواد أخرى هنا...
+
+    if (grades.length > 0) {
+        const avg = grades.reduce((a, b) => a + b, 0) / grades.length;
+        const generalEl = document.getElementById("generalGrade");
+        if (generalEl) generalEl.innerText = avg.toFixed(1) + "%";
+    }
+
+} catch (err) {
+    console.error("خطأ في العرض:", err);
+}
 }); // إغلاق دالة DOMContentLoaded - هذا القوس هو الذي كان مفقوداً غالباً
 
 // دالة لتحديث الوقت والتاريخ (روح قوقل)
