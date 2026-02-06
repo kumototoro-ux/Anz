@@ -1,53 +1,81 @@
-import { getStudentData } from "./api.js";
+import { getStudentData } from './api.js';
 
 document.addEventListener("DOMContentLoaded", async () => {
-    // 1. جلب بيانات الطالب من التخزين المحلي
-    const rawData = localStorage.getItem("user");
-    if (!rawData) {
-        window.location.href = "index.html"; // العودة للدخول إذا لم توجد بيانات
-        return;
-    }
+    const userData = JSON.parse(localStorage.getItem("user"));
+    if (!userData || !userData.ID) { window.location.href = "index.html"; return; }
 
-    const userData = JSON.parse(rawData);
-    const studentId = userData.ID; // استخدام ID الكبير كما في قاعدة بياناتك
+    const studentId = userData.ID;
 
-    // تحديث رسالة الترحيب والاسم في الواجهة
-    const welcomeMsg = document.getElementById("welcomeMessage");
-    if(welcomeMsg) welcomeMsg.innerText = `مرحباً بك، ${userData.Name_AR || 'الطالب'}`;
+    // --- أولاً: دوال الحساب الذكية ---
 
-    // 2. طلب البيانات من الجداول (لاحظ مطابقة الحروف الكبيرة تماماً لصورك)
-    // home.js داخل دالة DOMContentLoaded
-try {
-    const [attendanceRes, mathRes, scienceRes] = await Promise.all([
-        getStudentData('AB', studentId), 
-        getStudentData('Math', studentId),
-        getStudentData('Science', studentId)
-    ]);
+    // حساب المواد العامة (رياضيات، علوم، إلخ)
+    const calcGeneralGrade = (data) => {
+        if (!data) return 0;
+        let points = 0, count = 0;
+        // جمع PR (1-2), HW (1-12), QZ (1-12)
+        const keys = ['PR_1','PR_2', ...Array.from({length:12}, (_,i)=>`HW_${i+1}`), ...Array.from({length:12}, (_,i)=>`QZ_${i+1}`)];
+        keys.forEach(k => { if(data[k] !== null) { points += parseFloat(data[k]); count++; } });
+        return count > 0 ? (points / count) : 0;
+    };
 
-    // عرض الغياب من جدول AB
-    if (attendanceRes.success) {
-        console.log("محتوى جدول الغياب:", attendanceRes.data);
-        // تأكد من اسم عمود الغياب في Supabase (مثلاً Absent أو Total_Absence)
-        const absentValue = attendanceRes.data.Absent || attendanceRes.data.absent_days || 0;
-        document.getElementById("absentCount").innerText = absentValue;
-    }
+    // حساب القرآن (HW, read, Taj, save, PR)
+    const calcQuranGrade = (data) => {
+        if (!data) return 0;
+        let points = 0, count = 0;
+        const types = ['HW', 'read', 'Taj', 'save'];
+        types.forEach(t => {
+            for(let i=1; i<=12; i++) {
+                let val = data[`${t}_${i}`];
+                if(val !== null) { points += parseFloat(val); count++; }
+            }
+        });
+        // إضافة المشاركة
+        if(data.PR_1 !== null) { points += data.PR_1; count++; }
+        if(data.PR_2 !== null) { points += data.PR_2; count++; }
+        return count > 0 ? (points / count) : 0;
+    };
 
-    // حساب التقييم العام (متوسط كافة المواد)
-    let grades = [];
-    if (mathRes.success) grades.push(parseFloat(mathRes.data.Total || 0));
-    if (scienceRes.success) grades.push(parseFloat(scienceRes.data.Total || 0));
-    // أضف أي مواد أخرى هنا...
+    // حساب الغياب من جدول AB (الأسابيع 1-14)
+    const calcAbsence = (data) => {
+        if (!data) return 0;
+        let total = 0;
+        for(let i=1; i<=14; i++) { if(data[String(i)] !== null) total += parseFloat(data[String(i)]); }
+        return total;
+    };
 
-    if (grades.length > 0) {
-        const avg = grades.reduce((a, b) => a + b, 0) / grades.length;
-        const generalEl = document.getElementById("generalGrade");
-        if (generalEl) generalEl.innerText = avg.toFixed(1) + "%";
-    }
+    // --- ثانياً: جلب البيانات وعرضها ---
 
-} catch (err) {
-    console.error("خطأ في العرض:", err);
-}
-}); // إغلاق دالة DOMContentLoaded - هذا القوس هو الذي كان مفقوداً غالباً
+    try {
+        const [math, quran, science, attendance] = await Promise.all([
+            getStudentData('Math', studentId),
+            getStudentData('Quran', studentId),
+            getStudentData('Science', studentId),
+            getStudentData('AB', studentId)
+        ]);
+
+        // عرض الغياب
+        if (attendance.success) document.getElementById("absentCount").innerText = calcAbsence(attendance.data);
+
+        // عرض الرياضيات
+        let mGrade = 0;
+        if (math.success) {
+            mGrade = calcGeneralGrade(math.data);
+            document.getElementById("mathGrade").innerText = mGrade.toFixed(1) + "%";
+        }
+
+        // عرض القرآن
+        let qGrade = 0;
+        if (quran.success) {
+            qGrade = calcQuranGrade(quran.data);
+            document.getElementById("quranGrade").innerText = qGrade.toFixed(1) + "%";
+        }
+
+        // التقييم العام (متوسط المواد)
+        const generalAvg = (mGrade + qGrade) / 2; // أضف بقية المواد في المعادلة
+        document.getElementById("generalGrade").innerText = generalAvg.toFixed(1) + "%";
+
+    } catch (err) { console.error("Error loading dashboard:", err); }
+});
 
 // دالة لتحديث الوقت والتاريخ (روح قوقل)
 function updateDateTime() {
