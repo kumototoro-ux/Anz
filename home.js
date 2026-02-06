@@ -2,24 +2,34 @@ import { getStudentData } from './api.js';
 
 document.addEventListener("DOMContentLoaded", async () => {
     const userData = JSON.parse(localStorage.getItem("user"));
-    if (!userData || !userData.ID) { window.location.href = "index.html"; return; }
+    if (!userData || !userData.ID) { 
+        window.location.href = "index.html"; 
+        return; 
+    }
 
     const studentId = userData.ID;
+
+    // --- 1. تشغيل الدوال الخدمية (الوقت والجدول) ---
+    updateDateTime();
+    renderDailySchedule();
+    renderAcademicCalendar();
+    
+    // تحديث اسم الطالب في الواجهة
+    const welcomeMsg = document.getElementById("welcomeMessage");
+    if(welcomeMsg) welcomeMsg.innerText = `مرحباً بك، ${userData.Name_AR || 'الطالب'}`;
 
     // مصفوفة بأسماء كافة الجداول للمواد الـ 12 كما هي في Supabase
     const subjectTables = [
         'Math', 'Science', 'Arabic', 'English', 'Islamic', 
         'Social', 'Quran', 'Physics', 'Chemistry', 'Biology', 
-        'Computer', 'History' // تأكد من مطابقة هذه الأسماء لأسماء جداولك
+        'Computer', 'History'
     ];
 
-    // --- دوال الحساب الذكية ---
-
+    // --- 2. دوال الحساب الذكية ---
     const calcGrade = (tableName, data) => {
         if (!data) return 0;
         let points = 0, count = 0;
 
-        // إذا كانت المادة هي القرآن، نستخدم توزيعة القرآن الخاصة
         if (tableName === 'Quran') {
             const types = ['HW', 'read', 'Taj', 'save'];
             types.forEach(t => {
@@ -28,24 +38,26 @@ document.addEventListener("DOMContentLoaded", async () => {
                 }
             });
         } else {
-            // بقية المواد (PR, HW, QZ)
             const keys = ['PR_1','PR_2', ...Array.from({length:12}, (_,i)=>`HW_${i+1}`), ...Array.from({length:12}, (_,i)=>`QZ_${i+1}`)];
             keys.forEach(k => { if(data[k] !== null) { points += parseFloat(data[k]); count++; } });
         }
         return count > 0 ? (points / count) : 0;
     };
 
+    // --- 3. جلب البيانات من السيرفر ---
     try {
-        // 1. جلب بيانات الغياب أولاً
+        // جلب بيانات الغياب
         const attendance = await getStudentData('AB', studentId);
         if (attendance.success) {
             let totalAbs = 0;
-            for(let i=1; i<=14; i++) { if(attendance.data[String(i)] !== null) totalAbs += parseFloat(attendance.data[String(i)]); }
+            for(let i=1; i<=14; i++) { 
+                if(attendance.data[String(i)] !== null) totalAbs += parseFloat(attendance.data[String(i)]); 
+            }
             const el = document.getElementById("absentCount");
             if(el) el.innerText = totalAbs;
         }
 
-        // 2. جلب وحساب كافة المواد الـ 12 في حلقة واحدة
+        // جلب وحساب المواد الـ 12
         let totalAllSubjects = 0;
         let subjectsFound = 0;
 
@@ -53,8 +65,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             const res = await getStudentData(subject, studentId);
             if (res.success) {
                 const grade = calcGrade(subject, res.data);
-                
-                // تحديث العنصر في HTML (مثلاً id="Math_Grade")
                 const gradeEl = document.getElementById(`${subject}_Grade`);
                 if (gradeEl) gradeEl.innerText = grade.toFixed(1) + "%";
                 
@@ -63,7 +73,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
         }
 
-        // 3. حساب التقييم العام لكافة المواد
+        // حساب التقييم العام
         if (subjectsFound > 0) {
             const finalAvg = totalAllSubjects / subjectsFound;
             const generalEl = document.getElementById("generalGrade");
@@ -73,20 +83,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     } catch (err) { console.error("Error loading dashboard:", err); }
 });
 
-// دالة لتحديث الوقت والتاريخ (روح قوقل)
+// --- الدوال الفرعية (خارج DOMContentLoaded) ---
+
 function updateDateTime() {
     const now = new Date();
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    document.getElementById("currentDateText").innerText = now.toLocaleDateString('ar-SA', options);
-    document.getElementById("dayName").innerText = now.toLocaleDateString('ar-SA', { weekday: 'long' });
+    const dateText = document.getElementById("currentDateText");
+    const dayName = document.getElementById("dayName");
+    if(dateText) dateText.innerText = now.toLocaleDateString('ar-SA', options);
+    if(dayName) dayName.innerText = now.toLocaleDateString('ar-SA', { weekday: 'long' });
 }
 
-// دالة عرض جدول الحصص بناءً على اليوم
 function renderDailySchedule() {
     const container = document.getElementById("scheduleContainer");
-    const day = new Date().getDay(); // 0 لـ الأحد في بعض الأنظمة، تأكد من ترتيبك
+    if(!container) return;
 
-    // مثال لبيانات الحصص (يمكنك وضعها في مصفوفة لكل صف)
     const schedule = [
         { time: "08:00 ص", subject: "الرياضيات", teacher: "أ. محمد علي" },
         { time: "09:00 ص", subject: "اللغة العربية", teacher: "أ. أحمد سالم" },
@@ -94,7 +105,7 @@ function renderDailySchedule() {
     ];
 
     container.innerHTML = schedule.map(item => `
-        <div class="schedule-item animate-fade">
+        <div class="schedule-item">
             <div class="sub-info">
                 <span class="subject-name">${item.subject}</span>
                 <span class="teacher-name">${item.teacher}</span>
@@ -104,10 +115,9 @@ function renderDailySchedule() {
     `).join('');
 }
 
-// دالة التقويم الدراسي (الأسبوع الحالي)
 function renderAcademicCalendar() {
     const weekContainer = document.getElementById("calendarContainer");
-    document.getElementById("weekNumber").innerText = "الأسبوع السادس"; // حسابي أو يدوي
+    if(!weekContainer) return;
 
     const days = [
         { name: "الأحد", date: "1 فبراير" },
