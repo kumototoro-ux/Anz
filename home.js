@@ -2,14 +2,17 @@ import { getStudentData } from './api.js';
 
 document.addEventListener("DOMContentLoaded", async () => {
     
-    // 1. التحقق من المستخدم (الكود الحالي)
+    // 1. التحقق من المستخدم
     const userData = JSON.parse(localStorage.getItem("user"));
     if (!userData || !userData.ID) { 
         window.location.href = "index.html"; 
         return; 
     }
 
-    // 2. تفعيل زر القائمة للجوال (قمنا بنقله هنا)
+    // تعريف المعرف لاستخدامه في جلب البيانات
+    const studentId = userData.ID;
+
+    // 2. تفعيل القائمة الجانبية وطبقة التعتيم (للجوال)
     const menuBtn = document.getElementById('menuToggle');
     const sideNav = document.querySelector('.side-nav');
     const overlay = document.getElementById('sidebarOverlay');
@@ -29,7 +32,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         };
     }
 
-    // 2. تحديث الواجهة والوقت
+    // 3. تحديث الواجهة والوقت (باستخدام دوالك الأصلية)
     updateDateTime();
     renderDailySchedule();
     renderAcademicCalendar();
@@ -37,25 +40,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     const welcomeMsg = document.getElementById("welcomeMessage");
     if(welcomeMsg) welcomeMsg.innerText = `مرحباً بك، ${userData.Name_AR || 'الطالب'}`;
 
-    // 3. قاموس تعريب أسماء المواد (للعرض فقط)
+    // 4. قاموس تعريب أسماء المواد
     const subjectNamesAr = {
-        'Arabic': 'اللغة العربية',
-        'Art': 'التربية الفنية',
-        'Critical': 'التفكير الناقد',
-        'Digital': 'المهارات الرقمية',
-        'English': 'اللغة الإنجليزية',
-        'Islamic': 'الدراسات الإسلامية',
-        'Life': 'المهارات الحياتية',
-        'Math': 'الرياضيات',
-        'PE': 'التربية البدنية',
-        'Quran': 'القرآن الكريم',
-        'Science': 'العلوم',
-        'Social': 'الدراسات الاجتماعية'
+        'Arabic': 'اللغة العربية', 'Art': 'التربية الفنية', 'Critical': 'التفكير الناقد',
+        'Digital': 'المهارات الرقمية', 'English': 'اللغة الإنجليزية', 'Islamic': 'الدراسات الإسلامية',
+        'Life': 'المهارات الحياتية', 'Math': 'الرياضيات', 'PE': 'التربية البدنية',
+        'Quran': 'القرآن الكريم', 'Science': 'العلوم', 'Social': 'الدراسات الاجتماعية'
     };
-
     const subjectTables = Object.keys(subjectNamesAr);
 
-    // --- دالة حساب درجات المواد ---
+    // 5. دالة حساب درجات المواد (من كودك الأصلي)
     const calcGrade = (tableName, data) => {
         if (!data) return 0;
         let points = 0, count = 0;
@@ -74,9 +68,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         return count > 0 ? (points / count) : 0;
     };
 
-    // --- جلب ومعالجة البيانات ---
+    // 6. جلب ومعالجة البيانات (الغياب والمواد)
     try {
-        // أ. معالجة الغياب (تحويل الدرجات إلى حصص حضور/غياب من 15)
+        // أ. معالجة الغياب
         const attendanceRes = await getStudentData('AB', studentId);
         if (attendanceRes.success) {
             let totalAtt = 0;
@@ -92,7 +86,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     totalAbs += absent;
 
                     chartHTML += `
-                        <div class="week-stat" style="margin-bottom: 12px; padding: 5px; border-radius: 8px; transition: background 0.3s;">
+                        <div class="week-stat" style="margin-bottom: 12px; padding: 5px; border-radius: 8px;">
                             <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:4px;">
                                 <span style="color: #5f6368;">الأسبوع ${i}</span>
                                 <span style="font-weight:bold; color: #202124;">${attended} ح / 15</span>
@@ -101,20 +95,15 @@ document.addEventListener("DOMContentLoaded", async () => {
                                 <div style="width:${(attended/15)*100}%; background: linear-gradient(90deg, #34a853, #2ecc71);"></div>
                                 <div style="width:${(absent/15)*100}%; background: #ea4335;"></div>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 }
             }
-            const attEl = document.getElementById("totalAttendanceSessions");
-            const absEl = document.getElementById("totalAbsenceSessions");
-            const chartContainer = document.getElementById("attendanceChart");
-            
-            if(attEl) attEl.innerText = totalAtt;
-            if(absEl) absEl.innerText = totalAbs;
-            if(chartContainer) chartContainer.innerHTML = chartHTML;
+            document.getElementById("totalAttendanceSessions").innerText = totalAtt;
+            document.getElementById("totalAbsenceSessions").innerText = totalAbs;
+            document.getElementById("attendanceChart").innerHTML = chartHTML;
         }
 
-        // ب. إنشاء بطاقات المواد الـ 12 وحساب التقييم
+        // ب. بطاقات المواد وحساب التقييم
         const subjectsContainer = document.getElementById("subjectsGradesContainer");
         let totalAllGrades = 0;
         let subjectsFound = 0;
@@ -123,17 +112,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         for (const subject of subjectTables) {
             const res = await getStudentData(subject, studentId);
-            
             if (res.success) {
                 const grade = calcGrade(subject, res.data);
                 totalAllGrades += grade;
                 subjectsFound++;
 
                 if (subjectsContainer) {
-                    // تم إضافة شريط تقدم ملون لكل بطاقة مادة
                     subjectsContainer.innerHTML += `
-                        <div class="subject-mini-card animate-up" 
-                             onclick="window.location.href='evaluation.html?subject=${subject}'">
+                        <div class="subject-mini-card animate-up" onclick="window.location.href='evaluation.html?subject=${subject}'">
                             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
                                 <span style="font-size:0.9rem; font-weight:700; color:#4a5568;">${subjectNamesAr[subject]}</span>
                                 <span style="font-weight:800; color:#1a73e8;">${grade.toFixed(1)}%</span>
@@ -141,8 +127,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                             <div style="height:6px; background:#edf2f7; border-radius:3px; overflow:hidden;">
                                 <div style="width:${grade}%; height:100%; background:linear-gradient(90deg, #1a73e8, #63b3ed); transition: width 1s ease-in-out;"></div>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 }
             }
         }
@@ -159,7 +144,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 });
 
-// --- الدوال الفرعية المساعدة ---
+// --- الدوال الفرعية المساعدة (نسختك الأصلية بالكامل) ---
 
 function updateDateTime() {
     const now = new Date();
@@ -175,7 +160,6 @@ function renderDailySchedule() {
     if (!container) return;
 
     const userData = JSON.parse(localStorage.getItem("user"));
-    // ملاحظة: تأكد أن "Level" مخزن في Supabase بنفس المسمى (أول متوسط، ثاني متوسط، ثالث متوسط)
     const studentLevel = userData?.Level || "أول متوسط"; 
 
     const now = new Date();
@@ -319,10 +303,9 @@ function renderDailySchedule() {
 
 function renderAcademicCalendar() {
     const weekContainer = document.getElementById("calendarContainer");
-    const weekNumberBadge = document.getElementById("weekNumber"); // تأكد من وجود هذا ID في HTML بجانب كلمة "التقويم"
+    const weekNumberBadge = document.getElementById("weekNumber");
     if(!weekContainer) return;
 
-    // 1. قاعدة بيانات التقويم الدراسي للفصل الثاني 2026
     const academicPlan = [
         { week: 1, start: new Date('2026-01-25'), end: new Date('2026-01-29'), note: "يوم دراسي" },
         { week: 2, start: new Date('2026-02-01'), end: new Date('2026-02-05'), note: "يوم دراسي" },
@@ -340,11 +323,8 @@ function renderAcademicCalendar() {
     ];
 
     const today = new Date();
-    
-    // 2. البحث عن الأسبوع الحالي
     let currentWeekInfo = academicPlan.find(w => today >= w.start && today <= w.end);
     
-    // إذا كنا في عطلة نهاية الأسبوع، ابحث عن الأسبوع القادم
     if (!currentWeekInfo) {
         currentWeekInfo = academicPlan.find(w => today < w.start);
     }
@@ -353,7 +333,6 @@ function renderAcademicCalendar() {
         weekNumberBadge.innerText = `الأسبوع ${currentWeekInfo.week} - ${currentWeekInfo.note}`;
     }
 
-    // 3. توليد أيام الأسبوع الخمسة للعرض (الأحد - الخميس)
     const daysArr = [];
     const startDate = currentWeekInfo ? new Date(currentWeekInfo.start) : new Date();
     const dayNames = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"];
@@ -368,13 +347,12 @@ function renderAcademicCalendar() {
         });
     }
 
-    // 4. رسم التقويم في HTML
     weekContainer.innerHTML = `
         <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:8px;">
             ${daysArr.map(d => `
                 <div class="cal-day ${d.isToday ? 'active-day' : ''}" 
                      style="padding: 10px 5px; border-radius: 12px; text-align: center; transition: 0.3s; 
-                     ${d.isToday ? 'background: var(--primary); color: white; transform: scale(1.05); shadow: 0 4px 10px rgba(0,0,0,0.1);' : 'background: #f8f9fa; color: #5f6368; border: 1px solid #eee;'}">
+                     ${d.isToday ? 'background: var(--primary); color: white; transform: scale(1.05);' : 'background: #f8f9fa; color: #5f6368; border: 1px solid #eee;'}">
                     <div style="font-size: 0.7rem; margin-bottom: 4px;">${d.name}</div>
                     <div style="font-size: 0.85rem; font-weight: bold;">${d.date}</div>
                 </div>
