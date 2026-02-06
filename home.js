@@ -17,20 +17,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     const sideNav = document.querySelector('.side-nav');
     const overlay = document.getElementById('sidebarOverlay');
 
-    if (menuBtn && sideNav && overlay) {
-        menuBtn.onclick = (e) => {
-            e.stopPropagation();
-            sideNav.classList.add('active');
-            overlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        };
+    // استبدل الجزء الخاص بـ menuBtn في كودك بهذا:
+if (menuBtn && sideNav && overlay) {
+    menuBtn.onclick = (e) => {
+        e.preventDefault(); // منع المتصفح من تنفيذ أي أمر آخر
+        sideNav.classList.add('active');
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden'; // منع سكرول الصفحة عند فتح المنيو
+    };
 
-        overlay.onclick = () => {
-            sideNav.classList.remove('active');
-            overlay.classList.remove('active');
-            document.body.style.overflow = '';
-        };
-    }
+    overlay.onclick = () => {
+        sideNav.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.style.overflow = ''; // إعادة السكرول
+    };
+}
 
     // 3. تحديث الواجهة والوقت
     updateDateTime();
