@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>تسجيل الدخول | نظام مقياس</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="login.css">
@@ -18,10 +18,12 @@
         </div>
 
         <div class="login-card">
+            <div id="errorMessage" class="error-msg" style="display: none; color: #d93025; background: #fce8e6; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem; text-align: center; border: 1px solid #f28b82;"></div>
+
             <form id="loginForm">
                 <div class="input-group">
                     <label for="studentId">رقم الهوية / الإقامة</label>
-                    <input type="text" id="studentId" name="studentId" placeholder="1XXXXXXXXX" required autocomplete="username">
+                    <input type="text" id="studentId" name="studentId" placeholder="J1234" required autocomplete="username" inputmode="text">
                 </div>
 
                 <div class="input-group">
@@ -36,7 +38,7 @@
 
             <div class="login-footer">
                 <p>هل تواجه مشكلة في الدخول؟</p>
-                <a href="#" class="support-link">تواصل مع الدعم الفني: <span id="support-number"></span></a>
+                <a href="#" class="support-link">تواصل مع الدعم الفني</a>
             </div>
         </div>
 
@@ -45,7 +47,6 @@
         </footer>
     </div>
 
-    <script type="module" src="api.js"></script>
     <script type="module" src="login.js"></script>
 </body>
 </html>
