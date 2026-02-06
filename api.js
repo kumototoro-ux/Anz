@@ -4,12 +4,12 @@ const SUPABASE_KEY = 'sb_publishable_g7k3Dw8Q461GUjX-9_rbrA_ilsJ8NSc';
 export async function getStudentData(tableName, studentId) {
     if (!studentId) {
         console.error("خطأ: studentId غير معرف (undefined)");
-        return { success: false, message: "هوية الطالب مفقودة" };
+        return { success: false, message: "الهوية مفقودة" };
     }
 
     try {
-        // تأكد من أسماء الجداول في Supabase (لو كانت تبدأ بحرف كبير غيرها هنا)
-        const queryColumn = (tableName === 'students') ? 'ID' : 'student_id';
+        // بما أن الهوية ID في كل الجداول كما ذكرت:
+        const queryColumn = 'ID'; 
         const url = `${SUPABASE_URL}/rest/v1/${tableName}?${queryColumn}=eq.${studentId}&select=*`;
         
         const response = await fetch(url, {
@@ -21,7 +21,7 @@ export async function getStudentData(tableName, studentId) {
             }
         });
 
-        if (!response.ok) throw new Error(`خطأ ${response.status}: تأكد من اسم الجدول [${tableName}]`);
+        if (!response.ok) throw new Error(`خطأ ${response.status}: تأكد من الجدول [${tableName}]`);
 
         const data = await response.json();
         return (data && data.length > 0) ? { success: true, data: data[0] } : { success: false };
@@ -33,9 +33,10 @@ export async function getStudentData(tableName, studentId) {
 
 export async function loginUser(id, password) {
     const result = await getStudentData('students', id);
-    // تأكدنا هنا من استخدام Password بحرف P كبير كما في صورتك
+    
+    // تأكد من مطابقة الحرف P الكبير في Password كما في صورتك
     if (result.success && String(result.data.Password).trim() === String(password).trim()) {
-        // حفظ بيانات الطالب في الذاكرة لاستخدامها في بقية الصفحات
+        // حفظ بيانات الطالب في الذاكرة
         localStorage.setItem("user", JSON.stringify(result.data));
         return { found: true, student: result.data };
     }
