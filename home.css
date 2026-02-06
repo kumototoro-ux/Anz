@@ -1,3 +1,4 @@
+/* الإعدادات الأساسية التي قدمتها */
 :root {
     --primary: #1a73e8;
     --bg: #f8f9fa;
@@ -5,6 +6,9 @@
     --text-main: #202124;
     --text-sub: #5f6368;
     --border: #dadce0;
+    --success: #34a853;
+    --danger: #ea4335;
+    --warning: #fbbc04;
 }
 
 body {
@@ -16,7 +20,7 @@ body {
     color: var(--text-main);
 }
 
-/* القائمة الجانبية - روح قوقل */
+/* القائمة الجانبية */
 .side-nav {
     width: 80px;
     height: 100vh;
@@ -66,7 +70,7 @@ body {
 .main-content {
     margin-right: 80px;
     padding: 40px;
-    width: 100%;
+    width: calc(100% - 80px);
 }
 
 .dashboard-grid {
@@ -76,7 +80,7 @@ body {
     margin-top: 30px;
 }
 
-/* البطاقات الاحترافية */
+/* البطاقات */
 .card {
     background: var(--card-bg);
     border-radius: 12px;
@@ -105,7 +109,83 @@ body {
     color: var(--primary);
 }
 
-/* Animations */
+/* --- الإضافات الجديدة لتحسين عرض المواد والغياب --- */
+
+/* حاوية المواد الـ 12 */
+#subjectsGradesContainer {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* عرض مادتين في كل صف */
+    gap: 12px;
+}
+
+.subject-mini-card {
+    transition: all 0.2s;
+    border: 1px solid transparent;
+}
+
+.subject-mini-card:hover {
+    border-color: var(--primary);
+    background-color: #fff;
+    transform: scale(1.02);
+}
+
+/* ملخص الإحصائيات (الحصص) */
+.stats-content {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-label {
+    display: block;
+    font-size: 13px;
+    color: var(--text-sub);
+    margin-bottom: 5px;
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.stat-value.info { color: var(--success); } /* حضور */
+.stat-value.warning { color: var(--danger); } /* غياب */
+
+/* حاوية الرسم البياني للحصص */
+#attendanceChart {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+    padding-right: 5px;
+}
+
+#attendanceChart::-webkit-scrollbar {
+    width: 4px;
+}
+
+#attendanceChart::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 10px;
+}
+
+/* التجاوب مع الجوال */
+@media (max-width: 768px) {
+    .main-content {
+        margin-right: 0;
+        padding: 20px;
+    }
+    .side-nav {
+        display: none; /* إخفاء القائمة في الجوال الصغير جداً أو تحويلها لأسفل */
+    }
+    #subjectsGradesContainer {
+        grid-template-columns: 1fr; /* مادة واحدة في الصف في الجوال */
+    }
+}
+
+/* الأنميشن */
 .animate-up {
     animation: fadeInUp 0.6s ease-out forwards;
     opacity: 0;
@@ -114,52 +194,4 @@ body {
 @keyframes fadeInUp {
     from { transform: translateY(20px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
-}
-
-/* جدول الحصص */
-.schedule-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 12px;
-    border-bottom: 1px dashed #eee;
-}
-
-.subject-name { font-weight: bold; }
-.teacher-name { color: var(--text-sub); font-size: 13px; }
-
-/* تأثير الظهور المتدرج للحصص */
-.animate-fade {
-    animation: fadeInRight 0.5s ease-in-out forwards;
-    opacity: 0;
-}
-
-@keyframes fadeInRight {
-    from { transform: translateX(20px); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
-}
-
-/* تصميم اليوم الحالي في التقويم */
-.cal-day {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px;
-    border-radius: 8px;
-    background: #f1f3f4;
-}
-
-.active-day {
-    background: var(--primary) !important;
-    color: white !important;
-    transform: scale(1.1);
-    box-shadow: 0 4px 10px rgba(26,115,232,0.3);
-}
-
-.time-badge {
-    background: #e8f0fe;
-    color: var(--primary);
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: bold;
 }
