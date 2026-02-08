@@ -141,7 +141,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
        // ثانياً: معالجة درجات المواد (تحديث العدادات والأنيميشن الذكي)
-      const subjectsContainer = document.getElementById("subjectsGradesContainer");
+      // --- ثانياً: معالجة درجات المواد (تحديث العدادات والأنيميشن الذكي) ---
+const subjectsContainer = document.getElementById("subjectsGradesContainer");
 let allGradesData = []; 
 let totalLastWeekSum = 0;
 let subjectsWithDataCount = 0;
@@ -149,38 +150,47 @@ let subjectsWithDataCount = 0;
 for (const subject of subjectTables) {
     const res = await getStudentData(subject, studentId);
     
-    // تأكدنا من وجود البيانات وصحتها
     if (res && res.success && res.data) {
-        let gradesArray = [];
+        let subjectWeeksAvg = []; // مصفوفة لتخزين متوسط كل أسبوع على حدة
         
-        // جلب الدرجات من الأعمدة (الأسابيع 1-14)
-        for (let i = 1; i <= 14; i++) {
-            let val = res.data[String(i)];
-            
-            // تنظيف القيمة: تحويلها لرق وإهمال القيم غير الصالحة أو الفارغة
-            let numericVal = parseFloat(val);
-            if (!isNaN(numericVal)) {
-                gradesArray.push(numericVal);
+        // جلب الدرجات من الأعمدة (الأسابيع 1-12)
+        for (let i = 1; i <= 12; i++) {
+            let weekPoints = 0;
+            let weekCount = 0;
+
+            // تحديد مفاتيح الأعمدة بناءً على نوع المادة (قرآن أو مواد عامة)
+            let keys = (subject === 'Quran') 
+                ? [`read_${i}`, `Taj_${i}`, `save_${i}`] 
+                : [`PR_${i}`, `HW_${i}`, `QZ_${i}`];
+
+            keys.forEach(key => {
+                let val = parseFloat(res.data[key]);
+                if (!isNaN(val) && res.data[key] !== null) {
+                    weekPoints += val;
+                    weekCount++;
+                }
+            });
+
+            // إذا وجدنا درجات لهذا الأسبوع، نحسب متوسط الأسبوع
+            if (weekCount > 0) {
+                subjectWeeksAvg.push(weekPoints / weekCount);
             }
         }
 
-        if (gradesArray.length > 0) {
-            // 1. حساب المتوسط الفعلي من 5 للمادة
-            const sum = gradesArray.reduce((a, b) => a + b, 0);
-            const avgFromFive = sum / gradesArray.length;
-            
-            // 2. تحويل المتوسط لنسبة مئوية لشريط التقدم (مثلاً 2.5 من 5 تصبح 50%)
+        if (subjectWeeksAvg.length > 0) {
+            // 1. حساب المعدل التراكمي للمادة (من 5)
+            const avgFromFive = subjectWeeksAvg.reduce((a, b) => a + b, 0) / subjectWeeksAvg.length;
             const progressPercent = (avgFromFive / 5) * 100;
 
-            // 3. تحديد درجة "آخر أسبوع" فعلي تم رصده
-            const lastRecordedGrade = gradesArray[gradesArray.length - 1];
-            const lastWeekPercent = (lastRecordedGrade / 5) * 100;
+            // 2. تحديد أداء آخر أسبوع مسجل لهذه المادة
+            const lastWeekGrade = subjectWeeksAvg[subjectWeeksAvg.length - 1];
+            const lastWeekPercent = (lastWeekGrade / 5) * 100;
 
             allGradesData.push({ 
                 id: subject, 
                 name: subjectNamesAr[subject] || subject, 
                 gradePercent: progressPercent, 
-                displayGrade: avgFromFive.toFixed(1), // الدرجة من 5
+                displayGrade: avgFromFive.toFixed(1),
                 lastWeekPercent: lastWeekPercent 
             });
 
@@ -200,11 +210,10 @@ if (allGradesData.length > 0) {
 
     setTimeout(() => {
         // المعدل التراكمي: يعرض الرقم من 5 (مثل 2.7)
-        if (document.getElementById("generalGrade")) animateCounter("generalGrade", finalScoreFromFive.toFixed(1), "");
-        
+        // المعدل التراكمي: يعرض الرقم من 5 (مثل 4.8)
+        if (document.getElementById("generalGrade")) {animateCounter("generalGrade", finalScoreFromFive.toFixed(1), ""); 
         // أداء آخر أسبوع: يعرض النسبة المئوية
-        if (document.getElementById("lastWeekAvg")) animateCounter("lastWeekAvg", lastWeekAvgPercent.toFixed(1), "%");
-        
+        if (document.getElementById("lastWeekAvg")) animateCounter("lastWeekAvg", lastWeekAvgPercent.toFixed(1), "%"); 
         // المتوسط الذكي: يعرض الرقم من 5
         if (document.getElementById("smartGeneralAvg")) animateCounter("smartGeneralAvg", finalScoreFromFive.toFixed(1), "");
     }, 150);
