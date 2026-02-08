@@ -132,28 +132,28 @@ body {
 .schedule-card.card {
     display: flex;
     flex-direction: column;
-    padding: 20px;
+    padding: 15px;
 }
 
 .schedule-card.card .card-header {
     display: flex;
-    flex-direction: row; /* جعلهم بجانب بعض في سطر واحد */
-    justify-content: space-between; /* العنوان يمين واليوم يسار */
+    flex-direction: row-reverse; /* عكس الاتجاه لضمان بقاء العنوان يميناً واليوم يساراً */
+    justify-content: space-between;
     align-items: center;
     width: 100%;
-    border-bottom: 2px solid #f8f9fa; /* خط فاصل خفيف */
-    padding-bottom: 15px;
-    margin-bottom: 20px;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 10px; /* تقليل الفراغ تحت الخط */
+    margin-bottom: 15px; /* تقليل الفراغ بين العنوان وأول حصة */
 }
 
 .schedule-card.card .card-header h3 {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     font-weight: 800;
     margin: 0;
     color: #2d3436;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
 
 .schedule-card.card .card-header h3 i {
@@ -161,22 +161,27 @@ body {
     font-size: 1.3rem;
 }
 
-/* تنسيق اليوم (الأحد) ليكون في الزاوية اليسرى من الأعلى */
+/* تنسيق اليوم (الأحد) ليظهر في أقصى اليسار */
 .day-badge {
     background: #f1f3f4;
     color: #5f6368;
-    padding: 6px 15px;
-    border-radius: 10px;
-    font-size: 0.9rem;
+    padding: 4px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
     font-weight: 700;
 }
 
-/* التأكد من أن حاوية الحصص تأخذ العرض الكامل تحت الرأس */
+/* التأكد من أن البطاقات تبدأ فوراً بدون إزاحة */
 #scheduleContainer {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px; /* تقليل المسافة بين الحصص نفسها */
+}
+
+/* تعديل إضافي لبطاقة الحصة لتشغل المساحة بشكل أفضل */
+.schedule-card-item {
+    margin: 0 !important; /* إلغاء أي مارجن خارجي قد يسبب فراغات */
 }
 /* -------------------------------------- */
 /* --- 5. تصميم بطاقة ملخص الحصص المطور (جديد) --- */
