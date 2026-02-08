@@ -73,22 +73,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
 
     // دالة عداد الأرقام (توضع داخل الدالة الأساسية أو خارجها)
-    function animateCounter(id, endValue) {
-        const obj = document.getElementById(id);
-        if (!obj) return;
-        let startValue = 0;
-        let duration = 1000; // مدة الحركة ثانية واحدة
-        let startTimestamp = null;
-        const step = (timestamp) => {
-            if (!startTimestamp) startTimestamp = timestamp;
-            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-            obj.innerText = Math.floor(progress * endValue);
-            if (progress < 1) {
-                window.requestAnimationFrame(step);
-            }
-        };
-        window.requestAnimationFrame(step);
-    }
+    function animateCounter(id, endValue, suffix = "") {
+    const obj = document.getElementById(id);
+    if (!obj) return;
+    let duration = 1500; // ثانية ونصف
+    let startTimestamp = null;
+    const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        const currentVal = (progress * endValue).toFixed(1);
+        obj.innerText = currentVal + suffix;
+        if (progress < 1) window.requestAnimationFrame(step);
+    };
+    window.requestAnimationFrame(step);
+}
     
    // 6. جلب البيانات والمعالجة (بلوك واحد شامل)
     try {
@@ -142,7 +140,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
         }
 
-        // ثانياً: معالجة درجات المواد
+       // ثانياً: معالجة درجات المواد (تحديث العدادات والأنيميشن الذكي)
         const subjectsContainer = document.getElementById("subjectsGradesContainer");
         let allGradesData = []; 
         let totalLastWeekSum = 0, subjectsWithDataCount = 0;
@@ -151,19 +149,32 @@ document.addEventListener("DOMContentLoaded", async () => {
             const res = await getStudentData(subject, studentId);
             if (res.success) {
                 const cumulativeGrade = calcGrade(subject, res.data);
-                let lastWeekGrade = 0, foundLastWeek = false;
+                let lastWeekRaw = 0, foundLastWeek = false;
 
+                // البحث عن أحدث أسبوع مسجل (تجنب الأصفار غير المقصودة)
                 for (let i = 14; i >= 1; i--) {
                     let val = res.data[String(i)];
-                    if (val !== null && val !== undefined && val !== "") {
-                        lastWeekGrade = parseFloat(val);
+                    if (val !== null && val !== undefined && val !== "" && parseFloat(val) !== 0) {
+                        lastWeekRaw = parseFloat(val);
                         foundLastWeek = true;
                         break;
                     }
                 }
 
-                allGradesData.push({ id: subject, name: subjectNamesAr[subject], grade: cumulativeGrade, lastWeek: lastWeekGrade });
-                if (foundLastWeek) { totalLastWeekSum += lastWeekGrade; subjectsWithDataCount++; }
+                // تحويل لنسبة مئوية: إذا كانت الدرجة من 10 نضربها في 10، إذا كانت من 100 تبقى كما هي
+                let lastWeekPercent = lastWeekRaw <= 10 ? lastWeekRaw * 10 : lastWeekRaw;
+
+                allGradesData.push({ 
+                    id: subject, 
+                    name: subjectNamesAr[subject], 
+                    grade: cumulativeGrade, 
+                    lastWeek: lastWeekPercent 
+                });
+
+                if (foundLastWeek) { 
+                    totalLastWeekSum += lastWeekPercent; 
+                    subjectsWithDataCount++; 
+                }
             }
         }
 
@@ -171,27 +182,41 @@ document.addEventListener("DOMContentLoaded", async () => {
             const totalAvg = allGradesData.reduce((acc, curr) => acc + curr.grade, 0) / allGradesData.length;
             const lastWeekAvg = subjectsWithDataCount > 0 ? (totalLastWeekSum / subjectsWithDataCount) : 0;
 
-            if (document.getElementById("generalGrade")) document.getElementById("generalGrade").innerText = totalAvg.toFixed(1) + "%";
-            if (document.getElementById("lastWeekAvg")) document.getElementById("lastWeekAvg").innerText = lastWeekAvg.toFixed(1) + "%";
-            if (document.getElementById("smartGeneralAvg")) document.getElementById("smartGeneralAvg").innerText = totalAvg.toFixed(1) + "%";
+            // --- تشغيل العدادات (Counter Animation) ---
+            animateCounter("generalGrade", totalAvg, "%");
+            animateCounter("lastWeekAvg", lastWeekAvg, "%");
+            animateCounter("smartGeneralAvg", totalAvg, "%");
 
             const perfBadge = document.getElementById("performanceChange");
             if (perfBadge) {
-                perfBadge.innerHTML = lastWeekAvg >= totalAvg ? `<i class="fas fa-arrow-up"></i> أداء متصاعد` : `<i class="fas fa-arrow-down"></i> أداء متراجع`;
-                perfBadge.style.color = lastWeekAvg >= totalAvg ? "var(--success)" : "var(--danger)";
+                const isImproving = lastWeekAvg >= totalAvg;
+                perfBadge.innerHTML = isImproving ? `<i class="fas fa-arrow-up"></i> أداء متصاعد` : `<i class="fas fa-arrow-down"></i> أداء متراجع`;
+                perfBadge.style.color = isImproving ? "var(--success)" : "var(--danger)";
+                perfBadge.classList.add('animate-up');
             }
             
             if (subjectsContainer) {
-                subjectsContainer.innerHTML = `<p style="font-size: 0.8rem; color: var(--text-sub); margin: 15px 0 10px 0;">أفضل أداء في المواد:</p>`;
-                allGradesData.sort((a, b) => b.grade - a.grade).slice(0, 3).forEach(sub => {
-                    subjectsContainer.innerHTML += `
-                        <div class="subject-mini-card compact" onclick="window.location.href='evaluation.html?subject=${sub.id}'">
+                subjectsContainer.innerHTML = `<p style="font-size: 0.8rem; color: var(--text-sub); margin: 15px 0 10px 0;">أعلى المواد تقييماً:</p>`;
+                
+                // عرض أفضل 3 مواد مع أنيميشن للـ Progress Bar
+                allGradesData.sort((a, b) => b.grade - a.grade).slice(0, 3).forEach((sub, index) => {
+                    const cardHtml = `
+                        <div class="subject-mini-card compact animate-up" style="animation-delay: ${index * 0.1}s" onclick="window.location.href='evaluation.html?subject=${sub.id}'">
                             <div class="sub-card-info">
                                 <span class="sub-name">${sub.name}</span>
                                 <span class="sub-value">${sub.grade.toFixed(1)}%</span>
                             </div>
-                            <div class="sub-progress-bar"><div class="fill" style="width: ${sub.grade}%"></div></div>
+                            <div class="sub-progress-bar">
+                                <div class="fill" id="fill-${sub.id}" style="width: 0%; transition: width 1.5s ease-in-out;"></div>
+                            </div>
                         </div>`;
+                    subjectsContainer.insertAdjacentHTML('beforeend', cardHtml);
+                    
+                    // تحريك شريط التقدم بعد الإضافة بفترة قصيرة
+                    setTimeout(() => {
+                        const fillBar = document.getElementById(`fill-${sub.id}`);
+                        if (fillBar) fillBar.style.width = `${sub.grade}%`;
+                    }, 100);
                 });
             }
         }
