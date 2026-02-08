@@ -69,67 +69,101 @@ if (menuBtn && sideNav && overlay) {
     };
 
     // 6. جلب ومعالجة البيانات
-    try {
-        // أ. معالجة الغياب
-        const attendanceRes = await getStudentData('AB', studentId);
-        if (attendanceRes.success) {
-            let totalAtt = 0, totalAbs = 0, chartHTML = '';
-            for(let i = 1; i <= 14; i++) {
-                let val = attendanceRes.data[String(i)];
-                if (val !== null) {
-                    let attended = parseFloat(val);
-                    let absent = 15 - attended;
-                    totalAtt += attended; totalAbs += absent;
-                    chartHTML += `
-                        <div class="week-stat" style="margin-bottom: 12px; padding: 5px; border-radius: 8px;">
-                            <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:4px;">
-                                <span style="color: #5f6368;">الأسبوع ${i}</span>
-                                <span style="font-weight:bold; color: #202124;">${attended} ح / 15</span>
-                            </div>
-                            <div style="height:8px; background:#eee; border-radius:4px; overflow:hidden; display:flex;">
-                                <div style="width:${(attended/15)*100}%; background: linear-gradient(90deg, #34a853, #2ecc71);"></div>
-                                <div style="width:${(absent/15)*100}%; background: #ea4335;"></div>
-                            </div>
-                        </div>`;
-                }
-            }
-            if(document.getElementById("totalAttendanceSessions")) document.getElementById("totalAttendanceSessions").innerText = totalAtt;
-            if(document.getElementById("totalAbsenceSessions")) document.getElementById("totalAbsenceSessions").innerText = totalAbs;
-            if(document.getElementById("attendanceChart")) document.getElementById("attendanceChart").innerHTML = chartHTML;
-        }
+   // ... (بداية الكود كما هي عندك حتى قسم جلب البيانات)
 
-        // ب. إنشاء بطاقات المواد
-        const subjectsContainer = document.getElementById("subjectsGradesContainer");
-        let totalAllGrades = 0, subjectsFound = 0;
-        if (subjectsContainer) subjectsContainer.innerHTML = '';
-
-        for (const subject of subjectTables) {
-            const res = await getStudentData(subject, studentId);
-            if (res.success) {
-                const grade = calcGrade(subject, res.data);
-                totalAllGrades += grade;
-                subjectsFound++;
-                if (subjectsContainer) {
-                    subjectsContainer.innerHTML += `
-                        <div class="subject-mini-card animate-up" onclick="window.location.href='evaluation.html?subject=${subject}'">
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                                <span style="font-size:0.9rem; font-weight:700; color:#4a5568;">${subjectNamesAr[subject]}</span>
-                                <span style="font-weight:800; color:#1a73e8;">${grade.toFixed(1)}%</span>
-                            </div>
-                            <div style="height:6px; background:#edf2f7; border-radius:3px; overflow:hidden;">
-                                <div style="width:${grade}%; height:100%; background:linear-gradient(90deg, #1a73e8, #63b3ed); transition: width 1s ease-in-out;"></div>
-                            </div>
-                        </div>`;
-                }
+try {
+    // أ. معالجة الغياب الذكية (كما هي في كودك - ممتازة)
+    const attendanceRes = await getStudentData('AB', studentId);
+    if (attendanceRes.success) {
+        let totalAtt = 0, totalAbs = 0, weeksCount = 0;
+        for(let i = 1; i <= 14; i++) {
+            let val = attendanceRes.data[String(i)];
+            if (val !== null) {
+                weeksCount++;
+                totalAtt += parseFloat(val);
+                totalAbs += (15 - parseFloat(val));
             }
         }
-        if (subjectsFound > 0 && document.getElementById("generalGrade")) {
-            document.getElementById("generalGrade").innerText = (totalAllGrades / subjectsFound).toFixed(1) + "%";
+        const totalSessions = weeksCount * 15;
+        const attRate = totalSessions > 0 ? Math.round((totalAtt / totalSessions) * 100) : 0;
+        let statusMsg = attRate > 90 ? "ممتاز، واصل انضباطك! ✨" : attRate > 75 ? "حضورك جيد جداً 👍" : "انتبه لنسبة غيابك! ⚠️";
+        let statusColor = attRate > 90 ? "#34a853" : attRate > 75 ? "#fbbc04" : "#ea4335";
+
+        const attendanceChart = document.getElementById("attendanceChart");
+        if(attendanceChart) {
+            attendanceChart.innerHTML = `
+                <div class="smart-attendance-card">
+                    <div class="attendance-progress-circle" style="background: conic-gradient(${statusColor} ${attRate}%, #eee 0deg);">
+                        <div class="inner-circle">
+                            <span class="percentage">${attRate}%</span>
+                            <span class="label">انضباط</span>
+                        </div>
+                    </div>
+                    <div class="attendance-info-summary">
+                        <p class="status-text" style="color: ${statusColor}">${statusMsg}</p>
+                        <div class="stats-pills">
+                            <span>حضور: <b>${totalAtt}</b></span>
+                            <span>غياب: <b>${totalAbs}</b></span>
+                        </div>
+                    </div>
+                </div>`;
         }
-    } catch (err) {
-        console.error("خطأ في تحميل لوحة البيانات:", err);
+        if(document.getElementById("totalAttendanceSessions")) document.getElementById("totalAttendanceSessions").innerText = totalAtt;
+        if(document.getElementById("totalAbsenceSessions")) document.getElementById("totalAbsenceSessions").innerText = totalAbs;
     }
-});
+
+    // ب. إنشاء بطاقات المواد الذكية (التصحيح هنا لضمان عدم حدوث خطأ)
+    const subjectsContainer = document.getElementById("subjectsGradesContainer");
+    let allGradesData = []; 
+
+    for (const subject of subjectTables) {
+        const res = await getStudentData(subject, studentId);
+        if (res.success) {
+            const grade = calcGrade(subject, res.data);
+            allGradesData.push({ id: subject, name: subjectNamesAr[subject], grade: grade });
+        }
+    }
+
+    if (allGradesData.length > 0) {
+        // حساب المعدل العام من المصفوفة مباشرة
+        const totalAvg = allGradesData.reduce((acc, curr) => acc + curr.grade, 0) / allGradesData.length;
+        if (document.getElementById("generalGrade")) {
+            document.getElementById("generalGrade").innerText = totalAvg.toFixed(1) + "%";
+        }
+
+        const topSubjects = [...allGradesData].sort((a, b) => b.grade - a.grade).slice(0, 3);
+
+        if (subjectsContainer) {
+            subjectsContainer.innerHTML = `
+                <div style="grid-column: 1 / -1; margin-bottom: 10px;">
+                    <p style="font-size: 0.8rem; color: var(--text-sub); margin-bottom: 15px;">أفضل أداء في المواد:</p>
+                </div>`;
+            
+            topSubjects.forEach(sub => {
+                subjectsContainer.innerHTML += `
+                    <div class="subject-mini-card compact" onclick="window.location.href='evaluation.html?subject=${sub.id}'">
+                        <div class="sub-card-info">
+                            <span class="sub-name">${sub.name}</span>
+                            <span class="sub-value">${sub.grade.toFixed(1)}%</span>
+                        </div>
+                        <div class="sub-progress-bar">
+                            <div class="fill" style="width: ${sub.grade}%"></div>
+                        </div>
+                    </div>`;
+            });
+
+            subjectsContainer.innerHTML += `
+                <div style="grid-column: 1 / -1; text-align: center; margin-top: 10px;">
+                    <a href="evaluation.html" style="color: var(--primary); text-decoration: none; font-size: 0.85rem; font-weight: bold;">
+                        عرض كافة المواد (${allGradesData.length}) <i class="fas fa-chevron-left" style="font-size: 0.7rem;"></i>
+                    </a>
+                </div>`;
+        }
+    }
+
+} catch (err) {
+    console.error("خطأ في تحميل لوحة البيانات:", err);
+}
 
 // --- الدوال المساعدة (دوال الجداول والتقويم الخاصة بك كما هي) ---
 
