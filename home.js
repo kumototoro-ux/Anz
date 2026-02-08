@@ -252,16 +252,14 @@ if (allGradesData.length > 0) {
                     </div>
                 </div>`;
             
-            setTimeout(() => {
-                const bar = document.getElementById(uniqueId);
-                if (bar) bar.style.width = `${sub.gradePercent}%`;
-            }, 400);
-        });
+            setTimeout(() => { document.getElementById(uniqueId).style.width = `${sub.gradePercent}%`; }, 400);
+                });
+            }
+        }
+    } catch (err) {
+        console.error("خطأ في تحميل لوحة البيانات:", err);
     }
-} else {
-    // في حال عدم وجود أي بيانات نهائياً
-    if (subjectsContainer) subjectsContainer.innerHTML = "<p>لا توجد بيانات مسجلة حالياً</p>";
-}
+}); // <--- هذا القوس لإغلاق DOMContentLoaded
 // --- الدوال المساعدة (تُكتب خارج DOMContentLoaded) ---
 
 function updateDateTime() {
