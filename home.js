@@ -72,6 +72,24 @@ document.addEventListener("DOMContentLoaded", async () => {
         return count > 0 ? (points / count) : 0;
     };
 
+    // دالة عداد الأرقام (توضع داخل الدالة الأساسية أو خارجها)
+    function animateCounter(id, endValue) {
+        const obj = document.getElementById(id);
+        if (!obj) return;
+        let startValue = 0;
+        let duration = 1000; // مدة الحركة ثانية واحدة
+        let startTimestamp = null;
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            obj.innerText = Math.floor(progress * endValue);
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            }
+        };
+        window.requestAnimationFrame(step);
+    }
+    
    // 6. جلب البيانات والمعالجة
     try {
         const attendanceRes = await getStudentData('AB', studentId);
@@ -80,47 +98,57 @@ document.addEventListener("DOMContentLoaded", async () => {
             let totalAtt = 0;
             let weeksCount = 0;
             let lastWeekAttVal = 0;
-            const sessionsPerWeek = 25; // افتراض 25 حصة في الأسبوع كما في الأنظمة التعليمية
+            const sessionsPerWeek = 15; // تم تعديلها إلى 15 حسب مثالك
 
             // حساب البيانات من الأسابيع الـ 14
             for (let i = 1; i <= 14; i++) {
                 let val = attendanceRes.data[String(i)];
                 if (val !== null && val !== undefined && val !== "") {
-                    weeksCount = i; // آخر أسبوع فيه بيانات
+                    weeksCount = i; 
                     let attVal = parseFloat(val);
                     totalAtt += attVal;
-                    lastWeekAttVal = attVal; // قيمة حضور آخر أسبوع فقط
+                    lastWeekAttVal = attVal; 
                 }
             }
 
-            // أ- حساب النسبة المئوية لآخر أسبوع (للدائرة الصغيرة)
+            // أ- حساب النسبة المئوية
             const lastWeekRate = Math.round((lastWeekAttVal / sessionsPerWeek) * 100);
-            
-            // ب- حساب إجمالي الحضور التراكمي والمتوسط الذكي
             const totalPossibleSessions = weeksCount * sessionsPerWeek;
             const smartAvgRate = totalPossibleSessions > 0 
                 ? ((totalAtt / totalPossibleSessions) * 100).toFixed(1) 
                 : 0;
 
-            // ج- تحديث العناصر في الواجهة
-            const currentWeekNum = document.getElementById("currentWeekNum");
-            const passedWeeksCount = document.getElementById("passedWeeksCount");
-            const weekSessionsCount = document.getElementById("weekSessionsCount");
-            const totalAttended = document.getElementById("totalAttended");
-            const smartAvg = document.getElementById("smartAvg");
-            const weekPercentText = document.getElementById("weekPercentText");
-            const weekCircle = document.getElementById("weekCircle");
+            // ب- تحديث العناصر الأساسية
+            if (document.getElementById("currentWeekNum")) document.getElementById("currentWeekNum").innerText = weeksCount;
+            if (document.getElementById("passedWeeksCount")) document.getElementById("passedWeeksCount").innerText = weeksCount;
+            if (document.getElementById("weekSessionsCount")) document.getElementById("weekSessionsCount").innerText = lastWeekAttVal;
+            if (document.getElementById("totalAttended")) document.getElementById("totalAttended").innerText = totalAtt;
+            if (document.getElementById("smartAvg")) document.getElementById("smartAvg").innerText = smartAvgRate + "%";
+            if (document.getElementById("weekPercentText")) document.getElementById("weekPercentText").innerText = lastWeekRate + "%";
 
-            if (currentWeekNum) currentWeekNum.innerText = weeksCount;
-            if (passedWeeksCount) passedWeeksCount.innerText = weeksCount;
-            if (weekSessionsCount) weekSessionsCount.innerText = lastWeekAttVal;
-            if (totalAttended) totalAttended.innerText = totalAtt;
-            if (smartAvg) smartAvg.innerText = smartAvgRate + "%";
-            if (weekPercentText) weekPercentText.innerText = lastWeekRate + "%";
+            // ج- المنطق الذكي للتقييم اللفظي (التعديل الجديد)
+            const statusText = document.querySelector(".completion-badge"); // استهداف الحاوية
             
-            // تحديث تصميم الدائرة (اللون الأخضر بناءً على نسبة الأسبوع)
+            if (statusText) {
+                if (lastWeekAttVal >= sessionsPerWeek) {
+                    statusText.innerHTML = `<i class="fas fa-check-square"></i> حضور مكتمل لهذا الأسبوع`;
+                    statusText.style.color = "var(--success)";
+                } else if (lastWeekAttVal > 0) {
+                    let missing = sessionsPerWeek - lastWeekAttVal;
+                    statusText.innerHTML = `<i class="fas fa-exclamation-triangle"></i> غياب ${missing} حصص هذا الأسبوع`;
+                    statusText.style.color = "var(--warning)"; // لون برتقالي
+                } else {
+                    statusText.innerHTML = `<i class="fas fa-times-circle"></i> لم يتم تسجيل حضور`;
+                    statusText.style.color = "var(--danger)"; // لون أحمر
+                }
+            }
+            
+            // د- تحديث لون الدائرة بناءً على الحالة
+            const weekCircle = document.getElementById("weekCircle");
             if (weekCircle) {
-                weekCircle.style.background = `conic-gradient(#34a853 ${lastWeekRate}%, #f1f3f4 0deg)`;
+                let circleColor = lastWeekAttVal >= sessionsPerWeek ? "#34a853" : "#fbbc04";
+                if (lastWeekAttVal === 0) circleColor = "#ea4335";
+                weekCircle.style.background = `conic-gradient(${circleColor} ${lastWeekRate}%, #f1f3f4 0deg)`;
             }
         }
 
