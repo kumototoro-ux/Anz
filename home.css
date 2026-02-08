@@ -127,58 +127,61 @@ body {
     position: relative;
 }
 
-/* --- التعديل الجديد لترتيب العنوان واليوم --- */
-/* --- التنسيق النهائي: محاذاة صحيحة وإلغاء الفراغ العلوي --- */
+/* --- التنسيق الاحترافي النهائي للرأس --- */
+
+/* 1. الحاوية الأساسية للبطاقة */
 .schedule-card.card {
-    padding: 10px 15px !important;
+    display: flex !important;
+    flex-direction: column !important; /* ترتيب عمودي إجباري */
+    padding: 15px !important;
+    align-items: stretch !important;
 }
 
-.schedule-card.card .card-header {
-    display: flex;
-    /* تأكد أن العنوان يمين واليوم يسار بدون عكس */
-    justify-content: space-between; 
-    flex-direction: row; 
-    align-items: center;
-    width: 100%;
-    margin-bottom: 5px !important; /* هذا ما يلغي الفراغ تحت العنوان */
-    padding: 10px 0;
-    border-bottom: 1px solid #f0f0f0;
+/* 2. رأس البطاقة (العنوان واليوم) */
+.card-header {
+    display: flex !important;
+    justify-content: space-between !important; /* العنوان يمين واليوم يسار */
+    align-items: center !important;
+    width: 100% !important;
+    padding-bottom: 12px !important;
+    border-bottom: 2px solid #f1f3f4 !important; /* خط فاصل واضح */
+    margin-bottom: 15px !important; /* مسافة بين الرأس وأول حصة */
 }
 
-.schedule-card.card .card-header h3 {
-    font-size: 1.1rem;
-    font-weight: 800;
-    margin: 0;
-    color: var(--text-main);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    /* إجبار النص على البقاء جهة اليمين */
-    order: 1; 
-}
-
-.day-badge {
-    background: #f1f3f4;
-    color: #5f6368;
-    padding: 4px 12px;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 700;
-    /* إجبار اليوم على البقاء جهة اليسار */
-    order: 2; 
-}
-
-/* ضبط المسافة بين الحصص لتكون متناسقة مع الرأس */
-#scheduleContainer {
-    margin-top: 5px !important;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.schedule-card-item {
+/* 3. نص العنوان "جدول حصص اليوم" */
+.card-header h3 {
+    font-size: 1.1rem !important;
+    font-weight: 800 !important;
+    color: #202124 !important;
     margin: 0 !important;
-    width: 100%;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+/* 4. بطاقة اليوم "الأحد" */
+.day-badge {
+    background: #e8f0fe !important; /* لون أزرق خفيف جداً */
+    color: #1a73e8 !important;
+    padding: 5px 12px !important;
+    border-radius: 8px !important;
+    font-size: 0.85rem !important;
+    font-weight: 700 !important;
+}
+
+/* 5. حاوية الحصص (الجدول) */
+#scheduleContainer {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important; /* مسافة منتظمة بين الحصص */
+    width: 100% !important;
+}
+
+/* لضمان عدم تداخل أي صفوف */
+.schedule-card-item {
+    width: 100% !important;
+    margin: 0 !important;
+};
 }
 /* -------------------------------------- */
 /* --- 5. تصميم بطاقة ملخص الحصص المطور (جديد) --- */
