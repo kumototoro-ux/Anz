@@ -209,23 +209,24 @@ if (allGradesData.length > 0) {
     // الدرجة الإجمالية من 5 لعرضها في الدائرة الكبيرة
     const finalScoreFromFive = (totalAvgPercent / 100) * 5;
 
+    // --- تحديث الأرقام والعدادات ---
     setTimeout(() => {
-        // المعدل التراكمي: يعرض الرقم من 5 (مثل 4.8)
+        // 1. المعدل التراكمي (من 5)
         if (document.getElementById("generalGrade")) {
             animateCounter("generalGrade", finalScoreFromFive.toFixed(1), ""); 
         }
         
-        // أداء آخر أسبوع: يعرض النسبة المئوية
+        // 2. أداء آخر أسبوع (نسبة مئوية)
         if (document.getElementById("lastWeekAvg")) {
             animateCounter("lastWeekAvg", lastWeekAvgPercent.toFixed(1), "%"); 
         }
         
-        // المتوسط الذكي: يعرض الرقم من 5
+        // 3. المتوسط الذكي (من 5)
         if (document.getElementById("smartGeneralAvg")) {
             animateCounter("smartGeneralAvg", finalScoreFromFive.toFixed(1), "");
         }
-    }, 150); // هنا تم إغلاق القوس بشكل صحيح قبل الرقم 150
-
+    }, 150); // تم إغلاق الأقواس بشكل صحيح هنا
+    
     // تحديث بج الأداء
     const perfBadge = document.getElementById("performanceChange");
     if (perfBadge) {
