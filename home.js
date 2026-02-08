@@ -150,64 +150,66 @@ for (const subject of subjectTables) {
     const res = await getStudentData(subject, studentId);
     
     if (res && res.success) {
-        // 1. حساب المعدل التراكمي للمادة (بناءً على تقييم من 5)
-        // سنفترض أن دالة calcGrade ترجع المتوسط من 5
-        const rawCumulative = calcGrade(subject, res.data) || 0;
-        
-        // تحويل الدرجة من (5) إلى نسبة مئوية (100%) للعرض في شريط التقدم
-        // المعادلة: (الدرجة ÷ 5) × 100
-        const cumulativePercent = (rawCumulative / 5) * 100;
-
-        // 2. الحصول على أحدث درجة أسبوعية (من 5 درجات)
-        let lastValueRaw = 0;
-        for (let i = 14; i >= 1; i--) {
+        // 1. استخراج كل الدرجات المسجلة في المصفوفة (من 1 إلى 14)
+        let grades = [];
+        for (let i = 1; i <= 14; i++) {
             let val = res.data[String(i)];
             if (val !== null && val !== undefined && val !== "" && !isNaN(parseFloat(val))) {
-                lastValueRaw = parseFloat(val);
-                break; 
+                grades.push(parseFloat(val));
             }
         }
 
-        // تحويل درجة الأسبوع الأخير إلى نسبة مئوية
-        const lastWeekPercent = (lastValueRaw / 5) * 100;
+        // 2. حساب المعدل التراكمي للمادة (متوسط الدرجات من 5)
+        const avgRaw = grades.length > 0 ? (grades.reduce((a, b) => a + b, 0) / grades.length) : 0;
+        
+        // تحويل المتوسط إلى نسبة مئوية لشريط التقدم (مثلاً: 2.5 من 5 تصبح 50%)
+        const cumulativePercent = (avgRaw / 5) * 100;
+
+        // 3. تحديد أداء الأسبوع الأخير (آخر درجة تم إدخالها)
+        let lastGradeRaw = grades.length > 0 ? grades[grades.length - 1] : 0;
+        const lastWeekPercent = (lastGradeRaw / 5) * 100;
 
         allGradesData.push({ 
             id: subject, 
             name: subjectNamesAr[subject], 
-            grade: cumulativePercent, // النسبة المئوية لشريط التقدم
-            displayGrade: rawCumulative, // الدرجة من 5 للعرض النصي
-            lastWeek: lastWeekPercent 
+            gradePercent: cumulativePercent, // للرسم البياني
+            gradeRaw: avgRaw,             // للعرض الرقمي (2.7)
+            lastWeekPercent: lastWeekPercent 
         });
 
-        if (lastValueRaw > 0) { 
+        if (grades.length > 0) { 
             totalLastWeekSum += lastWeekPercent; 
             subjectsWithDataCount++; 
         }
     }
 }
 
-// --- تحديث الأرقام في الواجهة ---
+// --- تحديث شاشة العرض ---
 if (allGradesData.length > 0) {
-    // المعدل العام كنسبة مئوية
-    const totalAvgPercent = allGradesData.reduce((acc, curr) => acc + curr.grade, 0) / allGradesData.length;
+    // المعدل العام (المتوسط الحسابي للنسب المئوية)
+    const totalAvgPercent = allGradesData.reduce((acc, curr) => acc + curr.gradePercent, 0) / allGradesData.length;
     
-    // حل مشكلة الـ 0.0%: إذا لم يجد أسابيع، يستخدم المعدل الحالي
+    // إصلاح الـ 0.0%: إذا لم تتوفر بيانات أسبوعية، نستخدم المعدل العام
     let lastWeekAvgPercent = subjectsWithDataCount > 0 ? (totalLastWeekSum / subjectsWithDataCount) : totalAvgPercent;
 
-    // تحويل النسب المئوية إلى مقياس من 5 للعرض في الدوائر (مثل الصورة 2.7%)
+    // تحويل الأرقام للعرض بصيغة (X.X) من أصل 5
     const displayTotal = (totalAvgPercent / 100) * 5;
     const displayLastWeek = (lastWeekAvgPercent / 100) * 5;
 
     setTimeout(() => {
+        // العرض في الدائرة الكبيرة (2.7) بدون علامة %
         if (document.getElementById("generalGrade")) animateCounter("generalGrade", displayTotal.toFixed(1), "");
-        if (document.getElementById("lastWeekAvg")) animateCounter("lastWeekAvg", displayLastWeek.toFixed(1), "%");
+        
+        // أداء آخر أسبوع: نعرضه كنسبة مئوية من 100% كما في تصميمك
+        if (document.getElementById("lastWeekAvg")) animateCounter("lastWeekAvg", lastWeekAvgPercent.toFixed(1), "%");
+        
         if (document.getElementById("smartGeneralAvg")) animateCounter("smartGeneralAvg", displayTotal.toFixed(1), "");
     }, 150);
 
-    // تحديث بج الأداء
+    // تحديث بج الأداء (مقارنة النسب المئوية)
     const perfBadge = document.getElementById("performanceChange");
     if (perfBadge) {
-        const isImproving = lastWeekAvgPercent >= (totalAvgPercent - 0.1); 
+        const isImproving = lastWeekAvgPercent >= (totalAvgPercent - 0.5); 
         perfBadge.innerHTML = isImproving ? `<i class="fas fa-arrow-up"></i> أداء متصاعد` : `<i class="fas fa-arrow-down"></i> أداء متراجع`;
         perfBadge.style.color = isImproving ? "var(--success)" : "var(--danger)";
     }
@@ -216,13 +218,13 @@ if (allGradesData.length > 0) {
     if (subjectsContainer) {
         subjectsContainer.innerHTML = `<p style="font-size: 0.8rem; color: var(--text-sub); margin: 15px 0 10px 0;">أعلى المواد تقييماً:</p>`;
         
-        allGradesData.sort((a, b) => b.grade - a.grade).slice(0, 3).forEach((sub, index) => {
+        allGradesData.sort((a, b) => b.gradePercent - a.gradePercent).slice(0, 3).forEach((sub, index) => {
             const uniqueId = `fill-${sub.id}`;
             subjectsContainer.innerHTML += `
-                <div class="subject-mini-card compact animate-up" style="animation-delay: ${index * 0.1}s" onclick="window.location.href='evaluation.html?subject=${sub.id}'">
+                <div class="subject-mini-card compact animate-up" style="animation-delay: ${index * 0.1}s">
                     <div class="sub-card-info">
                         <span class="sub-name">${sub.name}</span>
-                        <span class="sub-value">${sub.displayGrade.toFixed(1)} / 5</span>
+                        <span class="sub-value">${sub.gradeRaw.toFixed(1)}</span>
                     </div>
                     <div class="sub-progress-bar">
                         <div class="fill" id="${uniqueId}" style="width: 0%;"></div>
@@ -231,7 +233,7 @@ if (allGradesData.length > 0) {
             
             setTimeout(() => {
                 const bar = document.getElementById(uniqueId);
-                if (bar) bar.style.width = `${sub.grade}%`; // شريط التقدم يتحرك بناءً على النسبة من 100
+                if (bar) bar.style.width = `${sub.gradePercent}%`;
             }, 400);
         });
     }
