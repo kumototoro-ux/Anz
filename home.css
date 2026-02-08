@@ -128,60 +128,43 @@ body {
 }
 
 /* --- التعديل الجديد لترتيب العنوان واليوم --- */
-/* --- تعديل رأس البطاقة ليكون العنوان واليوم في الأعلى --- */
+/* --- التعديل النهائي لإلغاء الفراغ بين العنوان وأول صف --- */
 .schedule-card.card {
-    display: flex;
-    flex-direction: column;
-    padding: 15px;
+    padding: 10px 15px !important; /* تقليل حشو البطاقة الكلي */
 }
 
 .schedule-card.card .card-header {
     display: flex;
-    flex-direction: row-reverse; /* عكس الاتجاه لضمان بقاء العنوان يميناً واليوم يساراً */
+    flex-direction: row-reverse; 
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    margin-bottom: 5px !important; /* تقليل المسافة جداً بين العنوان وأول صف */
+    padding: 10px 0; /* تقليل الحشو الداخلي للرأس */
     border-bottom: 1px solid #f0f0f0;
-    padding-bottom: 10px; /* تقليل الفراغ تحت الخط */
-    margin-bottom: 15px; /* تقليل الفراغ بين العنوان وأول حصة */
 }
 
 .schedule-card.card .card-header h3 {
     font-size: 1.1rem;
     font-weight: 800;
     margin: 0;
-    color: #2d3436;
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
-.schedule-card.card .card-header h3 i {
-    color: var(--primary);
-    font-size: 1.3rem;
-}
-
-/* تنسيق اليوم (الأحد) ليظهر في أقصى اليسار */
-.day-badge {
-    background: #f1f3f4;
-    color: #5f6368;
-    padding: 4px 12px;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 700;
-}
-
-/* التأكد من أن البطاقات تبدأ فوراً بدون إزاحة */
+/* ضبط حاوية الصفوف لتبدأ فوراً */
 #scheduleContainer {
-    width: 100%;
+    margin-top: 0 !important;
+    padding-top: 5px !important;
     display: flex;
     flex-direction: column;
-    gap: 10px; /* تقليل المسافة بين الحصص نفسها */
+    gap: 8px; /* المسافة بين الصفوف نفسها */
 }
 
-/* تعديل إضافي لبطاقة الحصة لتشغل المساحة بشكل أفضل */
+/* إزالة أي هوامش تلقائية من الصفوف */
 .schedule-card-item {
-    margin: 0 !important; /* إلغاء أي مارجن خارجي قد يسبب فراغات */
+    margin: 0 !important; 
 }
 /* -------------------------------------- */
 /* --- 5. تصميم بطاقة ملخص الحصص المطور (جديد) --- */
