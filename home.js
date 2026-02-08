@@ -151,50 +151,101 @@ document.addEventListener("DOMContentLoaded", async () => {
                 weekCircle.style.background = `conic-gradient(${circleColor} ${lastWeekRate}%, #f1f3f4 0deg)`;
             }
         }
+});
+        // --- معالجة درجات المواد (التحديث الشامل والذكي) ---
+try {
+    const subjectsContainer = document.getElementById("subjectsGradesContainer");
+    let allGradesData = []; 
+    let totalLastWeekSum = 0;
+    let subjectsWithDataCount = 0;
 
-        // --- معالجة درجات المواد ---
-        const subjectsContainer = document.getElementById("subjectsGradesContainer");
-        let allGradesData = []; 
+    for (const subject of subjectTables) {
+        const res = await getStudentData(subject, studentId);
+        if (res.success) {
+            // 1. حساب المعدل التراكمي (باستخدام الدالة الأصلية)
+            const cumulativeGrade = calcGrade(subject, res.data);
+            
+            // 2. البحث عن آخر أسبوع مسجل فعلياً لهذه المادة
+            let lastWeekGrade = 0;
+            let foundLastWeek = false;
+            for (let i = 14; i >= 1; i--) {
+                let val = res.data[String(i)];
+                if (val !== null && val !== undefined && val !== "") {
+                    lastWeekGrade = parseFloat(val);
+                    foundLastWeek = true;
+                    break; // توقف عند إيجاد أحدث درجة
+                }
+            }
 
-        for (const subject of subjectTables) {
-            const res = await getStudentData(subject, studentId);
-            if (res.success) {
-                const grade = calcGrade(subject, res.data);
-                allGradesData.push({ id: subject, name: subjectNamesAr[subject], grade: grade });
+            allGradesData.push({ 
+                id: subject, 
+                name: subjectNamesAr[subject], 
+                grade: cumulativeGrade, // التراكمي
+                lastWeek: lastWeekGrade  // الأسبوع الأخير
+            });
+
+            if (foundLastWeek) {
+                totalLastWeekSum += lastWeekGrade;
+                subjectsWithDataCount++;
             }
         }
-
-        if (allGradesData.length > 0) {
-            const totalAvg = allGradesData.reduce((acc, curr) => acc + curr.grade, 0) / allGradesData.length;
-            if (document.getElementById("generalGrade")) {
-                document.getElementById("generalGrade").innerText = totalAvg.toFixed(1) + "%";
-            }
-            
-            const topSubjects = [...allGradesData].sort((a, b) => b.grade - a.grade).slice(0, 3);
-            
-            if (subjectsContainer) {
-                subjectsContainer.innerHTML = `
-                    <div style="grid-column: 1 / -1; margin-bottom: 10px;">
-                        <p style="font-size: 0.8rem; color: var(--text-sub); margin-bottom: 15px;">أفضل أداء في المواد:</p>
-                    </div>`;
-                
-                topSubjects.forEach(sub => {
-                    subjectsContainer.innerHTML += `
-                        <div class="subject-mini-card compact" onclick="window.location.href='evaluation.html?subject=${sub.id}'">
-                            <div class="sub-card-info">
-                                <span class="sub-name">${sub.name}</span>
-                                <span class="sub-value">${sub.grade.toFixed(1)}%</span>
-                            </div>
-                            <div class="sub-progress-bar">
-                                <div class="fill" style="width: ${sub.grade}%"></div>
-                            </div>
-                        </div>`;
-                });
-            }
-        }
-    } catch (err) {
-        console.error("خطأ في تحميل لوحة البيانات:", err);
     }
+
+    if (allGradesData.length > 0) {
+        // حساب المتوسطات العامة
+        const totalAvg = allGradesData.reduce((acc, curr) => acc + curr.grade, 0) / allGradesData.length;
+        const lastWeekAvg = subjectsWithDataCount > 0 ? (totalLastWeekSum / subjectsWithDataCount) : 0;
+
+        // تحديث الأرقام في الواجهة (المعرفات الجديدة)
+        if (document.getElementById("generalGrade")) {
+            document.getElementById("generalGrade").innerText = totalAvg.toFixed(1) + "%";
+        }
+        if (document.getElementById("lastWeekAvg")) {
+            document.getElementById("lastWeekAvg").innerText = lastWeekAvg.toFixed(1) + "%";
+        }
+        if (document.getElementById("smartGeneralAvg")) {
+            // المتوسط الذكي هنا يمثل التراكمي الفعلي للمواد النشطة
+            document.getElementById("smartGeneralAvg").innerText = totalAvg.toFixed(1) + "%";
+        }
+
+        // تقييم حالة الأداء (سهم فوق أو تحت)
+        const performanceBadge = document.getElementById("performanceChange");
+        if (performanceBadge) {
+            if (lastWeekAvg >= totalAvg) {
+                performanceBadge.innerHTML = `<i class="fas fa-arrow-up"></i> أداء متصاعد`;
+                performanceBadge.style.color = "var(--success)";
+            } else {
+                performanceBadge.innerHTML = `<i class="fas fa-arrow-down"></i> أداء متراجع`;
+                performanceBadge.style.color = "var(--danger)";
+            }
+        }
+        
+        // عرض أفضل 3 مواد (الترتيب حسب المعدل التراكمي)
+        const topSubjects = [...allGradesData].sort((a, b) => b.grade - a.grade).slice(0, 3);
+        
+        if (subjectsContainer) {
+            subjectsContainer.innerHTML = `
+                <div style="grid-column: 1 / -1; margin-bottom: 10px;">
+                    <p style="font-size: 0.8rem; color: var(--text-sub); margin-bottom: 15px;">أفضل أداء في المواد:</p>
+                </div>`;
+            
+            topSubjects.forEach(sub => {
+                subjectsContainer.innerHTML += `
+                    <div class="subject-mini-card compact" onclick="window.location.href='evaluation.html?subject=${sub.id}'">
+                        <div class="sub-card-info">
+                            <span class="sub-name">${sub.name}</span>
+                            <span class="sub-value">${sub.grade.toFixed(1)}%</span>
+                        </div>
+                        <div class="sub-progress-bar">
+                            <div class="fill" style="width: ${sub.grade}%"></div>
+                        </div>
+                    </div>`;
+            });
+        }
+    }
+} catch (err) {
+    console.error("خطأ في تحميل لوحة البيانات:", err);
+}
     });
 // --- الدوال المساعدة (تُكتب خارج DOMContentLoaded) ---
 
