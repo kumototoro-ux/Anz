@@ -90,17 +90,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         window.requestAnimationFrame(step);
     }
     
-   // 6. جلب البيانات والمعالجة
+   // 6. جلب البيانات والمعالجة (بلوك واحد شامل)
     try {
+        // أولاً: جلب بيانات الحضور
         const attendanceRes = await getStudentData('AB', studentId);
         
         if (attendanceRes.success) {
-            let totalAtt = 0;
-            let weeksCount = 0;
-            let lastWeekAttVal = 0;
-            const sessionsPerWeek = 15; // تم تعديلها إلى 15 حسب مثالك
+            let totalAtt = 0, weeksCount = 0, lastWeekAttVal = 0;
+            const sessionsPerWeek = 15; 
 
-            // حساب البيانات من الأسابيع الـ 14
             for (let i = 1; i <= 14; i++) {
                 let val = attendanceRes.data[String(i)];
                 if (val !== null && val !== undefined && val !== "") {
@@ -111,142 +109,96 @@ document.addEventListener("DOMContentLoaded", async () => {
                 }
             }
 
-            // أ- حساب النسبة المئوية
             const lastWeekRate = Math.round((lastWeekAttVal / sessionsPerWeek) * 100);
-            const totalPossibleSessions = weeksCount * sessionsPerWeek;
-            const smartAvgRate = totalPossibleSessions > 0 
-                ? ((totalAtt / totalPossibleSessions) * 100).toFixed(1) 
-                : 0;
+            const smartAvgRate = (weeksCount * sessionsPerWeek) > 0 
+                ? ((totalAtt / (weeksCount * sessionsPerWeek)) * 100).toFixed(1) : 0;
 
-            // ب- تحديث العناصر الأساسية
             if (document.getElementById("currentWeekNum")) document.getElementById("currentWeekNum").innerText = weeksCount;
             if (document.getElementById("passedWeeksCount")) document.getElementById("passedWeeksCount").innerText = weeksCount;
-            if (document.getElementById("weekSessionsCount")) document.getElementById("weekSessionsCount").innerText = lastWeekAttVal;
-            if (document.getElementById("totalAttended")) document.getElementById("totalAttended").innerText = totalAtt;
             if (document.getElementById("smartAvg")) document.getElementById("smartAvg").innerText = smartAvgRate + "%";
             if (document.getElementById("weekPercentText")) document.getElementById("weekPercentText").innerText = lastWeekRate + "%";
 
-            // ج- المنطق الذكي للتقييم اللفظي (التعديل الجديد)
-            const statusText = document.querySelector(".completion-badge"); // استهداف الحاوية
-            
+            animateCounter("weekSessionsCount", lastWeekAttVal);
+            animateCounter("totalAttended", totalAtt);
+
+            const statusText = document.querySelector(".completion-badge");
             if (statusText) {
                 if (lastWeekAttVal >= sessionsPerWeek) {
                     statusText.innerHTML = `<i class="fas fa-check-square"></i> حضور مكتمل لهذا الأسبوع`;
                     statusText.style.color = "var(--success)";
                 } else if (lastWeekAttVal > 0) {
-                    let missing = sessionsPerWeek - lastWeekAttVal;
-                    statusText.innerHTML = `<i class="fas fa-exclamation-triangle"></i> غياب ${missing} حصص هذا الأسبوع`;
-                    statusText.style.color = "var(--warning)"; // لون برتقالي
+                    statusText.innerHTML = `<i class="fas fa-exclamation-triangle"></i> غياب ${sessionsPerWeek - lastWeekAttVal} حصص`;
+                    statusText.style.color = "var(--warning)";
                 } else {
                     statusText.innerHTML = `<i class="fas fa-times-circle"></i> لم يتم تسجيل حضور`;
-                    statusText.style.color = "var(--danger)"; // لون أحمر
+                    statusText.style.color = "var(--danger)";
                 }
             }
             
-            // د- تحديث لون الدائرة بناءً على الحالة
             const weekCircle = document.getElementById("weekCircle");
             if (weekCircle) {
-                let circleColor = lastWeekAttVal >= sessionsPerWeek ? "#34a853" : "#fbbc04";
-                if (lastWeekAttVal === 0) circleColor = "#ea4335";
+                let circleColor = lastWeekAttVal >= sessionsPerWeek ? "#34a853" : (lastWeekAttVal === 0 ? "#ea4335" : "#fbbc04");
                 weekCircle.style.background = `conic-gradient(${circleColor} ${lastWeekRate}%, #f1f3f4 0deg)`;
             }
         }
-});
-        // --- معالجة درجات المواد (التحديث الشامل والذكي) ---
-try {
-    const subjectsContainer = document.getElementById("subjectsGradesContainer");
-    let allGradesData = []; 
-    let totalLastWeekSum = 0;
-    let subjectsWithDataCount = 0;
 
-    for (const subject of subjectTables) {
-        const res = await getStudentData(subject, studentId);
-        if (res.success) {
-            // 1. حساب المعدل التراكمي (باستخدام الدالة الأصلية)
-            const cumulativeGrade = calcGrade(subject, res.data);
-            
-            // 2. البحث عن آخر أسبوع مسجل فعلياً لهذه المادة
-            let lastWeekGrade = 0;
-            let foundLastWeek = false;
-            for (let i = 14; i >= 1; i--) {
-                let val = res.data[String(i)];
-                if (val !== null && val !== undefined && val !== "") {
-                    lastWeekGrade = parseFloat(val);
-                    foundLastWeek = true;
-                    break; // توقف عند إيجاد أحدث درجة
+        // ثانياً: معالجة درجات المواد
+        const subjectsContainer = document.getElementById("subjectsGradesContainer");
+        let allGradesData = []; 
+        let totalLastWeekSum = 0, subjectsWithDataCount = 0;
+
+        for (const subject of subjectTables) {
+            const res = await getStudentData(subject, studentId);
+            if (res.success) {
+                const cumulativeGrade = calcGrade(subject, res.data);
+                let lastWeekGrade = 0, foundLastWeek = false;
+
+                for (let i = 14; i >= 1; i--) {
+                    let val = res.data[String(i)];
+                    if (val !== null && val !== undefined && val !== "") {
+                        lastWeekGrade = parseFloat(val);
+                        foundLastWeek = true;
+                        break;
+                    }
                 }
-            }
 
-            allGradesData.push({ 
-                id: subject, 
-                name: subjectNamesAr[subject], 
-                grade: cumulativeGrade, // التراكمي
-                lastWeek: lastWeekGrade  // الأسبوع الأخير
-            });
-
-            if (foundLastWeek) {
-                totalLastWeekSum += lastWeekGrade;
-                subjectsWithDataCount++;
+                allGradesData.push({ id: subject, name: subjectNamesAr[subject], grade: cumulativeGrade, lastWeek: lastWeekGrade });
+                if (foundLastWeek) { totalLastWeekSum += lastWeekGrade; subjectsWithDataCount++; }
             }
         }
-    }
 
-    if (allGradesData.length > 0) {
-        // حساب المتوسطات العامة
-        const totalAvg = allGradesData.reduce((acc, curr) => acc + curr.grade, 0) / allGradesData.length;
-        const lastWeekAvg = subjectsWithDataCount > 0 ? (totalLastWeekSum / subjectsWithDataCount) : 0;
+        if (allGradesData.length > 0) {
+            const totalAvg = allGradesData.reduce((acc, curr) => acc + curr.grade, 0) / allGradesData.length;
+            const lastWeekAvg = subjectsWithDataCount > 0 ? (totalLastWeekSum / subjectsWithDataCount) : 0;
 
-        // تحديث الأرقام في الواجهة (المعرفات الجديدة)
-        if (document.getElementById("generalGrade")) {
-            document.getElementById("generalGrade").innerText = totalAvg.toFixed(1) + "%";
-        }
-        if (document.getElementById("lastWeekAvg")) {
-            document.getElementById("lastWeekAvg").innerText = lastWeekAvg.toFixed(1) + "%";
-        }
-        if (document.getElementById("smartGeneralAvg")) {
-            // المتوسط الذكي هنا يمثل التراكمي الفعلي للمواد النشطة
-            document.getElementById("smartGeneralAvg").innerText = totalAvg.toFixed(1) + "%";
-        }
+            if (document.getElementById("generalGrade")) document.getElementById("generalGrade").innerText = totalAvg.toFixed(1) + "%";
+            if (document.getElementById("lastWeekAvg")) document.getElementById("lastWeekAvg").innerText = lastWeekAvg.toFixed(1) + "%";
+            if (document.getElementById("smartGeneralAvg")) document.getElementById("smartGeneralAvg").innerText = totalAvg.toFixed(1) + "%";
 
-        // تقييم حالة الأداء (سهم فوق أو تحت)
-        const performanceBadge = document.getElementById("performanceChange");
-        if (performanceBadge) {
-            if (lastWeekAvg >= totalAvg) {
-                performanceBadge.innerHTML = `<i class="fas fa-arrow-up"></i> أداء متصاعد`;
-                performanceBadge.style.color = "var(--success)";
-            } else {
-                performanceBadge.innerHTML = `<i class="fas fa-arrow-down"></i> أداء متراجع`;
-                performanceBadge.style.color = "var(--danger)";
+            const perfBadge = document.getElementById("performanceChange");
+            if (perfBadge) {
+                perfBadge.innerHTML = lastWeekAvg >= totalAvg ? `<i class="fas fa-arrow-up"></i> أداء متصاعد` : `<i class="fas fa-arrow-down"></i> أداء متراجع`;
+                perfBadge.style.color = lastWeekAvg >= totalAvg ? "var(--success)" : "var(--danger)";
             }
-        }
-        
-        // عرض أفضل 3 مواد (الترتيب حسب المعدل التراكمي)
-        const topSubjects = [...allGradesData].sort((a, b) => b.grade - a.grade).slice(0, 3);
-        
-        if (subjectsContainer) {
-            subjectsContainer.innerHTML = `
-                <div style="grid-column: 1 / -1; margin-bottom: 10px;">
-                    <p style="font-size: 0.8rem; color: var(--text-sub); margin-bottom: 15px;">أفضل أداء في المواد:</p>
-                </div>`;
             
-            topSubjects.forEach(sub => {
-                subjectsContainer.innerHTML += `
-                    <div class="subject-mini-card compact" onclick="window.location.href='evaluation.html?subject=${sub.id}'">
-                        <div class="sub-card-info">
-                            <span class="sub-name">${sub.name}</span>
-                            <span class="sub-value">${sub.grade.toFixed(1)}%</span>
-                        </div>
-                        <div class="sub-progress-bar">
-                            <div class="fill" style="width: ${sub.grade}%"></div>
-                        </div>
-                    </div>`;
-            });
+            if (subjectsContainer) {
+                subjectsContainer.innerHTML = `<p style="font-size: 0.8rem; color: var(--text-sub); margin: 15px 0 10px 0;">أفضل أداء في المواد:</p>`;
+                allGradesData.sort((a, b) => b.grade - a.grade).slice(0, 3).forEach(sub => {
+                    subjectsContainer.innerHTML += `
+                        <div class="subject-mini-card compact" onclick="window.location.href='evaluation.html?subject=${sub.id}'">
+                            <div class="sub-card-info">
+                                <span class="sub-name">${sub.name}</span>
+                                <span class="sub-value">${sub.grade.toFixed(1)}%</span>
+                            </div>
+                            <div class="sub-progress-bar"><div class="fill" style="width: ${sub.grade}%"></div></div>
+                        </div>`;
+                });
+            }
         }
+    } catch (err) {
+        console.error("خطأ في تحميل لوحة البيانات:", err);
     }
-} catch (err) {
-    console.error("خطأ في تحميل لوحة البيانات:", err);
-}
-    });
+});
 // --- الدوال المساعدة (تُكتب خارج DOMContentLoaded) ---
 
 function updateDateTime() {
