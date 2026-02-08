@@ -11,19 +11,19 @@
 <body>
 
     <div class="mobile-app-bar">
-    <div class="app-bar-container">
-        <button id="menuToggle" class="menu-icon-btn">
-            <i class="fas fa-bars"></i>
-        </button>
-        <div class="app-title-wrapper">
-            <span class="app-name">نظام مقياس</span>
-            <span class="app-subtitle" id="mobileUserName">لوحة الطالب</span>
-        </div>
-        <div class="user-avatar-mobile">
-            <i class="fas fa-user-circle"></i>
+        <div class="app-bar-container">
+            <button id="menuToggle" class="menu-icon-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="app-title-wrapper">
+                <span class="app-name">نظام مقياس</span>
+                <span class="app-subtitle" id="mobileUserName">لوحة الطالب</span>
+            </div>
+            <div class="user-avatar-mobile">
+                <i class="fas fa-user-circle"></i>
+            </div>
         </div>
     </div>
-</div>
 
     <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
@@ -88,26 +88,43 @@
                     </div>
             </div>
 
-            <div class="card mini-stats-card animate-up">
+            <div class="card attendance-summary-card animate-up">
                 <div class="card-header">
-                    <h3><i class="fas fa-user-check"></i> ملخص حصص الفصل</h3>
+                    <h3>ملخص الحصص الدراسية</h3>
                 </div>
-                <div class="stats-content">
-                    <div class="stat-item">
-                        <span class="stat-label">حصص الحضور</span>
-                        <span class="stat-value info" id="totalAttendanceSessions">0</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">حصص الغياب</span>
-                        <span class="stat-value warning" id="totalAbsenceSessions">0</span>
+                
+                <div class="main-status-box">
+                    <div class="last-update-info">
+                        <span class="update-label">آخر تحديث (الأسبوع <span id="currentWeekNum">--</span>)</span>
+                        <div class="main-value-row">
+                            <div class="mini-chart-container">
+                                <div class="circle-progress" id="weekCircle">
+                                    <span id="weekPercentText">0%</span>
+                                </div>
+                            </div>
+                            <div class="value-text">
+                                <span id="weekSessionsCount" class="huge-number">0</span>
+                                <span class="unit">حصة</span>
+                            </div>
+                        </div>
+                        <div class="completion-badge">
+                            <i class="fas fa-check-square"></i> حضور مكتمل لهذا الأسبوع
+                        </div>
                     </div>
                 </div>
-                <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
-                <div class="card-header" style="padding: 0;">
-                    <h4 style="font-size: 0.85rem; color: var(--text-sub);">بيانات الحضور الأسبوعية</h4>
-                </div>
-                <div id="attendanceChart" class="card-body" style="max-height: 180px; overflow-y: auto; margin-top: 10px;">
+
+                <div class="cumulative-stats">
+                    <div class="stat-group">
+                        <span class="stat-label">إجمالي الحضور التراكمي</span>
+                        <span class="stat-val"><b id="totalAttended">0</b> حصة</span>
                     </div>
+                    <div class="stat-group" style="text-align: left;">
+                        <span class="stat-label">متوسط الحضور الذكي</span>
+                        <span class="stat-val green" id="smartAvg">0%</span>
+                    </div>
+                </div>
+                
+                <p class="footer-note">• قياس معتمد على الأسابيع المنقضية (<span id="passedWeeksCount">0</span> من أصل 14)</p>
             </div>
 
             <div class="card animate-up">
