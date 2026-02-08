@@ -306,6 +306,7 @@ function updateDateTime() {
 function renderDailySchedule() {
     const container = document.getElementById("scheduleContainer");
     if (!container) return;
+    
     const userData = JSON.parse(localStorage.getItem("user"));
     const studentLevel = userData?.Level || "أول متوسط"; 
     const daysMap = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
@@ -336,11 +337,22 @@ function renderDailySchedule() {
     };
 
     const todaySchedule = allSchedules[studentLevel]?.[currentDay] || [];
-    container.innerHTML = todaySchedule.length === 0 ? `<div style="text-align:center; padding:20px; color:#999;">لا توجد حصص اليوم</div>` :
-        todaySchedule.map(item => `
-        <div class="schedule-item animate-fade">
-            <div class="sub-info"><span class="subject-name">${item.subject}</span><span class="teacher-name">${item.teacher}</span></div>
-            <div class="time-badge">${item.time}</div>
+    
+    if (todaySchedule.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:20px; color:#999;">لا توجد حصص اليوم</div>`;
+        return;
+    }
+
+    container.innerHTML = todaySchedule.map((item, index) => `
+        <div class="modern-schedule-item" style="animation-delay: ${index * 0.1}s">
+            <div class="schedule-time">
+                <i class="far fa-clock"></i>
+                <span>${item.time}</span>
+            </div>
+            <div class="schedule-details">
+                <span class="subject-name">${item.subject}</span>
+                <span class="teacher-name">${item.teacher}</span>
+            </div>
         </div>`).join('');
 }
 
