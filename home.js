@@ -339,19 +339,33 @@ function renderDailySchedule() {
     const todaySchedule = allSchedules[studentLevel]?.[currentDay] || [];
     
     if (todaySchedule.length === 0) {
-        container.innerHTML = `<div style="text-align:center; padding:20px; color:#999;">لا توجد حصص اليوم</div>`;
+        container.innerHTML = `
+            <div style="text-align:center; padding:40px; color:#bdc3c7;">
+                <i class="fas fa-calendar-day" style="font-size: 3rem; margin-bottom:15px; opacity:0.3;"></i>
+                <p>لا توجد حصص مجدولة اليوم</p>
+            </div>`;
         return;
     }
 
+    // تصميم الجدول باستخدام Flexbox
     container.innerHTML = todaySchedule.map((item, index) => `
-        <div class="modern-schedule-item" style="animation-delay: ${index * 0.1}s">
-            <div class="schedule-time">
-                <i class="far fa-clock"></i>
-                <span>${item.time}</span>
+        <div class="schedule-card" style="animation-delay: ${index * 0.1}s">
+            <div class="schedule-info">
+                <div class="subject-box">
+                    <span class="sub-label">المادة</span>
+                    <span class="sub-name">${item.subject}</span>
+                </div>
+                <div class="teacher-box">
+                    <span class="sub-label">المعلم</span>
+                    <span class="teacher-name">${item.teacher}</span>
+                </div>
             </div>
-            <div class="schedule-details">
-                <span class="subject-name">${item.subject}</span>
-                <span class="teacher-name">${item.teacher}</span>
+            <div class="schedule-meta">
+                <div class="time-tag">
+                    <i class="far fa-clock"></i>
+                    <span>${item.time}</span>
+                </div>
+                <div class="session-number">الحصة ${index + 1}</div>
             </div>
         </div>`).join('');
 }
