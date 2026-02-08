@@ -149,67 +149,70 @@ let subjectsWithDataCount = 0;
 for (const subject of subjectTables) {
     const res = await getStudentData(subject, studentId);
     
-    if (res && res.success) {
-        // 1. استخراج كل الدرجات المسجلة في المصفوفة (من 1 إلى 14)
-        let grades = [];
+    // تأكدنا من وجود البيانات وصحتها
+    if (res && res.success && res.data) {
+        let gradesArray = [];
+        
+        // جلب الدرجات من الأعمدة (الأسابيع 1-14)
         for (let i = 1; i <= 14; i++) {
             let val = res.data[String(i)];
-            if (val !== null && val !== undefined && val !== "" && !isNaN(parseFloat(val))) {
-                grades.push(parseFloat(val));
+            
+            // تنظيف القيمة: تحويلها لرق وإهمال القيم غير الصالحة أو الفارغة
+            let numericVal = parseFloat(val);
+            if (!isNaN(numericVal)) {
+                gradesArray.push(numericVal);
             }
         }
 
-        // 2. حساب المعدل التراكمي للمادة (متوسط الدرجات من 5)
-        const avgRaw = grades.length > 0 ? (grades.reduce((a, b) => a + b, 0) / grades.length) : 0;
-        
-        // تحويل المتوسط إلى نسبة مئوية لشريط التقدم (مثلاً: 2.5 من 5 تصبح 50%)
-        const cumulativePercent = (avgRaw / 5) * 100;
+        if (gradesArray.length > 0) {
+            // 1. حساب المتوسط الفعلي من 5 للمادة
+            const sum = gradesArray.reduce((a, b) => a + b, 0);
+            const avgFromFive = sum / gradesArray.length;
+            
+            // 2. تحويل المتوسط لنسبة مئوية لشريط التقدم (مثلاً 2.5 من 5 تصبح 50%)
+            const progressPercent = (avgFromFive / 5) * 100;
 
-        // 3. تحديد أداء الأسبوع الأخير (آخر درجة تم إدخالها)
-        let lastGradeRaw = grades.length > 0 ? grades[grades.length - 1] : 0;
-        const lastWeekPercent = (lastGradeRaw / 5) * 100;
+            // 3. تحديد درجة "آخر أسبوع" فعلي تم رصده
+            const lastRecordedGrade = gradesArray[gradesArray.length - 1];
+            const lastWeekPercent = (lastRecordedGrade / 5) * 100;
 
-        allGradesData.push({ 
-            id: subject, 
-            name: subjectNamesAr[subject], 
-            gradePercent: cumulativePercent, // للرسم البياني
-            gradeRaw: avgRaw,             // للعرض الرقمي (2.7)
-            lastWeekPercent: lastWeekPercent 
-        });
+            allGradesData.push({ 
+                id: subject, 
+                name: subjectNamesAr[subject] || subject, 
+                gradePercent: progressPercent, 
+                displayGrade: avgFromFive.toFixed(1), // الدرجة من 5
+                lastWeekPercent: lastWeekPercent 
+            });
 
-        if (grades.length > 0) { 
             totalLastWeekSum += lastWeekPercent; 
             subjectsWithDataCount++; 
         }
     }
 }
 
-// --- تحديث شاشة العرض ---
+// --- تحديث الواجهة ---
 if (allGradesData.length > 0) {
-    // المعدل العام (المتوسط الحسابي للنسب المئوية)
     const totalAvgPercent = allGradesData.reduce((acc, curr) => acc + curr.gradePercent, 0) / allGradesData.length;
-    
-    // إصلاح الـ 0.0%: إذا لم تتوفر بيانات أسبوعية، نستخدم المعدل العام
     let lastWeekAvgPercent = subjectsWithDataCount > 0 ? (totalLastWeekSum / subjectsWithDataCount) : totalAvgPercent;
 
-    // تحويل الأرقام للعرض بصيغة (X.X) من أصل 5
-    const displayTotal = (totalAvgPercent / 100) * 5;
-    const displayLastWeek = (lastWeekAvgPercent / 100) * 5;
+    // الدرجة الإجمالية من 5 لعرضها في الدائرة الكبيرة
+    const finalScoreFromFive = (totalAvgPercent / 100) * 5;
 
     setTimeout(() => {
-        // العرض في الدائرة الكبيرة (2.7) بدون علامة %
-        if (document.getElementById("generalGrade")) animateCounter("generalGrade", displayTotal.toFixed(1), "");
+        // المعدل التراكمي: يعرض الرقم من 5 (مثل 2.7)
+        if (document.getElementById("generalGrade")) animateCounter("generalGrade", finalScoreFromFive.toFixed(1), "");
         
-        // أداء آخر أسبوع: نعرضه كنسبة مئوية من 100% كما في تصميمك
+        // أداء آخر أسبوع: يعرض النسبة المئوية
         if (document.getElementById("lastWeekAvg")) animateCounter("lastWeekAvg", lastWeekAvgPercent.toFixed(1), "%");
         
-        if (document.getElementById("smartGeneralAvg")) animateCounter("smartGeneralAvg", displayTotal.toFixed(1), "");
+        // المتوسط الذكي: يعرض الرقم من 5
+        if (document.getElementById("smartGeneralAvg")) animateCounter("smartGeneralAvg", finalScoreFromFive.toFixed(1), "");
     }, 150);
 
-    // تحديث بج الأداء (مقارنة النسب المئوية)
+    // تحديث بج الأداء
     const perfBadge = document.getElementById("performanceChange");
     if (perfBadge) {
-        const isImproving = lastWeekAvgPercent >= (totalAvgPercent - 0.5); 
+        const isImproving = lastWeekAvgPercent >= (totalAvgPercent - 0.1); 
         perfBadge.innerHTML = isImproving ? `<i class="fas fa-arrow-up"></i> أداء متصاعد` : `<i class="fas fa-arrow-down"></i> أداء متراجع`;
         perfBadge.style.color = isImproving ? "var(--success)" : "var(--danger)";
     }
@@ -224,7 +227,7 @@ if (allGradesData.length > 0) {
                 <div class="subject-mini-card compact animate-up" style="animation-delay: ${index * 0.1}s">
                     <div class="sub-card-info">
                         <span class="sub-name">${sub.name}</span>
-                        <span class="sub-value">${sub.gradeRaw.toFixed(1)}</span>
+                        <span class="sub-value">${sub.displayGrade}</span>
                     </div>
                     <div class="sub-progress-bar">
                         <div class="fill" id="${uniqueId}" style="width: 0%;"></div>
@@ -237,6 +240,9 @@ if (allGradesData.length > 0) {
             }, 400);
         });
     }
+} else {
+    // في حال عدم وجود أي بيانات نهائياً
+    if (subjectsContainer) subjectsContainer.innerHTML = "<p>لا توجد بيانات مسجلة حالياً</p>";
 }
     } catch (err) {
         console.error("خطأ في تحميل لوحة البيانات:", err);
