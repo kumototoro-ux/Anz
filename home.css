@@ -542,3 +542,24 @@ body {
 .schedule-card {
     animation: fadeInUp 0.4s ease forwards;
 }
+
+/* تحسين شكل زر تسجيل الخروج */
+.nav-logout {
+    margin-top: auto;
+    padding: 20px;
+    cursor: pointer;
+    color: var(--danger);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: background 0.3s;
+}
+
+.nav-logout:hover {
+    background: rgba(234, 67, 53, 0.1); /* خلفية حمراء خفيفة عند التأشير */
+}
+
+.nav-logout i {
+    font-size: 20px;
+    min-width: 30px;
+}
