@@ -141,7 +141,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
        // ثانياً: معالجة درجات المواد (تحديث العدادات والأنيميشن الذكي)
-      // ثانياً: معالجة درجات المواد (تفعيل العداد والأنيميشن)
       const subjectsContainer = document.getElementById("subjectsGradesContainer");
 let allGradesData = []; 
 let totalLastWeekSum = 0;
@@ -149,69 +148,71 @@ let subjectsWithDataCount = 0;
 
 for (const subject of subjectTables) {
     const res = await getStudentData(subject, studentId);
-    if (res.success) {
-        // 1. حساب المعدل التراكمي العام للمادة
-        const cumulativeGrade = calcGrade(subject, res.data);
+    
+    if (res && res.success) {
+        // 1. حساب المعدل التراكمي للمادة (بناءً على تقييم من 5)
+        // سنفترض أن دالة calcGrade ترجع المتوسط من 5
+        const rawCumulative = calcGrade(subject, res.data) || 0;
         
-        // 2. استخراج الدرجات المسجلة فقط (تجاهل الخانات الفارغة)
-        let recordedGrades = [];
-        for (let i = 1; i <= 14; i++) {
+        // تحويل الدرجة من (5) إلى نسبة مئوية (100%) للعرض في شريط التقدم
+        // المعادلة: (الدرجة ÷ 5) × 100
+        const cumulativePercent = (rawCumulative / 5) * 100;
+
+        // 2. الحصول على أحدث درجة أسبوعية (من 5 درجات)
+        let lastValueRaw = 0;
+        for (let i = 14; i >= 1; i--) {
             let val = res.data[String(i)];
             if (val !== null && val !== undefined && val !== "" && !isNaN(parseFloat(val))) {
-                recordedGrades.push(parseFloat(val));
+                lastValueRaw = parseFloat(val);
+                break; 
             }
         }
 
-        let lastWeekRaw = 0;
-        let hasData = false;
-
-        if (recordedGrades.length > 0) {
-            hasData = true;
-            // أحدث درجة تم رصدها (تمثل الأسبوع الحالي/الأخير)
-            lastWeekRaw = recordedGrades[recordedGrades.length - 1];
-        }
-
-        // 3. تحويل الدرجة لنسبة مئوية (إذا كانت الدرجة من 10)
-        let lastWeekPercent = lastWeekRaw <= 10 ? lastWeekRaw * 10 : lastWeekRaw;
+        // تحويل درجة الأسبوع الأخير إلى نسبة مئوية
+        const lastWeekPercent = (lastValueRaw / 5) * 100;
 
         allGradesData.push({ 
             id: subject, 
             name: subjectNamesAr[subject], 
-            grade: cumulativeGrade, 
+            grade: cumulativePercent, // النسبة المئوية لشريط التقدم
+            displayGrade: rawCumulative, // الدرجة من 5 للعرض النصي
             lastWeek: lastWeekPercent 
         });
 
-        if (hasData) { 
+        if (lastValueRaw > 0) { 
             totalLastWeekSum += lastWeekPercent; 
             subjectsWithDataCount++; 
         }
     }
 }
 
-// --- تحديث البيانات في الواجهة ---
+// --- تحديث الأرقام في الواجهة ---
 if (allGradesData.length > 0) {
-    // حساب المتوسط العام لجميع المواد والمتوسط لآخر أسبوع
-    const totalAvg = allGradesData.reduce((acc, curr) => acc + curr.grade, 0) / allGradesData.length;
-    const lastWeekAvg = subjectsWithDataCount > 0 ? (totalLastWeekSum / subjectsWithDataCount) : 0;
+    // المعدل العام كنسبة مئوية
+    const totalAvgPercent = allGradesData.reduce((acc, curr) => acc + curr.grade, 0) / allGradesData.length;
+    
+    // حل مشكلة الـ 0.0%: إذا لم يجد أسابيع، يستخدم المعدل الحالي
+    let lastWeekAvgPercent = subjectsWithDataCount > 0 ? (totalLastWeekSum / subjectsWithDataCount) : totalAvgPercent;
 
-    // تشغيل عدادات الأرقام بأنيميشن
+    // تحويل النسب المئوية إلى مقياس من 5 للعرض في الدوائر (مثل الصورة 2.7%)
+    const displayTotal = (totalAvgPercent / 100) * 5;
+    const displayLastWeek = (lastWeekAvgPercent / 100) * 5;
+
     setTimeout(() => {
-        if (document.getElementById("generalGrade")) animateCounter("generalGrade", totalAvg, "%");
-        // هنا سيتم عرض النسبة الصحيحة بدلاً من 0.0%
-        if (document.getElementById("lastWeekAvg")) animateCounter("lastWeekAvg", lastWeekAvg, "%");
-        if (document.getElementById("smartGeneralAvg")) animateCounter("smartGeneralAvg", totalAvg, "%");
-    }, 100);
+        if (document.getElementById("generalGrade")) animateCounter("generalGrade", displayTotal.toFixed(1), "");
+        if (document.getElementById("lastWeekAvg")) animateCounter("lastWeekAvg", displayLastWeek.toFixed(1), "%");
+        if (document.getElementById("smartGeneralAvg")) animateCounter("smartGeneralAvg", displayTotal.toFixed(1), "");
+    }, 150);
 
-    // 4. تحديث "بج الأداء" (تحسين منطق المقارنة)
+    // تحديث بج الأداء
     const perfBadge = document.getElementById("performanceChange");
     if (perfBadge) {
-        // إذا كان أداء الأسبوع الأخير أكبر من أو يساوي المعدل التراكمي، فالأداء متصاعد/مستقر
-        const isImproving = lastWeekAvg >= (totalAvg - 0.01); 
+        const isImproving = lastWeekAvgPercent >= (totalAvgPercent - 0.1); 
         perfBadge.innerHTML = isImproving ? `<i class="fas fa-arrow-up"></i> أداء متصاعد` : `<i class="fas fa-arrow-down"></i> أداء متراجع`;
         perfBadge.style.color = isImproving ? "var(--success)" : "var(--danger)";
     }
     
-    // 5. عرض قائمة المواد (أعلى 3 مواد)
+    // عرض قائمة المواد
     if (subjectsContainer) {
         subjectsContainer.innerHTML = `<p style="font-size: 0.8rem; color: var(--text-sub); margin: 15px 0 10px 0;">أعلى المواد تقييماً:</p>`;
         
@@ -221,7 +222,7 @@ if (allGradesData.length > 0) {
                 <div class="subject-mini-card compact animate-up" style="animation-delay: ${index * 0.1}s" onclick="window.location.href='evaluation.html?subject=${sub.id}'">
                     <div class="sub-card-info">
                         <span class="sub-name">${sub.name}</span>
-                        <span class="sub-value">${sub.grade.toFixed(1)}%</span>
+                        <span class="sub-value">${sub.displayGrade.toFixed(1)} / 5</span>
                     </div>
                     <div class="sub-progress-bar">
                         <div class="fill" id="${uniqueId}" style="width: 0%;"></div>
@@ -230,8 +231,8 @@ if (allGradesData.length > 0) {
             
             setTimeout(() => {
                 const bar = document.getElementById(uniqueId);
-                if (bar) bar.style.width = `${sub.grade}%`;
-            }, 300);
+                if (bar) bar.style.width = `${sub.grade}%`; // شريط التقدم يتحرك بناءً على النسبة من 100
+            }, 400);
         });
     }
 }
