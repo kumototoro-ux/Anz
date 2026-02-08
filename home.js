@@ -201,6 +201,7 @@ for (const subject of subjectTables) {
 }
 
 // --- تحديث الواجهة ---
+// --- تحديث الواجهة ---
 if (allGradesData.length > 0) {
     const totalAvgPercent = allGradesData.reduce((acc, curr) => acc + curr.gradePercent, 0) / allGradesData.length;
     let lastWeekAvgPercent = subjectsWithDataCount > 0 ? (totalLastWeekSum / subjectsWithDataCount) : totalAvgPercent;
@@ -209,14 +210,21 @@ if (allGradesData.length > 0) {
     const finalScoreFromFive = (totalAvgPercent / 100) * 5;
 
     setTimeout(() => {
-        // المعدل التراكمي: يعرض الرقم من 5 (مثل 2.7)
         // المعدل التراكمي: يعرض الرقم من 5 (مثل 4.8)
-        if (document.getElementById("generalGrade")) {animateCounter("generalGrade", finalScoreFromFive.toFixed(1), ""); 
+        if (document.getElementById("generalGrade")) {
+            animateCounter("generalGrade", finalScoreFromFive.toFixed(1), ""); 
+        }
+        
         // أداء آخر أسبوع: يعرض النسبة المئوية
-        if (document.getElementById("lastWeekAvg")) animateCounter("lastWeekAvg", lastWeekAvgPercent.toFixed(1), "%"); 
+        if (document.getElementById("lastWeekAvg")) {
+            animateCounter("lastWeekAvg", lastWeekAvgPercent.toFixed(1), "%"); 
+        }
+        
         // المتوسط الذكي: يعرض الرقم من 5
-        if (document.getElementById("smartGeneralAvg")) animateCounter("smartGeneralAvg", finalScoreFromFive.toFixed(1), "");
-    }, 150);
+        if (document.getElementById("smartGeneralAvg")) {
+            animateCounter("smartGeneralAvg", finalScoreFromFive.toFixed(1), "");
+        }
+    }, 150); // هنا تم إغلاق القوس بشكل صحيح قبل الرقم 150
 
     // تحديث بج الأداء
     const perfBadge = document.getElementById("performanceChange");
@@ -253,10 +261,6 @@ if (allGradesData.length > 0) {
     // في حال عدم وجود أي بيانات نهائياً
     if (subjectsContainer) subjectsContainer.innerHTML = "<p>لا توجد بيانات مسجلة حالياً</p>";
 }
-    } catch (err) {
-        console.error("خطأ في تحميل لوحة البيانات:", err);
-    }
-});
 // --- الدوال المساعدة (تُكتب خارج DOMContentLoaded) ---
 
 function updateDateTime() {
