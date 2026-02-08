@@ -389,3 +389,56 @@ body {
 @media (min-width: 769px) {
     .mobile-app-bar, .sidebar-overlay { display: none !important; }
 }
+
+/* تصميم عنصر الحصة */
+.modern-schedule-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    background: #f8faff;
+    border-radius: 12px;
+    border-right: 4px solid var(--primary); /* خط ملون جانبي */
+    transition: transform 0.2s;
+}
+
+.modern-schedule-item:hover {
+    transform: translateX(-5px);
+    background: #f0f4ff;
+}
+
+/* تنسيق الوقت */
+.schedule-time {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 60px;
+    color: var(--primary);
+    font-size: 0.85rem;
+    font-weight: bold;
+    border-left: 1px solid #eee;
+    margin-left: 15px;
+}
+
+/* تنسيق تفاصيل المادة والمعلم */
+.schedule-details {
+    display: flex;
+    justify-content: space-between; /* هذا يضع المادة في اليمين والمعلم في اليسار */
+    flex-grow: 1;
+    align-items: center;
+}
+
+.subject-name {
+    font-weight: 700;
+    color: #2d3436;
+    font-size: 1rem;
+}
+
+.teacher-name {
+    font-size: 0.8rem;
+    color: #636e72;
+    background: #fff;
+    padding: 3px 8px;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
