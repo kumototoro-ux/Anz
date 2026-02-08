@@ -141,27 +141,30 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
        // ثانياً: معالجة درجات المواد (تحديث العدادات والأنيميشن الذكي)
+      // ثانياً: معالجة درجات المواد (تفعيل العداد والأنيميشن)
         const subjectsContainer = document.getElementById("subjectsGradesContainer");
         let allGradesData = []; 
-        let totalLastWeekSum = 0, subjectsWithDataCount = 0;
+        let totalLastWeekSum = 0;
+        let subjectsWithDataCount = 0;
 
         for (const subject of subjectTables) {
             const res = await getStudentData(subject, studentId);
             if (res.success) {
                 const cumulativeGrade = calcGrade(subject, res.data);
-                let lastWeekRaw = 0, foundLastWeek = false;
+                let lastWeekRaw = 0;
+                let foundLastWeek = false;
 
-                // البحث عن أحدث أسبوع مسجل (تجنب الأصفار غير المقصودة)
+                // البحث عن أحدث درجة مسجلة (تنازلياً من الأسبوع 14)
                 for (let i = 14; i >= 1; i--) {
                     let val = res.data[String(i)];
-                    if (val !== null && val !== undefined && val !== "" && parseFloat(val) !== 0) {
+                    if (val !== null && val !== undefined && val !== "" && parseFloat(val) > 0) {
                         lastWeekRaw = parseFloat(val);
                         foundLastWeek = true;
                         break;
                     }
                 }
 
-                // تحويل لنسبة مئوية: إذا كانت الدرجة من 10 نضربها في 10، إذا كانت من 100 تبقى كما هي
+                // تحويل الدرجة لنسبة مئوية
                 let lastWeekPercent = lastWeekRaw <= 10 ? lastWeekRaw * 10 : lastWeekRaw;
 
                 allGradesData.push({ 
@@ -182,41 +185,43 @@ document.addEventListener("DOMContentLoaded", async () => {
             const totalAvg = allGradesData.reduce((acc, curr) => acc + curr.grade, 0) / allGradesData.length;
             const lastWeekAvg = subjectsWithDataCount > 0 ? (totalLastWeekSum / subjectsWithDataCount) : 0;
 
-            // --- تشغيل العدادات (Counter Animation) ---
-            animateCounter("generalGrade", totalAvg, "%");
-            animateCounter("lastWeekAvg", lastWeekAvg, "%");
-            animateCounter("smartGeneralAvg", totalAvg, "%");
+            // تأخير بسيط جداً لضمان ظهور العناصر ثم تشغيل العداد
+            setTimeout(() => {
+                if (document.getElementById("generalGrade")) animateCounter("generalGrade", totalAvg, "%");
+                if (document.getElementById("lastWeekAvg")) animateCounter("lastWeekAvg", lastWeekAvg, "%");
+                if (document.getElementById("smartGeneralAvg")) animateCounter("smartGeneralAvg", totalAvg, "%");
+            }, 100);
 
+            // تحديث حالة الأداء
             const perfBadge = document.getElementById("performanceChange");
             if (perfBadge) {
                 const isImproving = lastWeekAvg >= totalAvg;
                 perfBadge.innerHTML = isImproving ? `<i class="fas fa-arrow-up"></i> أداء متصاعد` : `<i class="fas fa-arrow-down"></i> أداء متراجع`;
                 perfBadge.style.color = isImproving ? "var(--success)" : "var(--danger)";
-                perfBadge.classList.add('animate-up');
             }
             
+            // عرض المواد مع أنيميشن شريط التقدم
             if (subjectsContainer) {
                 subjectsContainer.innerHTML = `<p style="font-size: 0.8rem; color: var(--text-sub); margin: 15px 0 10px 0;">أعلى المواد تقييماً:</p>`;
                 
-                // عرض أفضل 3 مواد مع أنيميشن للـ Progress Bar
                 allGradesData.sort((a, b) => b.grade - a.grade).slice(0, 3).forEach((sub, index) => {
-                    const cardHtml = `
+                    const uniqueId = `fill-${sub.id}`;
+                    subjectsContainer.innerHTML += `
                         <div class="subject-mini-card compact animate-up" style="animation-delay: ${index * 0.1}s" onclick="window.location.href='evaluation.html?subject=${sub.id}'">
                             <div class="sub-card-info">
                                 <span class="sub-name">${sub.name}</span>
                                 <span class="sub-value">${sub.grade.toFixed(1)}%</span>
                             </div>
                             <div class="sub-progress-bar">
-                                <div class="fill" id="fill-${sub.id}" style="width: 0%; transition: width 1.5s ease-in-out;"></div>
+                                <div class="fill" id="${uniqueId}" style="width: 0%; transition: width 1.5s cubic-bezier(0.1, 0.5, 0.5, 1);"></div>
                             </div>
                         </div>`;
-                    subjectsContainer.insertAdjacentHTML('beforeend', cardHtml);
                     
-                    // تحريك شريط التقدم بعد الإضافة بفترة قصيرة
+                    // تحريك الشريط (Animation) بعد الإضافة
                     setTimeout(() => {
-                        const fillBar = document.getElementById(`fill-${sub.id}`);
-                        if (fillBar) fillBar.style.width = `${sub.grade}%`;
-                    }, 100);
+                        const bar = document.getElementById(uniqueId);
+                        if (bar) bar.style.width = `${sub.grade}%`;
+                    }, 300);
                 });
             }
         }
