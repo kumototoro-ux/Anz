@@ -167,6 +167,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     } catch (err) {
         console.error("خطأ في تحميل لوحة البيانات:", err);
     }
+    });
 // --- الدوال المساعدة (تُكتب خارج DOMContentLoaded) ---
 
 function updateDateTime() {
