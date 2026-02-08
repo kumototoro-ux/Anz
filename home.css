@@ -390,55 +390,107 @@ body {
     .mobile-app-bar, .sidebar-overlay { display: none !important; }
 }
 
-/* تصميم عنصر الحصة */
-.modern-schedule-item {
-    display: flex;
-    align-items: center;
-    padding: 12px 15px;
-    margin-bottom: 10px;
-    background: #f8faff;
-    border-radius: 12px;
-    border-right: 4px solid var(--primary); /* خط ملون جانبي */
-    transition: transform 0.2s;
-}
-
-.modern-schedule-item:hover {
-    transform: translateX(-5px);
-    background: #f0f4ff;
-}
-
-/* تنسيق الوقت */
-.schedule-time {
+/* حاوية الجدول */
+#scheduleContainer {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    min-width: 60px;
-    color: var(--primary);
-    font-size: 0.85rem;
-    font-weight: bold;
-    border-left: 1px solid #eee;
-    margin-left: 15px;
+    gap: 12px;
+    padding: 10px 5px;
 }
 
-/* تنسيق تفاصيل المادة والمعلم */
-.schedule-details {
+/* بطاقة الحصة */
+.schedule-card {
+    background: #ffffff;
+    border: 1px solid #edf2f7;
+    border-radius: 16px;
+    padding: 15px;
     display: flex;
-    justify-content: space-between; /* هذا يضع المادة في اليمين والمعلم في اليسار */
-    flex-grow: 1;
+    justify-content: space-between;
     align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
-.subject-name {
-    font-weight: 700;
-    color: #2d3436;
-    font-size: 1rem;
+.schedule-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.05);
+    border-color: var(--primary);
+}
+
+/* الخط الجانبي الملون */
+.schedule-card::before {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 5px;
+    background: var(--primary);
+    border-radius: 0 16px 16px 0;
+}
+
+/* قسم معلومات المادة والمعلم */
+.schedule-info {
+    display: flex;
+    gap: 30px; /* مسافة كبيرة بين المادة والمعلم لمنع الالتصاق */
+}
+
+.sub-label {
+    display: block;
+    font-size: 0.7rem;
+    color: #a0aec0;
+    margin-bottom: 2px;
+}
+
+.sub-name {
+    display: block;
+    font-weight: 800;
+    color: #2d3748;
+    font-size: 1.05rem;
 }
 
 .teacher-name {
-    font-size: 0.8rem;
-    color: #636e72;
-    background: #fff;
-    padding: 3px 8px;
-    border-radius: 6px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    display: block;
+    font-weight: 600;
+    color: #4a5568;
+    font-size: 0.95rem;
+}
+
+/* قسم الوقت ورقم الحصة */
+.schedule-meta {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 5px;
+}
+
+.time-tag {
+    background: #ebf4ff;
+    color: #3182ce;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.session-number {
+    font-size: 0.75rem;
+    color: #cbd5e0;
+    font-weight: 500;
+}
+
+/* أنيميشن الظهور */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.schedule-card {
+    animation: fadeInUp 0.4s ease forwards;
 }
