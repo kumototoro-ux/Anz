@@ -128,19 +128,20 @@ body {
 }
 
 /* --- التعديل الجديد لترتيب العنوان واليوم --- */
-/* --- التعديل النهائي لإلغاء الفراغ بين العنوان وأول صف --- */
+/* --- التنسيق النهائي: محاذاة صحيحة وإلغاء الفراغ العلوي --- */
 .schedule-card.card {
-    padding: 10px 15px !important; /* تقليل حشو البطاقة الكلي */
+    padding: 10px 15px !important;
 }
 
 .schedule-card.card .card-header {
     display: flex;
-    flex-direction: row-reverse; 
-    justify-content: space-between;
+    /* تأكد أن العنوان يمين واليوم يسار بدون عكس */
+    justify-content: space-between; 
+    flex-direction: row; 
     align-items: center;
     width: 100%;
-    margin-bottom: 5px !important; /* تقليل المسافة جداً بين العنوان وأول صف */
-    padding: 10px 0; /* تقليل الحشو الداخلي للرأس */
+    margin-bottom: 5px !important; /* هذا ما يلغي الفراغ تحت العنوان */
+    padding: 10px 0;
     border-bottom: 1px solid #f0f0f0;
 }
 
@@ -148,23 +149,36 @@ body {
     font-size: 1.1rem;
     font-weight: 800;
     margin: 0;
+    color: var(--text-main);
     display: flex;
     align-items: center;
     gap: 8px;
+    /* إجبار النص على البقاء جهة اليمين */
+    order: 1; 
 }
 
-/* ضبط حاوية الصفوف لتبدأ فوراً */
+.day-badge {
+    background: #f1f3f4;
+    color: #5f6368;
+    padding: 4px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    /* إجبار اليوم على البقاء جهة اليسار */
+    order: 2; 
+}
+
+/* ضبط المسافة بين الحصص لتكون متناسقة مع الرأس */
 #scheduleContainer {
-    margin-top: 0 !important;
-    padding-top: 5px !important;
+    margin-top: 5px !important;
     display: flex;
     flex-direction: column;
-    gap: 8px; /* المسافة بين الصفوف نفسها */
+    gap: 10px;
 }
 
-/* إزالة أي هوامش تلقائية من الصفوف */
 .schedule-card-item {
-    margin: 0 !important; 
+    margin: 0 !important;
+    width: 100%;
 }
 /* -------------------------------------- */
 /* --- 5. تصميم بطاقة ملخص الحصص المطور (جديد) --- */
