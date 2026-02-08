@@ -267,18 +267,58 @@ body {
     height: 100%;
     background: linear-gradient(90deg, var(--primary), #63b3ed);
     border-radius: 10px;
-    transition: width 1s ease-in-out;
+    /* تغيير التوقيت ليكون أكثر نعومة */
+    transition: width 1.5s cubic-bezier(0.1, 0.5, 0.5, 1); 
+    box-shadow: 0 0 10px rgba(26, 115, 232, 0.2); /* إضافة توهج خفيف */
 }
 
+/* --- تحسين بج الأداء (داخل البطاقات) --- */
+#performanceChange {
+    padding: 5px 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    background: rgba(0, 0, 0, 0.03); 
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* التنسيق الجديد يوضع هنا بضبط */
+#performanceChange[style*="color: var(--success)"] { background: rgba(52, 168, 83, 0.1); }
+#performanceChange[style*="color: var(--danger)"] { background: rgba(234, 67, 53, 0.1); }
+
+/* إضافة أنميشن بسيط للسهم ليتحرك للأعلى والأسفل */
+#performanceChange i.fa-arrow-up {
+    animation: bounceUp 1s infinite alternate;
+}
+
+@keyframes bounceUp {
+    from { transform: translateY(0); }
+    to { transform: translateY(-3px); }
+}
+
+@keyframes bounceDown {
+    from { transform: translateY(0); }
+    to { transform: translateY(3px); }
+}
 /* --- 7. الأنميشن --- */
-.animate-up {
-    opacity: 0;
-    animation: fadeInUp 0.6s ease-out forwards;
-}
-
 @keyframes fadeInUp {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- تحسين الأنميشن المتتالي --- */
+.animate-up {
+    opacity: 0;
+    animation: fadeInUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+/* لضمان أن العناصر المخفية لا تشغل مساحة قبل ظهورها أو تظهر فجأة */
+[style*="animation-delay"] {
+    opacity: 0;
 }
 
 /* --- 8. شاشة الجوال (Responsive) --- */
