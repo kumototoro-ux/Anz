@@ -1,3 +1,8 @@
+// السطر 1: التحقق من الأمان (يجب أن يكون في البداية تماماً)
+if (!localStorage.getItem('user')) {
+    window.location.href = 'index.html'; 
+}
+
 import { getStudentData } from './api.js';
 
 document.addEventListener("DOMContentLoaded", async () => {
