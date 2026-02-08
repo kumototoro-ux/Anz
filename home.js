@@ -72,47 +72,62 @@ document.addEventListener("DOMContentLoaded", async () => {
         return count > 0 ? (points / count) : 0;
     };
 
-    // 6. جلب البيانات والمعالجة
+   // 6. جلب البيانات والمعالجة
     try {
         const attendanceRes = await getStudentData('AB', studentId);
+        
         if (attendanceRes.success) {
-            let totalAtt = 0, totalAbs = 0, weeksCount = 0;
-            for(let i = 1; i <= 14; i++) {
+            let totalAtt = 0;
+            let weeksCount = 0;
+            let lastWeekAttVal = 0;
+            const sessionsPerWeek = 25; // افتراض 25 حصة في الأسبوع كما في الأنظمة التعليمية
+
+            // حساب البيانات من الأسابيع الـ 14
+            for (let i = 1; i <= 14; i++) {
                 let val = attendanceRes.data[String(i)];
-                if (val !== null) {
-                    weeksCount++;
-                    totalAtt += parseFloat(val);
-                    totalAbs += (15 - parseFloat(val));
+                if (val !== null && val !== undefined && val !== "") {
+                    weeksCount = i; // آخر أسبوع فيه بيانات
+                    let attVal = parseFloat(val);
+                    totalAtt += attVal;
+                    lastWeekAttVal = attVal; // قيمة حضور آخر أسبوع فقط
                 }
             }
-            const totalSessions = weeksCount * 15;
-            const attRate = totalSessions > 0 ? Math.round((totalAtt / totalSessions) * 100) : 0;
-            let statusColor = attRate > 90 ? "#34a853" : attRate > 75 ? "#fbbc04" : "#ea4335";
-            let statusMsg = attRate > 90 ? "ممتاز، واصل انضباطك! ✨" : attRate > 75 ? "حضورك جيد جداً 👍" : "انتبه لنسبة غيابك! ⚠️";
 
-            const attendanceChart = document.getElementById("attendanceChart");
-            if(attendanceChart) {
-                attendanceChart.innerHTML = `
-                    <div class="smart-attendance-card">
-                        <div class="attendance-progress-circle" style="background: conic-gradient(${statusColor} ${attRate}%, #eee 0deg);">
-                            <div class="inner-circle">
-                                <span class="percentage">${attRate}%</span>
-                                <span class="label">انضباط</span>
-                            </div>
-                        </div>
-                        <div class="attendance-info-summary">
-                            <p class="status-text" style="color: ${statusColor}">${statusMsg}</p>
-                            <div class="stats-pills">
-                                <span>حضور: <b>${totalAtt}</b></span>
-                                <span>غياب: <b>${totalAbs}</b></span>
-                            </div>
-                        </div>
-                    </div>`;
+            // أ- حساب النسبة المئوية لآخر أسبوع (للدائرة الصغيرة)
+            const lastWeekRate = Math.round((lastWeekAttVal / sessionsPerWeek) * 100);
+            
+            // ب- حساب إجمالي الحضور التراكمي والمتوسط الذكي
+            const totalPossibleSessions = weeksCount * sessionsPerWeek;
+            const smartAvgRate = totalPossibleSessions > 0 
+                ? ((totalAtt / totalPossibleSessions) * 100).toFixed(1) 
+                : 0;
+
+            // ج- تحديث العناصر في الواجهة
+            const currentWeekNum = document.getElementById("currentWeekNum");
+            const passedWeeksCount = document.getElementById("passedWeeksCount");
+            const weekSessionsCount = document.getElementById("weekSessionsCount");
+            const totalAttended = document.getElementById("totalAttended");
+            const smartAvg = document.getElementById("smartAvg");
+            const weekPercentText = document.getElementById("weekPercentText");
+            const weekCircle = document.getElementById("weekCircle");
+
+            if (currentWeekNum) currentWeekNum.innerText = weeksCount;
+            if (passedWeeksCount) passedWeeksCount.innerText = weeksCount;
+            if (weekSessionsCount) weekSessionsCount.innerText = lastWeekAttVal;
+            if (totalAttended) totalAttended.innerText = totalAtt;
+            if (smartAvg) smartAvg.innerText = smartAvgRate + "%";
+            if (weekPercentText) weekPercentText.innerText = lastWeekRate + "%";
+            
+            // تحديث تصميم الدائرة (اللون الأخضر بناءً على نسبة الأسبوع)
+            if (weekCircle) {
+                weekCircle.style.background = `conic-gradient(#34a853 ${lastWeekRate}%, #f1f3f4 0deg)`;
             }
         }
 
+        // --- معالجة درجات المواد ---
         const subjectsContainer = document.getElementById("subjectsGradesContainer");
         let allGradesData = []; 
+
         for (const subject of subjectTables) {
             const res = await getStudentData(subject, studentId);
             if (res.success) {
@@ -123,16 +138,28 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         if (allGradesData.length > 0) {
             const totalAvg = allGradesData.reduce((acc, curr) => acc + curr.grade, 0) / allGradesData.length;
-            if (document.getElementById("generalGrade")) document.getElementById("generalGrade").innerText = totalAvg.toFixed(1) + "%";
+            if (document.getElementById("generalGrade")) {
+                document.getElementById("generalGrade").innerText = totalAvg.toFixed(1) + "%";
+            }
             
             const topSubjects = [...allGradesData].sort((a, b) => b.grade - a.grade).slice(0, 3);
+            
             if (subjectsContainer) {
-                subjectsContainer.innerHTML = `<div style="grid-column: 1 / -1; margin-bottom: 10px;"><p style="font-size: 0.8rem; color: var(--text-sub); margin-bottom: 15px;">أفضل أداء في المواد:</p></div>`;
+                subjectsContainer.innerHTML = `
+                    <div style="grid-column: 1 / -1; margin-bottom: 10px;">
+                        <p style="font-size: 0.8rem; color: var(--text-sub); margin-bottom: 15px;">أفضل أداء في المواد:</p>
+                    </div>`;
+                
                 topSubjects.forEach(sub => {
                     subjectsContainer.innerHTML += `
                         <div class="subject-mini-card compact" onclick="window.location.href='evaluation.html?subject=${sub.id}'">
-                            <div class="sub-card-info"><span class="sub-name">${sub.name}</span><span class="sub-value">${sub.grade.toFixed(1)}%</span></div>
-                            <div class="sub-progress-bar"><div class="fill" style="width: ${sub.grade}%"></div></div>
+                            <div class="sub-card-info">
+                                <span class="sub-name">${sub.name}</span>
+                                <span class="sub-value">${sub.grade.toFixed(1)}%</span>
+                            </div>
+                            <div class="sub-progress-bar">
+                                <div class="fill" style="width: ${sub.grade}%"></div>
+                            </div>
                         </div>`;
                 });
             }
@@ -140,8 +167,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     } catch (err) {
         console.error("خطأ في تحميل لوحة البيانات:", err);
     }
-}); // <--- هذا القوس كان مفقوداً أو موضوعاً في مكان خاطئ
-
 // --- الدوال المساعدة (تُكتب خارج DOMContentLoaded) ---
 
 function updateDateTime() {
