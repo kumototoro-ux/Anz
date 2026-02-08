@@ -206,26 +206,55 @@ if (allGradesData.length > 0) {
     const totalAvgPercent = allGradesData.reduce((acc, curr) => acc + curr.gradePercent, 0) / allGradesData.length;
     let lastWeekAvgPercent = subjectsWithDataCount > 0 ? (totalLastWeekSum / subjectsWithDataCount) : totalAvgPercent;
 
-    // الدرجة الإجمالية من 5 لعرضها في الدائرة الكبيرة
+    // الدرجة الإجمالية وأداء الأسبوع من 5
     const finalScoreFromFive = (totalAvgPercent / 100) * 5;
+    const lastWeekScoreFromFive = (lastWeekAvgPercent / 100) * 5;
+
+    // دالة داخلية لتحديث العناصر بالتصميم الجديد (الرقم + شريط صغير)
+    const updateMetricWithBar = (id, score, percent) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        
+        // تحديد لون الشريط بناءً على الدرجة
+        let barColor = score < 2.5 ? "#ea4335" : (score < 3.7 ? "#fbbc04" : "#34a853");
+
+        el.innerHTML = `
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+                <div style="display: flex; align-items: baseline; gap: 3px;">
+                    <span id="${id}-val" style="font-size: 1.6rem; font-weight: 800;">0.0</span>
+                    <span style="font-size: 0.8rem; color: var(--text-sub); font-weight: 500;">/ 5</span>
+                </div>
+                <div style="width: 45px; height: 3px; background: #eee; border-radius: 10px; overflow: hidden;">
+                    <div id="${id}-bar" style="width: 0%; height: 100%; background: ${barColor}; transition: width 1.5s ease-out;"></div>
+                </div>
+            </div>
+        `;
+        
+        // تشغيل العداد وتفعيل الشريط
+        animateCounter(`${id}-val`, score.toFixed(1), "");
+        setTimeout(() => { 
+            const bar = document.getElementById(`${id}-bar`);
+            if(bar) bar.style.width = `${percent}%`;
+        }, 100);
+    };
 
     // --- تحديث الأرقام والعدادات ---
     setTimeout(() => {
-        // 1. المعدل التراكمي (من 5)
+        // 1. المعدل التراكمي
         if (document.getElementById("generalGrade")) {
-            animateCounter("generalGrade", finalScoreFromFive.toFixed(1), ""); 
+            updateMetricWithBar("generalGrade", finalScoreFromFive, totalAvgPercent);
         }
         
-        // 2. أداء آخر أسبوع (نسبة مئوية)
+        // 2. أداء آخر أسبوع (أصبح من 5 الآن)
         if (document.getElementById("lastWeekAvg")) {
-            animateCounter("lastWeekAvg", lastWeekAvgPercent.toFixed(1), "%"); 
+            updateMetricWithBar("lastWeekAvg", lastWeekScoreFromFive, lastWeekAvgPercent);
         }
         
-        // 3. المتوسط الذكي (من 5)
+        // 3. المتوسط الذكي
         if (document.getElementById("smartGeneralAvg")) {
-            animateCounter("smartGeneralAvg", finalScoreFromFive.toFixed(1), "");
+            updateMetricWithBar("smartGeneralAvg", finalScoreFromFive, totalAvgPercent);
         }
-    }, 150); // تم إغلاق الأقواس بشكل صحيح هنا
+    }, 150);
     
     // تحديث بج الأداء
     const perfBadge = document.getElementById("performanceChange");
@@ -245,17 +274,20 @@ if (allGradesData.length > 0) {
                 <div class="subject-mini-card compact animate-up" style="animation-delay: ${index * 0.1}s">
                     <div class="sub-card-info">
                         <span class="sub-name">${sub.name}</span>
-                        <span class="sub-value">${sub.displayGrade}</span>
+                        <span class="sub-value">${sub.displayGrade} / 5</span>
                     </div>
                     <div class="sub-progress-bar">
                         <div class="fill" id="${uniqueId}" style="width: 0%;"></div>
                     </div>
                 </div>`;
             
-            setTimeout(() => { document.getElementById(uniqueId).style.width = `${sub.gradePercent}%`; }, 400);
-                });
-            }
-        }
+            setTimeout(() => { 
+                const bar = document.getElementById(uniqueId);
+                if(bar) bar.style.width = `${sub.gradePercent}%`; 
+            }, 400);
+        });
+    }
+}
     } catch (err) {
         console.error("خطأ في تحميل لوحة البيانات:", err);
     }
