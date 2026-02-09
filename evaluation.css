@@ -1,58 +1,74 @@
-:root {
-    --google-blue: #1a73e8;
-    --google-green: #34a853;
-    --google-yellow: #fbbc05;
-    --google-red: #ea4335;
-    --card-bg: #ffffff;
-}
-
-body { background-color: #f1f3f4; font-family: 'Tajawal', sans-serif; direction: rtl; }
-
-.evaluation-container { padding: 40px; margin-right: 80px; }
-
-.card {
-    background: var(--card-bg);
-    border-radius: 16px;
-    padding: 30px;
-    margin-bottom: 30px;
-    box-shadow: 0 1px 2px 0 rgba(60,64,67,.30), 0 1px 3px 1px rgba(60,64,67,.15);
-}
-
-.card-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-
-.google-select {
-    padding: 10px 15px;
-    border: 1px solid #dadce0;
-    border-radius: 8px;
-    font-family: 'Tajawal';
-    font-size: 14px;
-    cursor: pointer;
-    background: white;
-}
-
-.chart-wrapper { height: 300px; position: relative; }
-
-.motivation-banner {
-    margin-top: 25px;
-    padding: 20px;
-    border-radius: 12px;
-    background: #e8f0fe;
-    color: var(--google-blue);
+.selection-bar {
     display: flex;
-    align-items: center;
-    gap: 15px;
-    font-weight: 500;
-    transition: 0.5s;
+    gap: 20px;
+    padding: 10px 0;
 }
 
-/* الأنماط الخاصة بالدرجات */
-.score-box {
-    padding: 15px;
+.select-box {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.progress-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    padding: 20px 0;
+}
+
+.progress-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.progress-track {
+    height: 12px;
+    background: #eee;
     border-radius: 10px;
-    text-align: center;
-    background: #f8f9fa;
-    border-bottom: 4px solid #ddd;
+    overflow: hidden;
 }
 
-.score-box.excellent { border-color: var(--google-green); background: #e6f4ea; }
-.score-box.needs-work { border-color: var(--google-red); background: #fce8e6; }
+.progress-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.progress-fill.high { background: var(--success); }
+.progress-fill.med { background: var(--warning); }
+.progress-fill.low { background: var(--danger); }
+
+.analysis-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+    align-items: center;
+}
+
+.ai-feedback-box {
+    background: #f8faff;
+    padding: 20px;
+    border-radius: 15px;
+    border-right: 5px solid var(--primary);
+    text-align: center;
+}
+
+.ai-feedback-box i {
+    font-size: 2rem;
+    color: var(--primary);
+    margin-bottom: 10px;
+}
+
+@media (max-width: 768px) {
+    .progress-grid, .analysis-layout { grid-template-columns: 1fr; }
+}
