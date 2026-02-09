@@ -3,61 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>الحضور والغياب | نظام مقياس</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="attendance.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>سجل الغياب - منصة الطالب</title>
+    <link rel="stylesheet" href="css/bootstrap.rtl.min.css">
+    <link rel="stylesheet" href="css/style.css"> <link rel="stylesheet" href="css/attendance.css">
 </head>
 <body>
 
-    <main class="attendance-container">
-        <header class="page-header animate-fade">
-            <h1>سجل الانضباط المدرسي</h1>
-            <p>متابعة دقيقة لحضورك وحصصك الدراسية</p>
-        </header>
+    <div id="sidebar-container"></div> 
 
-        <section class="card stats-main-card animate-slide-up">
-            <div class="card-header">
-                <h3><i class="fas fa-chart-area"></i> مؤشر الحضور التراكمي</h3>
-                <div class="legend">
-                    <span class="legend-item"><span class="dot attendance"></span> حضور</span>
-                    <span class="legend-item"><span class="dot absence"></span> غياب</span>
-                </div>
-            </div>
-            <div class="chart-container">
-                <canvas id="attendanceLineChart"></canvas>
-            </div>
-            <div class="total-summary" id="totalSummaryText">
-                </div>
-        </section>
+    <main class="main-content">
+        <div class="container py-4">
+            <h3 class="mb-4 fw-bold text-dark">📊 تحليل الانضباط والغياب</h3>
 
-        <section class="card last-week-card animate-slide-up" style="animation-delay: 0.2s;">
-            <div class="card-header">
-                <h3><i class="fas fa-calendar-day"></i> تفاصيل آخر أسبوع مُقيّم</h3>
-                <span id="lastWeekLabel" class="week-tag">الأسبوع --</span>
-            </div>
-            <div class="attendance-details-grid">
-                <div class="circular-progress-wrapper">
-                    <div class="circular-progress" id="progressCircle">
-                        <span id="attendancePercent">0%</span>
+            <div class="card shadow-sm mb-4 border-0 p-4">
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <h6 class="fw-bold mb-3">مؤشر حضور الحصص الأسبوعي (15 حصة/أسبوع)</h6>
+                        <div style="height: 300px;">
+                            <canvas id="attendanceChart"></canvas>
+                        </div>
                     </div>
-                    <p>نسبة حضور الأسبوع</p>
-                </div>
-                <div class="detailed-stats">
-                    <div class="stat-box">
-                        <span class="val" id="presentHolidays">0</span>
-                        <span class="lbl">حصص حضور</span>
-                    </div>
-                    <div class="stat-box warning">
-                        <span class="val" id="absentHolidays">0</span>
-                        <span class="lbl">حصص غياب</span>
+                    <div class="col-lg-4">
+                        <div id="smart-alert" class="alert-box rounded-4 p-4 text-center">
+                            </div>
                     </div>
                 </div>
             </div>
-        </section>
+
+            <div class="card shadow-sm border-0 p-4">
+                <h6 class="fw-bold mb-3">تفاصيل الحصص لكل أسبوع</h6>
+                <div class="row g-3 align-items-center">
+                    <div class="col-md-5">
+                        <select id="weekSelector" class="form-select border-primary shadow-none">
+                            <option value="">-- اختر الأسبوع الدراسي --</option>
+                        </select>
+                    </div>
+                    <div class="col-md-7">
+                        <div id="week-detail-view" class="p-3 bg-light rounded-3 d-none">
+                            <div class="row text-center">
+                                <div class="col-6 border-start">
+                                    <small class="text-muted d-block">حضر</small>
+                                    <span id="week-present" class="h4 fw-bold text-success">0</span>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted d-block">غاب</small>
+                                    <span id="week-absent" class="h4 fw-bold text-danger">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
-    <script type="module" src="attendance.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="module" src="js/attendance.js"></script>
 </body>
 </html>
