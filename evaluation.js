@@ -16,16 +16,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     try {
         const response = await getStudentData('students', user.ID);
         if (response.success && response.data) {
-            const studentLevel = response.data.StudentLevel || "";
-            
-            // التحقق من أن الطالب في ثالث متوسط
-            if (studentLevel.includes("ثالث") && studentLevel.includes("متوسط")) {
+            const sd = response.data;
+            // التحقق من العمود Class والنص "الثالث متوسط"
+            if (sd.Class && sd.Class.includes("الثالث متوسط")) {
                 const criticalOpt = document.getElementById('criticalOption');
-                if (criticalOpt) criticalOpt.style.display = 'block';
+                if (criticalOpt) {
+                    criticalOpt.style.display = 'block';
+                }
             }
         }
     } catch (err) {
-        console.error("خطأ في التحقق من المستوى:", err);
+        console.error("خطأ في التحقق من فصل الطالب:", err);
     }
 
     // تجهيز قائمة الأسابيع
