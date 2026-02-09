@@ -12,12 +12,20 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // تفعيل القائمة الجانبية (نفس منطق صفحة معلوماتي)
     setupNavigation();
-
-    // التحقق من مادة التفكير الناقد بناءً على مستوى الطالب
-    const level = user.StudentLevel ? String(user.StudentLevel) : "";
-    if ((level.includes("ثالث") || level.includes("3")) && level.includes("متوسط")) {
-        const criticalOpt = document.getElementById('criticalOption');
-        if (criticalOpt) criticalOpt.style.display = 'block';
+    
+    try {
+        const response = await getStudentData('students', user.ID);
+        if (response.success && response.data) {
+            const studentLevel = response.data.StudentLevel || "";
+            
+            // التحقق من أن الطالب في ثالث متوسط
+            if (studentLevel.includes("ثالث") && studentLevel.includes("متوسط")) {
+                const criticalOpt = document.getElementById('criticalOption');
+                if (criticalOpt) criticalOpt.style.display = 'block';
+            }
+        }
+    } catch (err) {
+        console.error("خطأ في التحقق من المستوى:", err);
     }
 
     // تجهيز قائمة الأسابيع
