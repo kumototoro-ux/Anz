@@ -3,18 +3,28 @@ import { getStudentData } from "./api.js";
 let comparisonChart;
 
 document.addEventListener("DOMContentLoaded", async () => {
+    // 1. التحقق من الهوية (الربط الأساسي)
     const user = JSON.parse(localStorage.getItem("user"));
-    if (!user) return window.location.href = "index.html";
+    if (!user || !user.ID) { // تأكدنا أن ID مطابقة لما في قاعدة البيانات
+        window.location.href = "index.html";
+        return;
+    }
 
-    // تفعيل خيار التفكير الناقد للثالث متوسط فقط
-    if(user.StudentLevel && user.StudentLevel.includes("الثالث متوسط")) {
+    // تفعيل القائمة الجانبية للجوال
+    setupNavigation();
+
+    // إظهار التفكير الناقد لطلاب ثالث متوسط فقط
+    if (user.StudentLevel && user.StudentLevel.includes("ثالث متوسط")) {
         document.getElementById('criticalOption').style.display = 'block';
     }
 
     initWeekSelector();
-    setupEventListeners();
     
-    // التحميل الأولي
+    // تشغيل الجلب التلقائي عند تغيير الاختيارات
+    document.getElementById("subjectSelect").onchange = loadData;
+    document.getElementById("weekSelect").onchange = loadData;
+
+    // تحميل أول مادة تلقائياً
     loadData();
 });
 
@@ -25,18 +35,14 @@ function initWeekSelector() {
     }
 }
 
-function setupEventListeners() {
-    document.getElementById("subjectSelect").addEventListener("change", loadData);
-    document.getElementById("weekSelect").addEventListener("change", loadData);
-}
-
 async function loadData() {
     const user = JSON.parse(localStorage.getItem("user"));
     const subject = document.getElementById("subjectSelect").value;
     const week = parseInt(document.getElementById("weekSelect").value);
-    
-    const res = await getStudentData(subject, user.id);
-    
+
+    // الربط الفعلي: نرسل (اسم الجدول المادة، ID الطالب)
+    const res = await getStudentData(subject, user.ID); 
+
     if (res.success && res.data) {
         processAndDisplay(res.data, week, subject);
     } else {
@@ -46,56 +52,57 @@ async function loadData() {
 
 function processAndDisplay(data, week, subject) {
     let components = [];
-    const pr = week <= 6 ? (data.PR_1 || 0) : (data.PR_2 || 0);
+    // جلب درجة المشاركة بناءً على الأسبوع (PR1 للفترة الأولى، PR2 للثانية)
+    const prValue = week <= 6 ? data.PR_1 : data.PR_2;
 
-    // تقسيم البيانات بناءً على نوع المادة
     if (subject === 'Quran') {
         components = [
-            { label: "المشاركة", val: pr, key: 'PR' },
-            { label: "واجبات ومهام", val: data[`HW_${week}`], key: 'HW' },
-            { label: "قراءة القرآن", val: data[`read_${week}`], key: 'read' },
-            { label: "تجويد القرآن", val: data[`Taj_${week}`], key: 'Taj' },
-            { label: "حفظ القرآن", val: data[`save_${week}`], key: 'save' }
+            { label: "المشاركة", val: prValue },
+            { label: "واجبات ومهام", val: data[`HW_${week}`] },
+            { label: "قراءة القرآن", val: data[`read_${week}`] },
+            { label: "تجويد القرآن", val: data[`Taj_${week}`] },
+            { label: "حفظ القرآن", val: data[`save_${week}`] }
         ];
     } else {
         components = [
-            { label: "المشاركة", val: pr, key: 'PR' },
-            { label: "واجبات ومهام", val: data[`HW_${week}`], key: 'HW' },
-            { label: "اختبار قصير", val: data[`QZ_${week}`], key: 'QZ' }
+            { label: "المشاركة", val: prValue },
+            { label: "واجبات ومهام", val: data[`HW_${week}`] },
+            { label: "اختبار قصير", val: data[`QZ_${week}`] }
         ];
     }
 
-    // التحقق هل الأسبوع الحالي فيه درجات فعلاً؟
-    const hasData = components.some(c => c.val !== null && c.val !== undefined);
-    
-    if (!hasData) {
+    // التحقق الفعلي من وجود بيانات (ليست فارغة وليست صفر)
+    const hasValues = components.some(c => c.val !== null && c.val !== undefined && c.val !== "");
+
+    if (!hasValues) {
         showNoData();
         return;
     }
 
     hideNoData();
-    renderProgressBars(components);
-    renderComparisonChart(data, week, components);
-    generateSmartFeedback(components, data, week);
+    renderBars(components);
+    renderChart(data, week, subject);
 }
 
-function renderProgressBars(components) {
+function renderBars(components) {
     const container = document.getElementById('progressBarsContainer');
     container.innerHTML = '';
     
     components.forEach(comp => {
-        const value = comp.val || 0;
-        const percent = (value / 5) * 100;
-        const colorClass = percent >= 80 ? 'high' : percent >= 50 ? 'med' : 'low';
+        const val = parseFloat(comp.val) || 0;
+        const percent = (val / 5) * 100;
+        let color = "#ea4335"; // أحمر
+        if(percent >= 80) color = "#34a853"; // أخضر
+        else if(percent >= 50) color = "#fbbc05"; // أصفر
 
         container.innerHTML += `
-            <div class="progress-item">
-                <div class="progress-info">
+            <div style="margin-bottom:20px">
+                <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-weight:bold">
                     <span>${comp.label}</span>
-                    <strong>${value} / 5</strong>
+                    <span>${val} / 5</span>
                 </div>
-                <div class="progress-track">
-                    <div class="progress-fill ${colorClass}" style="width: ${percent}%"></div>
+                <div style="height:10px; background:#eee; border-radius:5px; overflow:hidden">
+                    <div style="width:${percent}%; height:100%; background:${color}; transition: width 0.5s"></div>
                 </div>
             </div>
         `;
@@ -153,13 +160,19 @@ function generateSmartFeedback(components, data, week) {
 }
 
 function showNoData() {
-    document.getElementById('scoresDisplayCard').style.display = 'none';
-    document.getElementById('analysisCard').style.display = 'none';
+    document.getElementById('dataContainer').style.display = 'none';
     document.getElementById('noDataMessage').style.display = 'block';
 }
 
 function hideNoData() {
-    document.getElementById('scoresDisplayCard').style.display = 'block';
-    document.getElementById('analysisCard').style.display = 'flex';
+    document.getElementById('dataContainer').style.display = 'block';
     document.getElementById('noDataMessage').style.display = 'none';
+}
+
+function setupNavigation() {
+    const logoutBtn = document.getElementById('logoutBtn');
+    if(logoutBtn) logoutBtn.onclick = () => {
+        localStorage.clear();
+        window.location.href = 'index.html';
+    };
 }
