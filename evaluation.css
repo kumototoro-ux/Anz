@@ -1,117 +1,164 @@
-/* evaluation.css - النسخة النهائية لإصلاح مشاكل العرض */
+/* evaluation.css - النسخة النهائية المطورة */
 
 :root {
-    --primary-gradient: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
-    --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --success: #34a853;
-    --warning: #fbbc05;
-    --danger: #ea4335;
+    --side-width: 260px;
     --primary: #1a73e8;
+    --danger: #d93025;
+    --bg-light: #f8f9fa;
+    --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
-/* 1. القائمة الجانبية: وضعناها في أقصى اليمين ثابتة */
+body {
+    margin: 0;
+    font-family: 'Tajawal', sans-serif;
+    background-color: var(--bg-light);
+    overflow-x: hidden;
+}
+
+/* --- القائمة الجانبية (ثابتة في الكمبيوتر) --- */
 .side-nav {
     position: fixed;
     top: 0;
-    right: 0; /* التثبيت في اليمين */
-    width: 260px;
+    right: 0;
+    width: var(--side-width);
     height: 100vh;
     background: #fff;
-    z-index: 2000;
     border-left: 1px solid #eee;
+    z-index: 2000;
     display: flex;
     flex-direction: column;
-    transition: transform 0.3s ease-in-out; /* حركة ناعمة */
+    transition: transform 0.3s ease-in-out;
 }
 
-/* 2. المحتوى الرئيسي: يجب أن يبدأ بعد 260px في الكمبيوتر */
+/* --- المحتوى الرئيسي (يزاح بمقدار عرض القائمة) --- */
 .main-content {
-    margin-right: 260px; /* دفع المحتوى لليسار ليفسح مجال للقائمة */
+    margin-right: var(--side-width) !important;
     padding: 20px;
     transition: margin-right 0.3s ease;
+    min-height: 100vh;
 }
 
-/* 3. شريط الجوال العلوي (مخفي في الكمبيوتر) */
+/* --- شريط الجوال (مخفي في الكمبيوتر) --- */
 .mobile-app-bar {
     display: none;
+    background: #fff;
+    padding: 10px 20px;
+    border-bottom: 1px solid #eee;
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 1500;
+    height: 60px;
+    align-items: center;
+    justify-content: space-between;
 }
 
-/* 4. تعديلات الجوال: هنا نحل مشكلة تقسيم الشاشة */
+.mobile-logo-text { font-weight: 800; color: var(--primary); }
+
+/* --- استجابة الجوال --- */
 @media (max-width: 992px) {
     .side-nav {
-        transform: translateX(100%); /* إخفاء القائمة تماماً خارج الشاشة جهة اليمين */
+        transform: translateX(100%); /* إخفاء تماماً يميناً */
     }
 
-    /* عندما نضيف كلاس active بواسطة JS، تعود القائمة للظهور */
     .side-nav.active {
-        transform: translateX(0);
-        box-shadow: -10px 0 30px rgba(0,0,0,0.15);
+        transform: translateX(0); /* ظهور فوق المحتوى */
+        box-shadow: -5px 0 25px rgba(0,0,0,0.15);
     }
 
     .main-content {
-        margin-right: 0 !important; /* في الجوال، المحتوى يأخذ كامل عرض الشاشة */
-        width: 100%;
-        padding-top: 80px; /* مساحة كافية تحت شريط الجوال */
+        margin-right: 0 !important;
+        padding-top: 80px; /* مساحة تحت شريط الجوال */
     }
 
     .mobile-app-bar {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-        position: fixed;
-        top: 0;
-        right: 0;
-        left: 0;
-        height: 60px;
-        background: #fff;
-        padding: 0 20px;
-        z-index: 1500;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .evaluation-grid {
+        grid-template-columns: 1fr !important;
     }
 }
 
-/* 5. إصلاح تسجيل الخروج */
-.nav-logout {
-    margin-top: auto;
-    padding: 20px;
-    color: var(--danger);
-    border-top: 1px solid #f5f5f5;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: bold;
-    white-space: nowrap; /* يمنع انقسام النص */
-}
-
-/* باقي التنسيقات (البطاقات، الأشرطة، إلخ) */
+/* --- شبكة التقييم --- */
 .evaluation-grid {
     display: grid;
     grid-template-columns: 1.1fr 0.9fr;
-    gap: 25px;
+    gap: 20px;
 }
 
-@media (max-width: 992px) {
-    .evaluation-grid {
-        grid-template-columns: 1fr;
-    }
+/* --- تنسيقات إضافية للبطاقات --- */
+.compact-card {
+    background: #fff;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: var(--card-shadow);
+    margin-bottom: 20px;
 }
 
-.progress-track {
-    height: 12px;
-    background: #f1f3f4;
-    border-radius: 50px;
-    overflow: hidden;
-    margin-top: 5px;
+.selection-bar {
+    display: flex;
+    gap: 15px;
+    align-items: flex-end;
 }
 
-.progress-fill {
-    height: 100%;
-    border-radius: 50px;
-    transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+.select-group { flex: 2; }
+.select-group-small { flex: 1; }
+
+.google-select {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #f1f3f4;
+    border-radius: 10px;
+    font-weight: 600;
+    background: #f8f9fa;
 }
 
-.progress-fill.high { background: linear-gradient(90deg, #34a853, #2ecc71); }
-.progress-fill.med { background: linear-gradient(90deg, #fbbc05, #f39c12); }
-.progress-fill.low { background: linear-gradient(90deg, #ea4335, #e74c3c); }
+.card-title {
+    font-size: 1rem;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.chart-container { height: 250px; position: relative; }
+
+.ai-feedback-box {
+    margin-top: 15px;
+    padding: 15px;
+    background: #e8f0fe;
+    border-right: 5px solid var(--primary);
+    border-radius: 10px;
+    color: #1967d2;
+}
+
+.nav-logout {
+    margin-top: auto;
+    padding: 20px;
+    border-top: 1px solid #eee;
+    color: var(--danger);
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.empty-state-card {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.empty-state-card i { font-size: 4rem; color: #dadce0; margin-bottom: 20px; }
+
+.menu-icon-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--primary);
+    cursor: pointer;
+}
