@@ -1,89 +1,93 @@
-import { getStudentData } from "./api.js";
+import { getStudentData } from './api.js';
 
-document.addEventListener("DOMContentLoaded", async () => {
+let attendanceData = null;
+const MAX_SESSIONS = 15; // عدد الحصص الكلي في الأسبوع
+
+async function initAttendance() {
     const user = JSON.parse(localStorage.getItem("user"));
-    const res = await getStudentData('attendance', user.id);
+    if (!user) return;
 
-    if (res.success) {
-        const data = res.data;
-        const weeksData = [];
-        const labels = [];
-
-        // معالجة البيانات: لدينا 12 أسبوعاً، كل أسبوع من 15 حصة
-        let lastRatedWeek = 0;
-        
-        for (let i = 1; i <= 12; i++) {
-            let val = data[`week_${i}`];
-            if (val !== null && val !== undefined && val !== "") {
-                weeksData.push(val);
-                labels.push(`الأسبوع ${i}`);
-                lastRatedWeek = i;
-            }
-        }
-
-        renderMainChart(labels, weeksData);
-        renderLastWeekCard(lastRatedWeek, data[`week_${lastRatedWeek}`]);
-        updateTotalSummary(weeksData);
+    const result = await getStudentData('AB', user.ID);
+    if (result.success) {
+        attendanceData = result.data;
+        processData(attendanceData);
+        populateWeeks(attendanceData);
     }
-});
+}
 
-function renderMainChart(labels, data) {
-    const ctx = document.getElementById('attendanceLineChart').getContext('2d');
+function processData(data) {
+    let totalAbsent = 0;
+    let weeksCount = 0;
+    let chartLabels = [];
+    let chartValues = [];
+
+    // تحليل الأسابيع من 1 إلى 14
+    for (let i = 1; i <= 14; i++) {
+        let val = data[i]; // قيمة العمود (رقم الأسبوع)
+        if (val !== null && val !== undefined && val !== "") {
+            let present = parseInt(val);
+            let absent = MAX_SESSIONS - present;
+            totalAbsent += absent;
+            weeksCount++;
+            
+            chartLabels.push(`أسبوع ${i}`);
+            chartValues.push(present);
+        }
+    }
+
+    renderChart(chartLabels, chartValues);
+    generateSmartAlert(totalAbsent);
+}
+
+function generateSmartAlert(totalAbsent) {
+    const alertBox = document.getElementById('smart-alert');
+    let message = "";
+    let statusClass = "bg-light text-dark";
+    let showWhatsApp = false;
+
+    if (totalAbsent >= 80) {
+        message = "⚠️ تم وضع اسمك في القائمة السوداء! سيتم نقلك لقسم الانتساب. تواصل فوراً مع المشرف العام.";
+        statusClass = "bg-dark text-white";
+        showWhatsApp = true;
+    } else if (totalAbsent >= 40) {
+        message = "🚨 إنذار نهائي: غيابك تجاوز 40 حصة. تواصل مع المشرف العام فوراً لتفادي الإجراءات الصارمة.";
+        statusClass = "bg-danger text-white";
+        showWhatsApp = true;
+    } else if (totalAbsent >= 30) {
+        message = "📢 تنبيه قوي: غيابك تجاوز 30 حصة! هذا المستوى يهدد استمرارك في القسم الأونلاين.";
+        statusClass = "bg-warning text-dark";
+    } else if (totalAbsent >= 20) {
+        message = "⚠️ تنبيه: غيابك تجاوز 20 حصة. يرجى الالتزام بالحضور لتحسين مستواك.";
+        statusClass = "bg-info text-dark";
+    } else {
+        message = "✅ مستواك في الحضور ممتاز. استمر على هذا الانضباط!";
+        statusClass = "bg-success text-white";
+    }
+
+    alertBox.className = `alert-box p-4 rounded-3 text-center ${statusClass}`;
+    alertBox.innerHTML = `
+        <h6 class="fw-bold">إجمالي الغياب: ${totalAbsent} حصة</h6>
+        <p class="small">${message}</p>
+        ${showWhatsApp ? `<a href="https://wa.me/966XXXXXXXXX" class="btn btn-light btn-sm mt-2 fw-bold">تواصل مع المشرف واتساب</a>` : ''}
+    `;
+}
+
+// دالة التمثيل البياني باستخدام Chart.js
+function renderChart(labels, values) {
+    const ctx = document.getElementById('attendanceChart').getContext('2d');
     new Chart(ctx, {
         type: 'line',
         data: {
             labels: labels,
             datasets: [{
                 label: 'عدد حصص الحضور',
-                data: data,
-                borderColor: '#1a73e8',
-                backgroundColor: 'rgba(26, 115, 232, 0.1)',
+                data: values,
+                borderColor: '#4e73df',
+                tension: 0.3,
                 fill: true,
-                tension: 0.4,
-                pointRadius: 5,
-                pointBackgroundColor: '#1a73e8'
+                backgroundColor: 'rgba(78, 115, 223, 0.05)'
             }]
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: { max: 15, min: 0, ticks: { stepSize: 3 } }
-            },
-            plugins: { legend: { display: false } }
-        }
+        options: { responsive: true, maintainAspectRatio: false }
     });
-}
-
-function renderLastWeekCard(weekNum, value) {
-    document.getElementById("lastWeekLabel").innerText = `الأسبوع ${weekNum}`;
-    const attendanceCount = parseInt(value);
-    const absentCount = 15 - attendanceCount;
-    const percent = Math.round((attendanceCount / 15) * 100);
-
-    document.getElementById("attendancePercent").innerText = `${percent}%`;
-    document.getElementById("presentHolidays").innerText = attendanceCount;
-    document.getElementById("absentHolidays").innerText = absentCount;
-
-    // تحديث الدائرة الملونة
-    const circle = document.getElementById("progressCircle");
-    circle.style.background = `conic-gradient(#34a853 ${percent}%, #f1f3f4 0%)`;
-}
-
-function updateTotalSummary(data) {
-    const totalPossible = data.length * 15;
-    const totalAttended = data.reduce((a, b) => a + parseInt(b), 0);
-    const totalPercent = Math.round((totalAttended / totalPossible) * 100);
-
-    let msg = "";
-    if (totalPercent >= 95) msg = "ممتاز! حضورك مثالي ونفخر بانضباطك.";
-    else if (totalPercent >= 85) msg = "جيد جداً، واصل الالتزام بالحضور لضمان الفهم الكامل للمواد.";
-    else msg = "انتبه! نسبة غيابك بدأت تؤثر على مستواك، ننصحك بالالتزام أكثر.";
-
-    document.getElementById("totalSummaryText").innerHTML = `
-        <div class="motivation-box">
-            <strong>نسبة الانضباط التراكمية: ${totalPercent}%</strong>
-            <p>${msg}</p>
-        </div>
-    `;
 }
