@@ -16,26 +16,40 @@ body {
 }
 
 /* --- القائمة الجانبية (ثابتة في الكمبيوتر) --- */
+/* --- القائمة الجانبية في الكمبيوتر --- */
 .side-nav {
     position: fixed;
     top: 0;
     right: 0;
-    width: var(--side-width);
+    width: var(--side-width); /* التأكد أنها 260px */
     height: 100vh;
     background: #fff;
     border-left: 1px solid #eee;
     z-index: 2000;
     display: flex;
     flex-direction: column;
-    transition: transform 0.3s ease-in-out;
+    /* إزالة أي تحويلات (Transform) في وضع الكمبيوتر */
+    transform: none !important; 
 }
 
-/* --- المحتوى الرئيسي (يزاح بمقدار عرض القائمة) --- */
+/* --- المحتوى الرئيسي في الكمبيوتر --- */
 .main-content {
-    margin-right: var(--side-width) !important;
-    padding: 20px;
-    transition: margin-right 0.3s ease;
+    /* يجب أن يكون المارجن مساوياً تماماً لعرض القائمة */
+    margin-right: var(--side-width) !important; 
+    margin-left: 0 !important;
+    padding: 30px;
+    display: block !important;
     min-height: 100vh;
+    background-color: var(--bg-light);
+    /* لضمان عدم تداخل العناصر */
+    box-sizing: border-box; 
+}
+
+/* لضمان استقرار العرض في الشاشات العريضة جداً */
+@media (min-width: 993px) {
+    .main-content {
+        width: calc(100% - var(--side-width)) !important;
+    }
 }
 
 /* --- شريط الجوال (مخفي في الكمبيوتر) --- */
