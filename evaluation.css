@@ -1,15 +1,49 @@
-/* evaluation.css - النسخة المجملة والمطورة */
+/* evaluation.css - النسخة المصححة والمجملة */
 
 :root {
     --primary-gradient: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
     --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* تعريف المتغيرات الناقصة لضمان عمل الألوان */
+    --success: #34a853;
+    --warning: #fbbc05;
+    --danger: #ea4335;
+    --primary: #1a73e8;
+}
+
+/* إصلاح مشكلة القائمة الجانبية وتداخل "تسجيل الخروج" (الصورة 2 و 3) */
+.side-nav {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100vh;
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 260px;
+    background: #fff;
+    z-index: 1000;
+    transition: var(--transition-smooth);
+    border-left: 1px solid #eee;
+}
+
+.nav-logout {
+    margin-top: auto; /* يدفع الزر للأسفل تماماً */
+    padding: 20px;
+    color: var(--danger);
+    border-top: 1px solid #f5f5f5;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: bold;
+    white-space: nowrap; /* يمنع انقسام كلمة تسجيل الخروج لسطرين */
 }
 
 /* الحاوية الرئيسية */
 .evaluation-grid {
     display: grid;
-    grid-template-columns: 1.1fr 0.9fr; /* توزيع غير متماثل لجمالية أكبر */
+    grid-template-columns: 1.1fr 0.9fr;
     gap: 25px;
     align-items: start;
     margin-top: 25px;
@@ -25,127 +59,58 @@
     transition: var(--transition-smooth);
 }
 
-.compact-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
-}
-
-/* شريط الخيارات العلوي */
-.selection-bar {
-    background: #ffffff;
-    padding: 20px;
-    border-radius: 20px;
-    box-shadow: var(--card-shadow);
-    display: flex;
-    gap: 20px;
-}
-
-/* تجميل القوائم المنسدلة */
+/* تجميل القوائم المنسدلة (إصلاح شكل المربعات في الصورة 1) */
 .google-select {
+    width: 100%;
+    padding: 10px;
     border: 2px solid #f1f3f4 !important;
+    border-radius: 10px !important;
     background-color: #f8f9fa !important;
     font-family: 'Tajawal', sans-serif;
     font-weight: 600;
-    color: #3c4043;
-    transition: var(--transition-smooth);
 }
 
-.google-select:focus {
-    border-color: #1a73e8 !important;
-    background-color: #fff !important;
-    outline: none;
-    box-shadow: 0 0 0 4px rgba(26, 115, 232, 0.1);
+/* تحسينات الموبايل (إصلاح الصورة 1 و 3) */
+@media (max-width: 992px) {
+    .side-nav {
+        right: -260px; /* إخفاء القائمة في الجوال افتراضياً */
+    }
+
+    .side-nav.active {
+        right: 0; /* إظهارها عند الضغط على الزر */
+        box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+    }
+
+    .evaluation-grid {
+        grid-template-columns: 1fr; /* جعل العناصر تحت بعضها في الجوال */
+    }
+    
+    .selection-bar {
+        flex-direction: column; /* جعل "اختر المادة" و "الأسبوع" تحت بعض */
+        gap: 15px;
+    }
+
+    .main-content {
+        margin-right: 0;
+        width: 100%;
+        padding: 15px;
+    }
 }
 
-/* تجميل أشرطة التقدم */
-.progress-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 18px;
-}
-
-.progress-info {
-    margin-bottom: 8px;
-}
-
-.progress-info span {
-    font-size: 0.9rem;
-    color: #5f6368;
-}
-
-.progress-info strong {
-    color: #202124;
-    font-size: 1rem;
-}
-
+/* تنسيق أشرطة التقدم */
 .progress-track {
-    height: 12px; /* أكثر سمكاً قليلاً لتكون واضحة */
+    height: 12px;
     background: #f1f3f4;
     border-radius: 50px;
-    position: relative;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+    overflow: hidden;
 }
 
 .progress-fill {
     height: 100%;
     border-radius: 50px;
-    position: relative;
-    transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1); /* حركة Elastic ممتعة */
+    transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* إضافة لمعة (Glow) للأشرطة */
-.progress-fill.high { 
-    background: linear-gradient(90deg, #34a853, #2ecc71);
-    box-shadow: 0 4px 12px rgba(52, 168, 83, 0.3);
-}
-.progress-fill.med { 
-    background: linear-gradient(90deg, #fbbc05, #f39c12);
-    box-shadow: 0 4px 12px rgba(251, 188, 5, 0.3);
-}
-.progress-fill.low { 
-    background: linear-gradient(90deg, #ea4335, #e74c3c);
-    box-shadow: 0 4px 12px rgba(234, 67, 53, 0.3);
-}
-
-/* تجميل صندوق الذكاء الاصطناعي */
-.ai-feedback-box {
-    background: linear-gradient(to left, #f0f7ff, #ffffff);
-    padding: 18px;
-    border-radius: 15px;
-    border-right: 6px solid #1a73e8;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    box-shadow: 0 4px 15px rgba(26, 115, 232, 0.08);
-}
-
-.ai-feedback-box p {
-    margin: 0;
-    line-height: 1.6;
-    font-weight: 500;
-}
-
-/* تجميل حالة لا توجد بيانات */
-.empty-card {
-    padding: 80px 20px !important;
-    border: 2px dashed #dadce0;
-    background: transparent;
-    box-shadow: none;
-}
-
-.empty-card i {
-    color: #bdc1c6;
-    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.05));
-}
-
-/* تحسينات الموبايل */
-@media (max-width: 992px) {
-    .evaluation-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .selection-bar {
-        flex-direction: column;
-        gap: 15px;
-    }
-}
+.progress-fill.high { background: linear-gradient(90deg, #34a853, #2ecc71); }
+.progress-fill.med { background: linear-gradient(90deg, #fbbc05, #f39c12); }
+.progress-fill.low { background: linear-gradient(90deg, #ea4335, #e74c3c); }
