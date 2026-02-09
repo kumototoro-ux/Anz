@@ -1,102 +1,78 @@
-/* evaluation.css - الإصلاح الشامل والنهائي */
+/* evaluation.css - الإصلاح المتوافق مع صفحة معلوماتي */
 
 :root {
     --side-width: 260px;
     --primary: #1a73e8;
-    --danger: #d93025;
     --bg-light: #f8f9fa;
     --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
-/* ضبط الهيكل الأساسي لمنع التداخل */
 body {
     margin: 0;
     font-family: 'Tajawal', sans-serif;
     background-color: var(--bg-light);
-    display: flex; /* يجعل العناصر تقف بجانب بعضها */
-    flex-direction: row-reverse; /* الترتيب من اليمين لليسار */
-    min-height: 100vh;
-    overflow-x: hidden;
+    direction: rtl;
 }
 
-/* --- القائمة الجانبية في الكمبيوتر --- */
-.side-nav {
-    width: var(--side-width);
-    min-width: var(--side-width);
-    height: 100vh;
-    background: #fff;
-    border-left: 1px solid #eee;
-    display: flex;
-    flex-direction: column;
-    position: sticky; /* تحجز مكانها ولا تتداخل مع المحتوى */
-    top: 0;
-    z-index: 2000;
+/* --- المحتوى الرئيسي: يبتعد عن القائمة بمارجن ثابت في الكمبيوتر --- */
+.main-content {
+    margin-right: var(--side-width) !important;
+    padding: 40px;
+    min-height: 100vh;
+    box-sizing: border-box;
     transition: all 0.3s ease;
 }
 
-/* --- المحتوى الرئيسي في الكمبيوتر --- */
-.main-content {
-    flex: 1; /* يأخذ كل المساحة المتبقية تلقائياً */
-    padding: 30px;
-    box-sizing: border-box;
-    overflow-y: auto;
-    background-color: var(--bg-light);
-}
-
-/* شريط الجوال (يظهر في الجوال فقط) */
-.mobile-app-bar {
-    display: none; /* مخفي في الكمبيوتر */
-    background: #fff;
-    padding: 10px 20px;
-    border-bottom: 1px solid #eee;
+/* --- القائمة الجانبية (نفس خصائص الهوم ومعلوماتي) --- */
+.side-nav {
     position: fixed;
     top: 0;
     right: 0;
-    left: 0;
-    z-index: 1500;
-    height: 60px;
-    align-items: center;
-    justify-content: space-between;
+    width: var(--side-width);
+    height: 100vh;
+    background: #fff;
+    border-left: 1px solid #eee;
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
 }
 
-.mobile-logo-text { font-weight: 800; color: var(--primary); }
+/* --- الـ Overlay (مطابق لملف معلوماتي) --- */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    z-index: 1800;
+}
+.sidebar-overlay.active { display: block; }
 
-/* --- استجابة الجوال (Media Query) --- */
+/* --- استجابة الجوال --- */
 @media (max-width: 992px) {
-    body {
-        display: block; /* إلغاء نظام Flex في الجوال ليصبح التصميم عمودياً */
+    .main-content {
+        margin-right: 0 !important;
+        padding: 20px;
+        padding-top: 80px;
     }
 
     .side-nav {
-        position: fixed; /* تعود لتصبح طبقة فوق المحتوى في الجوال فقط */
-        right: 0;
-        top: 0;
-        transform: translateX(100%); /* إخفاء خارج الشاشة */
-        height: 100vh;
-        z-index: 2500;
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
     }
 
     .side-nav.active {
-        transform: translateX(0); /* ظهور عند الضغط على الزر */
-        box-shadow: -5px 0 25px rgba(0,0,0,0.15);
-    }
-
-    .main-content {
-        width: 100% !important;
-        padding: 20px;
-        padding-top: 80px; /* مساحة فارغة تحت شريط الجوال */
-    }
-
-    .mobile-app-bar {
-        display: flex; /* إظهار الشريط في الجوال */
+        transform: translateX(0);
     }
 
     .evaluation-grid {
-        grid-template-columns: 1fr !important; /* عمود واحد في الجوال */
+        grid-template-columns: 1fr !important;
     }
 }
 
-/* --- تنسيقات العناصر الداخلية (الشبكة والبطاقات) --- */
+/* --- شبكة التقييم والبطاقات --- */
 .evaluation-grid {
     display: grid;
     grid-template-columns: 1.1fr 0.9fr;
@@ -114,7 +90,6 @@ body {
 .selection-bar {
     display: flex;
     gap: 15px;
-    align-items: flex-end;
 }
 
 .select-group { flex: 2; }
@@ -125,63 +100,36 @@ body {
     padding: 10px;
     border: 2px solid #f1f3f4;
     border-radius: 10px;
-    font-weight: 600;
     background: #f8f9fa;
     font-family: 'Tajawal', sans-serif;
+    font-weight: 600;
 }
 
 .card-title {
-    font-size: 1rem;
-    margin-bottom: 15px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #eee;
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    color: #3c4043;
     display: flex;
     align-items: center;
     gap: 10px;
-    color: #3c4043;
 }
 
-.chart-container { height: 250px; position: relative; }
+.chart-container { height: 280px; position: relative; }
 
 .ai-feedback-box {
-    margin-top: 15px;
+    margin-top: 20px;
     padding: 15px;
     background: #e8f0fe;
     border-right: 5px solid var(--primary);
-    border-radius: 10px;
+    border-radius: 8px;
     color: #1967d2;
+    font-size: 0.95rem;
 }
 
-/* تنسيق الروابط واللوجو */
-.nav-logo { padding: 30px; font-size: 24px; font-weight: 900; color: var(--primary); text-align: center; }
-.nav-links { list-style: none; padding: 0; margin: 0; }
-.nav-links li a {
-    display: flex;
-    align-items: center;
-    padding: 15px 25px;
+.empty-state-card {
+    text-align: center;
+    padding: 60px 20px;
     color: #5f6368;
-    text-decoration: none;
-    gap: 15px;
-    transition: 0.2s;
-}
-.nav-links li.active a { background: #e8f0fe; color: var(--primary); border-radius: 0 25px 25px 0; }
-
-.nav-logout {
-    margin-top: auto;
-    padding: 20px;
-    border-top: 1px solid #eee;
-    color: var(--danger);
-    cursor: pointer;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    gap: 10px;
 }
 
-.menu-icon-btn {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    color: var(--primary);
-    cursor: pointer;
-}
+.empty-state-card i { font-size: 3rem; margin-bottom: 15px; color: #dadce0; }
