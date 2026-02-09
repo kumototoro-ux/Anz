@@ -5,63 +5,74 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>معلوماتي | نظام مقياس</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="profile.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="home.css">
 </head>
 <body>
 
-    <nav class="side-nav">
-        </nav>
+    <div class="mobile-app-bar">
+        <div class="app-bar-container">
+            <button id="menuToggle" class="menu-icon-btn"><i class="fas fa-bars"></i></button>
+            <div class="app-title-wrapper">
+                <span class="app-name">نظام مقياس</span>
+                <span id="mobileUserName" class="app-subtitle">لوحة الطالب</span>
+            </div>
+        </div>
+    </div>
 
-    <main class="profile-container">
-        <header class="page-header animate-fade">
-            <h1>الملف الشخصي</h1>
-            <p>إدارة معلوماتك الشخصية والأكاديمية</p>
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <nav class="side-nav">
+        <div class="nav-logo">MQ</div>
+        <ul class="nav-links">
+            <li><a href="home.html"><i class="fas fa-home"></i> <span>الرئيسية</span></a></li>
+            <li class="active"><a href="profile.html"><i class="fas fa-user-circle"></i> <span>معلوماتي</span></a></li>
+            <li><a href="evaluation.html"><i class="fas fa-star"></i> <span>المواد</span></a></li>
+            <li><a href="attendance.html"><i class="fas fa-calendar-check"></i> <span>الغياب</span></a></li>
+            <li><a href="results.html"><i class="fas fa-poll-h"></i> <span>النتائج</span></a></li>
+        </ul>
+        <div class="nav-logout" id="logoutBtn">
+            <i class="fas fa-sign-out-alt"></i> <span>تسجيل الخروج</span>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <header class="home-header">
+            <div class="user-info">
+                <h1 id="welcomeHeader">ملفي الشخصي</h1>
+                <p>بياناتك المسجلة في نظام مقياس</p>
+            </div>
         </header>
 
-        <div class="profile-card animate-slide-up">
-            <div class="profile-hero">
-                <div class="avatar-wrapper">
-                    <img src="https://ui-avatars.com/api/?name=User&background=1a73e8&color=fff&size=128" id="userAvatar" alt="Avatar">
-                    <div class="status-indicator"></div>
+        <div class="dashboard-grid">
+            <div class="card animate-up" style="grid-column: 1 / -1; display: flex; align-items: center; gap: 20px; padding: 30px;">
+                <div id="userInitials" style="width: 80px; height: 80px; border-radius: 20px; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800;">
+                    --
                 </div>
-                <h2 id="fullName">جاري التحميل...</h2>
-                <span class="student-label">طالب</span>
-            </div>
-
-            <div class="info-grid">
-                <div class="info-item">
-                    <i class="fas fa-id-card"></i>
-                    <div class="info-content">
-                        <label>رقم الهوية</label>
-                        <p id="infoId">-</p>
-                    </div>
-                </div>
-                <div class="info-item">
-                    <i class="fas fa-school"></i>
-                    <div class="info-content">
-                        <label>الصف الدراسي</label>
-                        <p id="infoClass">-</p>
-                    </div>
-                </div>
-                <div class="info-item">
-                    <i class="fas fa-calendar-alt"></i>
-                    <div class="info-content">
-                        <label>العام الأكاديمي</label>
-                        <p id="infoYear">2026</p>
-                    </div>
-                </div>
-                <div class="info-item">
-                    <i class="fas fa-phone"></i>
-                    <div class="info-content">
-                        <label>رقم التواصل المسجل</label>
-                        <p id="infoPhone">-</p>
-                    </div>
+                <div>
+                    <h2 id="nameAR" style="margin: 0;">جاري التحميل...</h2>
+                    <p id="nameEN" style="color: var(--text-sub); margin: 5px 0 0 0;"></p>
                 </div>
             </div>
 
-            <div class="profile-footer">
-                <p><i class="fas fa-info-circle"></i> إذا وجدت خطأ في بياناتك، يرجى مراجعة شؤون الطلاب.</p>
+            <div class="card animate-up" style="animation-delay: 0.1s;">
+                <div class="card-header"><h3><i class="fas fa-info-circle"></i> البيانات الشخصية</h3></div>
+                <div id="personalInfoContainer" class="card-body">
+                    <div class="info-row"><strong>رقم الهوية:</strong> <span id="val_ID">---</span></div>
+                    <div class="info-row"><strong>تاريخ الميلاد:</strong> <span id="val_BirthDate">---</span></div>
+                    <div class="info-row"><strong>الجنسية:</strong> <span id="val_Nationality">---</span></div>
+                    <div class="info-row"><strong>الجنس:</strong> <span id="val_Gender">---</span></div>
+                </div>
+            </div>
+
+            <div class="card animate-up" style="animation-delay: 0.2s;">
+                <div class="card-header"><h3><i class="fas fa-graduation-cap"></i> البيانات الأكاديمية</h3></div>
+                <div id="academicInfoContainer" class="card-body">
+                    <div class="info-row"><strong>المستوى الدراسي:</strong> <span id="val_StudentLevel">---</span></div>
+                    <div class="info-row"><strong>الفصل/الشعبة:</strong> <span id="val_Class">---</span></div>
+                    <div class="info-row"><strong>الفصل الدراسي:</strong> <span id="val_Term">---</span></div>
+                    <div class="info-row"><strong>العام الدراسي:</strong> <span id="val_AcademicYear">---</span></div>
+                </div>
             </div>
         </div>
     </main>
