@@ -2,6 +2,7 @@ import { getStudentData } from "./api.js";
 
 let comparisonChart; 
 
+// 1. الدالة الرئيسية التي تعمل عند تحميل الصفحة
 document.addEventListener("DOMContentLoaded", async () => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (!user || !user.ID) {
@@ -9,27 +10,31 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
-    // تفعيل القائمة الجانبية بنفس منطق صفحة معلوماتي
+    // تفعيل القائمة الجانبية (نفس منطق صفحة معلوماتي)
     setupNavigation();
 
-    // التحقق من مادة التفكير الناقد
+    // التحقق من مادة التفكير الناقد بناءً على مستوى الطالب
     const level = user.StudentLevel ? String(user.StudentLevel) : "";
     if ((level.includes("ثالث") || level.includes("3")) && level.includes("متوسط")) {
         const criticalOpt = document.getElementById('criticalOption');
         if (criticalOpt) criticalOpt.style.display = 'block';
     }
 
+    // تجهيز قائمة الأسابيع
     initWeekSelector();
     
     const subSelect = document.getElementById("subjectSelect");
     const weekSelect = document.getElementById("weekSelect");
 
+    // ربط القوائم المنسدلة بدالة تحميل البيانات
     if (subSelect) subSelect.onchange = loadData;
     if (weekSelect) weekSelect.onchange = loadData;
 
+    // تحميل البيانات لأول مرة
     loadData();
 });
 
+// 2. دالة إعداد القائمة الجانبية وتسجيل الخروج
 function setupNavigation() {
     const menuToggle = document.getElementById('menuToggle');
     const sideNav = document.querySelector('.side-nav');
@@ -56,45 +61,17 @@ function setupNavigation() {
     }
 }
 
-    // 2. التحقق من مادة التفكير الناقد (تم تصحيح المنطق)
-    const level = user.StudentLevel ? String(user.StudentLevel) : "";
-    if ((level.includes("ثالث") || level.includes("3")) && level.includes("متوسط")) {
-        const criticalOpt = document.getElementById('criticalOption');
-        if (criticalOpt) criticalOpt.style.display = 'block';
-    }
-
-    initWeekSelector();
-    
-    const subSelect = document.getElementById("subjectSelect");
-    const weekSelect = document.getElementById("weekSelect");
-
-    if (subSelect) subSelect.onchange = loadData;
-    if (weekSelect) weekSelect.onchange = loadData;
-
-    loadData();
-    setupLogout(); 
-});
-
-// دالة تسجيل الخروج
-function setupLogout() {
-    const logoutBtn = document.getElementById('logoutBtn');
-    if(logoutBtn) {
-        logoutBtn.onclick = () => {
-            localStorage.clear();
-            window.location.href = 'index.html';
-        };
-    }
-}
-
+// 3. دالة تعبئة الأسابيع في القائمة
 function initWeekSelector() {
     const ws = document.getElementById("weekSelect");
     if (!ws) return;
-    ws.innerHTML = ""; // مسح المحتوى القديم
+    ws.innerHTML = ""; 
     for(let i=1; i<=12; i++) {
         ws.innerHTML += `<option value="${i}">الأسبوع ${i}</option>`;
     }
 }
 
+// 4. دالة جلب البيانات من api.js
 async function loadData() {
     const user = JSON.parse(localStorage.getItem("user"));
     const subSelect = document.getElementById("subjectSelect");
@@ -105,15 +82,20 @@ async function loadData() {
     const subject = subSelect.value;
     const week = parseInt(weekSelect.value);
 
-    const res = await getStudentData(subject, user.ID); 
-
-    if (res.success && res.data) {
-        processAndDisplay(res.data, week, subject);
-    } else {
+    try {
+        const res = await getStudentData(subject, user.ID); 
+        if (res.success && res.data) {
+            processAndDisplay(res.data, week, subject);
+        } else {
+            showNoData();
+        }
+    } catch (error) {
+        console.error("خطأ في جلب البيانات:", error);
         showNoData();
     }
 }
 
+// 5. معالجة البيانات وعرضها
 function processAndDisplay(data, week, subject) {
     let components = [];
     const prValue = week <= 6 ? data.PR_1 : data.PR_2;
@@ -147,6 +129,7 @@ function processAndDisplay(data, week, subject) {
     generateSmartFeedback(components);
 }
 
+// 6. رسم أعمدة التقييم
 function renderBars(components) {
     const container = document.getElementById('progressBarsContainer');
     if (!container) return;
@@ -173,6 +156,7 @@ function renderBars(components) {
     });
 }
 
+// 7. رسم الرسم البياني التراكمي
 function renderComparisonChart(data, currentWeek, components) {
     const canvas = document.getElementById('comparisonChart');
     if (!canvas) return;
@@ -229,6 +213,7 @@ function renderComparisonChart(data, currentWeek, components) {
     });
 }
 
+// 8. توليد الملاحظات الذكية
 function generateSmartFeedback(components) {
     const validComps = components.filter(c => c.val !== null && c.val !== "");
     const avg = validComps.reduce((a, b) => a + (parseFloat(b.val) || 0), 0) / (validComps.length || 1);
@@ -244,6 +229,7 @@ function generateSmartFeedback(components) {
     }
 }
 
+// 9. دوال التحكم في الواجهة (إظهار/إخفاء البيانات)
 function showNoData() {
     const dc = document.getElementById('dataContainer');
     const nd = document.getElementById('noDataMessage');
