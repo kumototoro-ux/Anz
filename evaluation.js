@@ -21,6 +21,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         };
     }
 
+    if (mainContent && sideNav) {
+        mainContent.addEventListener('click', () => {
+            if (window.innerWidth <= 992) {
+                sideNav.classList.remove('active');
+            }
+        });
+    }
     // إغلاق القائمة عند الضغط على المحتوى الرئيسي
     const mainContent = document.querySelector('.main-content');
     if (mainContent) {
