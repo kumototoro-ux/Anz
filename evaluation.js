@@ -3,34 +3,58 @@ import { getStudentData } from "./api.js";
 let comparisonChart; 
 
 document.addEventListener("DOMContentLoaded", async () => {
-    // 1. استرجاع بيانات الطالب
     const user = JSON.parse(localStorage.getItem("user"));
     if (!user || !user.ID) {
         window.location.href = "index.html";
         return;
     }
 
-    // --- تعريف العناصر أولاً ---
+    // تفعيل القائمة الجانبية بنفس منطق صفحة معلوماتي
+    setupNavigation();
+
+    // التحقق من مادة التفكير الناقد
+    const level = user.StudentLevel ? String(user.StudentLevel) : "";
+    if ((level.includes("ثالث") || level.includes("3")) && level.includes("متوسط")) {
+        const criticalOpt = document.getElementById('criticalOption');
+        if (criticalOpt) criticalOpt.style.display = 'block';
+    }
+
+    initWeekSelector();
+    
+    const subSelect = document.getElementById("subjectSelect");
+    const weekSelect = document.getElementById("weekSelect");
+
+    if (subSelect) subSelect.onchange = loadData;
+    if (weekSelect) weekSelect.onchange = loadData;
+
+    loadData();
+});
+
+function setupNavigation() {
     const menuToggle = document.getElementById('menuToggle');
     const sideNav = document.querySelector('.side-nav');
-    const mainContent = document.querySelector('.main-content'); // يجب تعريفه هنا قبل استخدامه
+    const overlay = document.getElementById('sidebarOverlay');
+    const logoutBtn = document.getElementById('logoutBtn');
 
-    // --- تفعيل القائمة في الجوال ---
-    if (menuToggle && sideNav) {
-        menuToggle.onclick = (e) => {
-            e.stopPropagation();
+    if (menuToggle && sideNav && overlay) {
+        menuToggle.onclick = () => {
             sideNav.classList.toggle('active');
+            overlay.classList.toggle('active');
+        };
+
+        overlay.onclick = () => {
+            sideNav.classList.remove('active');
+            overlay.classList.remove('active');
         };
     }
 
-    // --- إغلاق القائمة عند الضغط على المحتوى (للجوال) ---
-    if (mainContent && sideNav) {
-        mainContent.addEventListener('click', () => {
-            if (window.innerWidth <= 992) {
-                sideNav.classList.remove('active');
-            }
-        });
+    if(logoutBtn) {
+        logoutBtn.onclick = () => {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        };
     }
+}
 
     // 2. التحقق من مادة التفكير الناقد (تم تصحيح المنطق)
     const level = user.StudentLevel ? String(user.StudentLevel) : "";
