@@ -6,18 +6,21 @@
     <title>تقييم المواد | نظام مقياس</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="home.css"> 
-    <link rel="stylesheet" href="evaluation.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="home.css"> <link rel="stylesheet" href="evaluation.css"> <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
     <div class="mobile-app-bar">
-        <button id="menuToggle" class="menu-icon-btn">
-            <i class="fas fa-bars"></i>
-        </button>
-        <div class="mobile-logo-text">MQ نظام مقياس</div>
+        <div class="app-bar-container">
+            <button id="menuToggle" class="menu-icon-btn"><i class="fas fa-bars"></i></button>
+            <div class="app-title-wrapper">
+                <span class="app-name">نظام مقياس</span>
+                <span class="app-subtitle">مركز التقييم</span>
+            </div>
+        </div>
     </div>
+
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
     <nav class="side-nav">
         <div class="nav-logo">MQ</div>
@@ -37,10 +40,11 @@
         <header class="home-header">
             <div class="user-info">
                 <h1>مركز التقييم الأكاديمي</h1>
+                <p>متابعة مستوى التحصيل الدراسي الأسبوعي</p>
             </div>
         </header>
 
-        <div class="card compact-card animate-up selection-card">
+        <div class="card compact-card animate-up">
             <div class="selection-bar">
                 <div class="select-group">
                     <label>المادة الدراسية:</label>
@@ -68,16 +72,12 @@
 
         <div id="dataContainer" class="evaluation-grid" style="display:none;">
             <div class="card compact-card animate-up">
-                <h3 class="card-title">
-                    <i class="fas fa-chart-bar"></i> تفاصيل درجات الأسبوع
-                </h3>
-                <div id="progressBarsContainer" class="progress-grid"></div>
+                <h3 class="card-title"><i class="fas fa-chart-bar"></i> تفاصيل درجات الأسبوع</h3>
+                <div id="progressBarsContainer"></div>
             </div>
             
             <div class="card compact-card animate-up" style="animation-delay: 0.1s;">
-                <h3 class="card-title">
-                    <i class="fas fa-line-chart"></i> تحليل الأداء التراكمي
-                </h3>
+                <h3 class="card-title"><i class="fas fa-line-chart"></i> تحليل الأداء التراكمي</h3>
                 <div class="chart-container">
                     <canvas id="comparisonChart"></canvas>
                 </div>
@@ -90,7 +90,7 @@
         <div id="noDataMessage" class="card empty-state-card animate-up" style="display:none;">
             <i class="fas fa-folder-open"></i>
             <h3>لا يوجد تقييم حالي لهذا الأسبوع</h3>
-            <p>المعلم لم يرصد الدرجات بعد أو أننا لم نصل لهذا الأسبوع الدراسي.</p>
+            <p>المعلم لم يرصد الدرجات بعد أو الأسبوع الدراسي لم يبدأ.</p>
         </div>
     </main>
 
