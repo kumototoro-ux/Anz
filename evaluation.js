@@ -10,38 +10,42 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
-    // --- اضف هذا الجزء هنا بالضبط لتفعيل القائمة في الجوال ---
+    // --- تفعيل القائمة في الجوال ---
     const menuToggle = document.getElementById('menuToggle');
     const sideNav = document.querySelector('.side-nav');
 
-    if (menuToggle) {
-        menuToggle.onclick = () => {
-            sideNav.classList.toggle('active'); // يضيف كلاس active لفتح القائمة
+    if (menuToggle && sideNav) {
+        menuToggle.onclick = (e) => {
+            e.stopPropagation();
+            sideNav.classList.toggle('active');
         };
     }
 
-    // إغلاق القائمة عند الضغط على المحتوى الرئيسي (للجوال)
-    document.querySelector('.main-content').onclick = () => {
-        sideNav.classList.remove('active');
-    };
-    // -------------------------------------------------------
+    // إغلاق القائمة عند الضغط على المحتوى الرئيسي
+    const mainContent = document.querySelector('.main-content');
+    if (mainContent) {
+        mainContent.onclick = () => {
+            if (sideNav) sideNav.classList.remove('active');
+        };
+    }
 
-    // 2. التحقق من مادة التفكير الناقد
+    // 2. التحقق من مادة التفكير الناقد (تم تصحيح المنطق)
     const level = user.StudentLevel ? String(user.StudentLevel) : "";
-    if (level.includes("ثالث") || level.includes("3")) {
+    if ((level.includes("ثالث") || level.includes("3")) && level.includes("متوسط")) {
         const criticalOpt = document.getElementById('criticalOption');
-        if (criticalOpt && level.includes("متوسط")) {
-            criticalOpt.style.display = 'block';
-        }
+        if (criticalOpt) criticalOpt.style.display = 'block';
     }
 
     initWeekSelector();
     
-    document.getElementById("subjectSelect").onchange = loadData;
-    document.getElementById("weekSelect").onchange = loadData;
+    const subSelect = document.getElementById("subjectSelect");
+    const weekSelect = document.getElementById("weekSelect");
+
+    if (subSelect) subSelect.onchange = loadData;
+    if (weekSelect) weekSelect.onchange = loadData;
 
     loadData();
-    setupLogout(); // دالة تسجيل الخروج
+    setupLogout(); 
 });
 
 // دالة تسجيل الخروج
@@ -55,26 +59,10 @@ function setupLogout() {
     }
 }
 
-    setupNavigation();
-
-    const level = user.StudentLevel ? String(user.StudentLevel) : "";
-if (level.includes("ثالث") || level.includes("3")) {
-    const criticalOpt = document.getElementById('criticalOption');
-    if (criticalOpt && level.includes("متوسط")) {
-        criticalOpt.style.display = 'block';
-    }
-}
-
-    initWeekSelector();
-    
-    document.getElementById("subjectSelect").onchange = loadData;
-    document.getElementById("weekSelect").onchange = loadData;
-
-    loadData();
-});
-
 function initWeekSelector() {
     const ws = document.getElementById("weekSelect");
+    if (!ws) return;
+    ws.innerHTML = ""; // مسح المحتوى القديم
     for(let i=1; i<=12; i++) {
         ws.innerHTML += `<option value="${i}">الأسبوع ${i}</option>`;
     }
@@ -82,8 +70,13 @@ function initWeekSelector() {
 
 async function loadData() {
     const user = JSON.parse(localStorage.getItem("user"));
-    const subject = document.getElementById("subjectSelect").value;
-    const week = parseInt(document.getElementById("weekSelect").value);
+    const subSelect = document.getElementById("subjectSelect");
+    const weekSelect = document.getElementById("weekSelect");
+
+    if (!subSelect || !weekSelect) return;
+
+    const subject = subSelect.value;
+    const week = parseInt(weekSelect.value);
 
     const res = await getStudentData(subject, user.ID); 
 
@@ -100,17 +93,17 @@ function processAndDisplay(data, week, subject) {
 
     if (subject === 'Quran') {
         components = [
-            { label: "المشاركة", val: prValue, key: 'PR' },
-            { label: "واجبات ومهام", val: data[`HW_${week}`], key: 'HW' },
-            { label: "قراءة القرآن", val: data[`read_${week}`], key: 'read' },
-            { label: "تجويد القرآن", val: data[`Taj_${week}`], key: 'Taj' },
-            { label: "حفظ القرآن", val: data[`save_${week}`], key: 'save' }
+            { label: "المشاركة", val: prValue },
+            { label: "واجبات ومهام", val: data[`HW_${week}`] },
+            { label: "قراءة القرآن", val: data[`read_${week}`] },
+            { label: "تجويد القرآن", val: data[`Taj_${week}`] },
+            { label: "حفظ القرآن", val: data[`save_${week}`] }
         ];
     } else {
         components = [
-            { label: "المشاركة", val: prValue, key: 'PR' },
-            { label: "واجبات ومهام", val: data[`HW_${week}`], key: 'HW' },
-            { label: "اختبار قصير", val: data[`QZ_${week}`], key: 'QZ' }
+            { label: "المشاركة", val: prValue },
+            { label: "واجبات ومهام", val: data[`HW_${week}`] },
+            { label: "اختبار قصير", val: data[`QZ_${week}`] }
         ];
     }
 
@@ -123,13 +116,13 @@ function processAndDisplay(data, week, subject) {
 
     hideNoData();
     renderBars(components);
-    // تم تصحيح اسم الدالة هنا ليتطابق مع التعريف بالأسفل
     renderComparisonChart(data, week, components); 
     generateSmartFeedback(components);
 }
 
 function renderBars(components) {
     const container = document.getElementById('progressBarsContainer');
+    if (!container) return;
     container.innerHTML = '';
     
     components.forEach(comp => {
@@ -140,12 +133,12 @@ function renderBars(components) {
         else if(percent >= 50) color = "#fbbc05"; 
 
         container.innerHTML += `
-            <div style="margin-bottom:20px">
-                <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-weight:bold">
+            <div style="margin-bottom:15px">
+                <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-weight:bold; font-size:0.9rem;">
                     <span>${comp.label}</span>
                     <span>${val} / 5</span>
                 </div>
-                <div style="height:12px; background:#eee; border-radius:10px; overflow:hidden">
+                <div style="height:10px; background:#eee; border-radius:10px; overflow:hidden">
                     <div style="width:${percent}%; height:100%; background:${color}; transition: width 0.8s ease-out"></div>
                 </div>
             </div>
@@ -163,7 +156,6 @@ function renderComparisonChart(data, currentWeek, components) {
     const labels = [];
     const averages = [];
 
-    // حساب المتوسط لكل أسبوع من 1 حتى الأسبوع المختار
     for (let i = 1; i <= currentWeek; i++) {
         labels.push(`أسبوع ${i}`);
         let sum = 0, count = 0;
@@ -173,7 +165,6 @@ function renderComparisonChart(data, currentWeek, components) {
             if (c.label === "المشاركة") {
                 val = i <= 6 ? data.PR_1 : data.PR_2;
             } else {
-                // استنتاج مفتاح العمود البرمجي (HW, QZ, read, etc)
                 const key = (c.label === "واجبات ومهام") ? "HW" : 
                             (c.label === "اختبار قصير") ? "QZ" :
                             (c.label === "قراءة القرآن") ? "read" :
@@ -194,54 +185,48 @@ function renderComparisonChart(data, currentWeek, components) {
         data: {
             labels: labels,
             datasets: [{
-                label: 'معدل الأداء الأسبوعي',
+                label: 'معدل الأداء',
                 data: averages,
                 borderColor: '#1a73e8',
                 backgroundColor: 'rgba(26, 115, 232, 0.1)',
                 fill: true,
-                tension: 0.4,
-                pointRadius: 5,
-                pointBackgroundColor: '#1a73e8'
+                tension: 0.4
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            scales: { 
-                y: { max: 5, min: 0, ticks: { stepSize: 1 } } 
-            },
+            scales: { y: { max: 5, min: 0 } },
             plugins: { legend: { display: false } }
         }
     });
 }
 
 function generateSmartFeedback(components) {
-    const avg = components.reduce((a, b) => a + (parseFloat(b.val) || 0), 0) / components.length;
+    const validComps = components.filter(c => c.val !== null && c.val !== "");
+    const avg = validComps.reduce((a, b) => a + (parseFloat(b.val) || 0), 0) / (validComps.length || 1);
     const feedbackText = document.getElementById('feedbackText');
-    
+    if (!feedbackText) return;
+
     if (avg >= 4.5) {
-        feedbackText.innerHTML = "<strong>مستوى مذهل!</strong> أنت تسير على طريق التميز، استمر في هذا الأداء القوي.";
+        feedbackText.innerHTML = "<strong>مستوى مذهل!</strong> أنت تسير على طريق التميز.";
     } else if (avg >= 3.5) {
-        feedbackText.innerHTML = "<strong>أداء جيد جداً!</strong> لديك مهارات رائعة، قليل من التركيز في المهام القادمة وسوف تصل للدرجة الكاملة.";
+        feedbackText.innerHTML = "<strong>أداء جيد جداً!</strong> قليل من التركيز وستصل للكمال.";
     } else {
-        feedbackText.innerHTML = "<strong>تحتاج لمزيد من الاجتهاد!</strong> ننصحك بمراجعة دروس هذا الأسبوع والتواصل مع المعلم لرفع مستواك.";
+        feedbackText.innerHTML = "<strong>تحتاج لاجتهاد!</strong> ننصحك بمراجعة دروس هذا الأسبوع.";
     }
 }
 
 function showNoData() {
-    if(document.getElementById('dataContainer')) document.getElementById('dataContainer').style.display = 'none';
-    if(document.getElementById('noDataMessage')) document.getElementById('noDataMessage').style.display = 'block';
+    const dc = document.getElementById('dataContainer');
+    const nd = document.getElementById('noDataMessage');
+    if(dc) dc.style.display = 'none';
+    if(nd) nd.style.display = 'block';
 }
 
 function hideNoData() {
-    if(document.getElementById('dataContainer')) document.getElementById('dataContainer').style.display = 'block';
-    if(document.getElementById('noDataMessage')) document.getElementById('noDataMessage').style.display = 'none';
-}
-
-function setupNavigation() {
-    const logoutBtn = document.getElementById('logoutBtn');
-    if(logoutBtn) logoutBtn.onclick = () => {
-        localStorage.clear();
-        window.location.href = 'index.html';
-    };
+    const dc = document.getElementById('dataContainer');
+    const nd = document.getElementById('noDataMessage');
+    if(dc) dc.style.display = 'grid';
+    if(nd) nd.style.display = 'none';
 }
