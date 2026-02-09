@@ -1,91 +1,165 @@
 import { getStudentData } from "./api.js";
 
-let generalChart, subjectChart;
+let comparisonChart;
 
-document.addEventListener("DOMContentLoaded", () => {
-    initSelectors();
-    loadGeneralData(); // تحميل التقييم العام افتراضياً
+document.addEventListener("DOMContentLoaded", async () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user) return window.location.href = "index.html";
+
+    // تفعيل خيار التفكير الناقد للثالث متوسط فقط
+    if(user.StudentLevel && user.StudentLevel.includes("الثالث متوسط")) {
+        document.getElementById('criticalOption').style.display = 'block';
+    }
+
+    initWeekSelector();
+    setupEventListeners();
     
-    document.getElementById("subjectWeekSelect").addEventListener("change", loadSubjectDetail);
-    document.getElementById("subjectSelect").addEventListener("change", loadSubjectDetail);
+    // التحميل الأولي
+    loadData();
 });
 
-// تعبئة الأسابيع من 1 لـ 12
-function initSelectors() {
-    const selects = ["generalWeekSelect", "subjectWeekSelect"];
-    selects.forEach(id => {
-        const el = document.getElementById(id);
-        for(let i=1; i<=12; i++) {
-            el.innerHTML += `<option value="${i}">الأسبوع ${i}</option>`;
-        }
-    });
-}
-
-// دالة تحليل الرسائل التشجيعية (ذكاء اصطناعي بسيط)
-function getMotivation(score, type) {
-    if (score >= 4.5) return "مذهل! أنت بطل هذا الأسبوع في " + type + ". استمر في التحليق!";
-    if (score >= 3.5) return "أداء رائع في " + type + ". قليل من التركيز وتصل للدرجة الكاملة.";
-    if (score > 0) return "بداية جيدة في " + type + ". ثق بنفسك وحاول مرة أخرى لتتحسن.";
-    return "لم يتم رصد تقييم بعد. استعد جيداً!";
-}
-
-async function loadSubjectDetail() {
-    const user = JSON.parse(localStorage.getItem("user"));
-    const subject = document.getElementById("subjectSelect").value;
-    const week = document.getElementById("subjectWeekSelect").value;
-    
-    const res = await getStudentData(subject, user.id);
-    
-    if (res.success) {
-        const data = res.data;
-        let scores = [];
-        let labels = [];
-
-        // المنطق الخاص بالقرآن الكريم
-        if (subject === 'quran') {
-            const pr = week <= 6 ? data.PR_1 : data.PR_2;
-            scores = [pr, data[`HW_${week}`], data[`read_${week}`], data[`Taj_${week}`], data[`save_${week}`]];
-            labels = ["المشاركة", "الواجب", "القراءة", "التجويد", "الحفظ"];
-        } else {
-            // بقية المواد
-            const pr = week <= 6 ? data.PR_1 : data.PR_2;
-            scores = [pr, data[`HW_${week}`], data[`QZ_${week}`]];
-            labels = ["المشاركة", "الواجب", "الاختبار القصير"];
-        }
-
-        renderSubjectChart(labels, scores);
-        updateMotivationalMessage(scores, labels);
+function initWeekSelector() {
+    const ws = document.getElementById("weekSelect");
+    for(let i=1; i<=12; i++) {
+        ws.innerHTML += `<option value="${i}">الأسبوع ${i}</option>`;
     }
 }
 
-function renderSubjectChart(labels, scores) {
-    const ctx = document.getElementById('subjectChart').getContext('2d');
-    if (subjectChart) subjectChart.destroy();
+function setupEventListeners() {
+    document.getElementById("subjectSelect").addEventListener("change", loadData);
+    document.getElementById("weekSelect").addEventListener("change", loadData);
+}
 
-    subjectChart = new Chart(ctx, {
-        type: 'radar', // رادار شارت يعطي شكلاً رهيباً للتقييم
+async function loadData() {
+    const user = JSON.parse(localStorage.getItem("user"));
+    const subject = document.getElementById("subjectSelect").value;
+    const week = parseInt(document.getElementById("weekSelect").value);
+    
+    const res = await getStudentData(subject, user.id);
+    
+    if (res.success && res.data) {
+        processAndDisplay(res.data, week, subject);
+    } else {
+        showNoData();
+    }
+}
+
+function processAndDisplay(data, week, subject) {
+    let components = [];
+    const pr = week <= 6 ? (data.PR_1 || 0) : (data.PR_2 || 0);
+
+    // تقسيم البيانات بناءً على نوع المادة
+    if (subject === 'Quran') {
+        components = [
+            { label: "المشاركة", val: pr, key: 'PR' },
+            { label: "واجبات ومهام", val: data[`HW_${week}`], key: 'HW' },
+            { label: "قراءة القرآن", val: data[`read_${week}`], key: 'read' },
+            { label: "تجويد القرآن", val: data[`Taj_${week}`], key: 'Taj' },
+            { label: "حفظ القرآن", val: data[`save_${week}`], key: 'save' }
+        ];
+    } else {
+        components = [
+            { label: "المشاركة", val: pr, key: 'PR' },
+            { label: "واجبات ومهام", val: data[`HW_${week}`], key: 'HW' },
+            { label: "اختبار قصير", val: data[`QZ_${week}`], key: 'QZ' }
+        ];
+    }
+
+    // التحقق هل الأسبوع الحالي فيه درجات فعلاً؟
+    const hasData = components.some(c => c.val !== null && c.val !== undefined);
+    
+    if (!hasData) {
+        showNoData();
+        return;
+    }
+
+    hideNoData();
+    renderProgressBars(components);
+    renderComparisonChart(data, week, components);
+    generateSmartFeedback(components, data, week);
+}
+
+function renderProgressBars(components) {
+    const container = document.getElementById('progressBarsContainer');
+    container.innerHTML = '';
+    
+    components.forEach(comp => {
+        const value = comp.val || 0;
+        const percent = (value / 5) * 100;
+        const colorClass = percent >= 80 ? 'high' : percent >= 50 ? 'med' : 'low';
+
+        container.innerHTML += `
+            <div class="progress-item">
+                <div class="progress-info">
+                    <span>${comp.label}</span>
+                    <strong>${value} / 5</strong>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill ${colorClass}" style="width: ${percent}%"></div>
+                </div>
+            </div>
+        `;
+    });
+}
+
+function renderComparisonChart(data, currentWeek, components) {
+    const ctx = document.getElementById('comparisonChart').getContext('2d');
+    if (comparisonChart) comparisonChart.destroy();
+
+    // حساب متوسط كل أسبوع سابق للمقارنة
+    const labels = [];
+    const averages = [];
+
+    for (let i = 1; i <= currentWeek; i++) {
+        labels.push(`أسبوع ${i}`);
+        let sum = 0, count = 0;
+        
+        components.forEach(c => {
+            const val = (c.key === 'PR') ? (i <= 6 ? data.PR_1 : data.PR_2) : data[`${c.key}_${i}`];
+            if (val != null) { sum += val; count++; }
+        });
+        averages.push(count > 0 ? (sum / count).toFixed(2) : 0);
+    }
+
+    comparisonChart = new Chart(ctx, {
+        type: 'line',
         data: {
             labels: labels,
             datasets: [{
-                label: 'مستوى الأداء',
-                data: scores,
-                backgroundColor: 'rgba(26, 115, 232, 0.2)',
+                label: 'متوسط الأداء الأسبوعي',
+                data: averages,
                 borderColor: '#1a73e8',
-                borderWidth: 2
+                backgroundColor: 'rgba(26, 115, 232, 0.1)',
+                fill: true,
+                tension: 0.4
             }]
         },
         options: {
-            scales: { r: { max: 5, min: 0, ticks: { stepSize: 1 } } },
+            scales: { y: { max: 5, min: 0 } },
             plugins: { legend: { display: false } }
         }
     });
 }
 
-function updateMotivationalMessage(scores, labels) {
-    const avg = scores.filter(s => s != null).reduce((a,b) => a+b, 0) / scores.length;
-    const textEl = document.getElementById("motivationalText");
-    const banner = document.getElementById("motivationalMessage");
+function generateSmartFeedback(components, data, week) {
+    const avg = components.reduce((a, b) => a + (b.val || 0), 0) / components.length;
+    let msg = "";
     
-    textEl.innerText = getMotivation(avg, "هذه المادة");
-    banner.style.background = avg >= 4 ? "#e6f4ea" : "#e8f0fe";
+    if (avg >= 4.5) msg = "أداء استثنائي! أنت تسيطر على المادة بالكامل. حافظ على هذا المستوى المبهر.";
+    else if (avg >= 3.5) msg = "مستوى جيد جداً، لديك بعض النقاط البسيطة لتصل للكمال. ركز على المهام القادمة.";
+    else msg = "تحتاج لبذل جهد إضافي. مراجعة دروسك لهذا الأسبوع ستصنع فرقاً كبيراً في تقييمك القادم.";
+
+    document.getElementById('feedbackText').innerText = msg;
+}
+
+function showNoData() {
+    document.getElementById('scoresDisplayCard').style.display = 'none';
+    document.getElementById('analysisCard').style.display = 'none';
+    document.getElementById('noDataMessage').style.display = 'block';
+}
+
+function hideNoData() {
+    document.getElementById('scoresDisplayCard').style.display = 'block';
+    document.getElementById('analysisCard').style.display = 'flex';
+    document.getElementById('noDataMessage').style.display = 'none';
 }
