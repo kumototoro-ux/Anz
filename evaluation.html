@@ -32,13 +32,13 @@
         </header>
 
         <div class="card animate-up">
-            <div class="card-header">
-                <h3><i class="fas fa-sliders-h"></i> خيارات العرض</h3>
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin:0"><i class="fas fa-sliders-h"></i> خيارات العرض</h3>
             </div>
-            <div class="selection-bar">
-                <div class="select-box">
+            <div class="selection-bar" style="display: flex; gap: 20px; margin-top: 20px;">
+                <div class="select-box" style="flex: 1;">
                     <label>اختر المادة:</label>
-                    <select id="subjectSelect" class="google-select">
+                    <select id="subjectSelect" class="google-select" style="width: 100%;">
                         <option value="Quran">القرآن الكريم</option>
                         <option value="Islamic">الدراسات الإسلامية</option>
                         <option value="Arabic">اللغة العربية</option>
@@ -53,42 +53,31 @@
                         <option value="Critical" id="criticalOption" style="display:none;">التفكير الناقد</option>
                     </select>
                 </div>
-                <div class="select-box">
+                <div class="select-box" style="flex: 1;">
                     <label>اختر الأسبوع:</label>
-                    <select id="weekSelect" class="google-select"></select>
+                    <select id="weekSelect" class="google-select" style="width: 100%;"></select>
                 </div>
             </div>
         </div>
 
-        <div class="card animate-up" id="scoresDisplayCard" style="display:none;">
-            <div class="card-header">
-                <h3 id="displaySubjectName">تفاصيل التقييم</h3>
+        <div id="dataContainer" style="display:none;">
+            <div class="card animate-up">
+                <div id="progressBarsContainer" class="progress-grid"></div>
             </div>
-            <div id="progressBarsContainer" class="progress-grid">
-                </div>
-        </div>
-
-        <div class="card animate-up" id="analysisCard" style="display:none; animation-delay: 0.2s;">
-            <div class="card-header">
-                <h3><i class="fas fa-chart-area"></i> تحليل الأداء (مقارنة بالأسابيع السابقة)</h3>
-            </div>
-            <div class="analysis-layout">
-                <div class="chart-container">
-                    <canvas id="comparisonChart"></canvas>
-                </div>
+            
+            <div class="card animate-up">
+                <canvas id="comparisonChart"></canvas>
                 <div id="aiFeedback" class="ai-feedback-box">
-                    <i class="fas fa-robot"></i>
-                    <p id="feedbackText">جاري تحليل مستواك...</p>
+                    <p id="feedbackText"></p>
                 </div>
             </div>
         </div>
 
-        <div id="noDataMessage" class="card animate-up" style="display:none; text-align:center; color: var(--text-sub);">
-            <i class="fas fa-folder-open" style="font-size: 3rem; margin-bottom: 15px;"></i>
-            <h3>لا يوجد تقييم حالي لهذا الأسبوع</h3>
-            <p>المعلم لم يرصد الدرجات بعد أو أننا لم نصل لهذا الأسبوع الدراسي.</p>
+        <div id="noDataMessage" class="card animate-up" style="display:none; text-align:center; padding: 50px;">
+            <i class="fas fa-folder-open" style="font-size: 4rem; color: #70757a; margin-bottom: 20px;"></i>
+            <h2 style="color: #3c4043;">لا يوجد تقييم حالي لهذا الأسبوع</h2>
+            <p style="color: #70757a;">المعلم لم يرصد الدرجات بعد أو أننا لم نصل لهذا الأسبوع الدراسي.</p>
         </div>
-
     </main>
 
     <script type="module" src="evaluation.js"></script>
