@@ -1,74 +1,107 @@
-/* results.css */
-body { background-color: #f1f3f4; font-family: 'Tajawal', sans-serif; direction: rtl; }
+/* profile.css */
 
-.results-container { padding: 40px; text-align: center; }
-
-.selection-box { margin: 30px 0; display: flex; justify-content: center; gap: 20px; }
-
-.term-btn {
-    padding: 15px 30px;
-    border: none;
-    background: white;
-    color: #1a73e8;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    transition: 0.3s;
-}
-
-.term-btn:hover { background: #1a73e8; color: white; transform: translateY(-3px); }
-
-/* تصميم الشهادة */
-.certificate-wrapper { margin-top: 40px; animation: zoomIn 0.5s ease; }
-
-.certificate-card {
-    background: white;
-    padding: 50px;
-    border: 2px solid #eee;
+.profile-card {
     max-width: 800px;
     margin: 0 auto;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-    position: relative;
-}
-
-.results-table { width: 100%; border-collapse: collapse; margin-top: 30px; }
-.results-table th, .results-table td {
-    padding: 15px;
-    border: 1px solid #eee;
-    text-align: right;
-}
-.results-table th { background-color: #f8f9fa; color: #1a73e8; }
-
-.cert-summary {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 2px solid #1a73e8;
-}
-
-/* رسالة الخطأ */
-.error-card {
     background: white;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    max-width: 400px;
-    margin: 40px auto;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
 }
-.error-card i { font-size: 50px; color: #ea4335; margin-bottom: 20px; }
 
-.whatsapp-btn {
-    display: inline-block;
-    margin-top: 20px;
-    background: #25d366;
+.profile-hero {
+    background: linear-gradient(135deg, #f8faff 0%, #e8f0fe 100%);
+    padding: 40px 20px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+}
+
+.avatar-wrapper {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 15px;
+}
+
+#userAvatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 4px solid white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.status-indicator {
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    width: 20px;
+    height: 20px;
+    background: var(--success);
+    border: 3px solid white;
+    border-radius: 50%;
+}
+
+.student-label {
+    background: var(--primary);
     color: white;
-    padding: 12px 25px;
-    border-radius: 30px;
-    text-decoration: none;
+    padding: 4px 15px;
+    border-radius: 20px;
+    font-size: 0.8rem;
     font-weight: bold;
 }
 
-.hide { display: none; }
-@keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 30px;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border: 1px solid #f0f0f0;
+}
+
+.info-item i {
+    font-size: 1.5rem;
+    color: var(--primary);
+    width: 40px;
+}
+
+.info-content label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-sub);
+    margin-bottom: 2px;
+}
+
+.info-content p {
+    margin: 0;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.profile-footer {
+    padding: 20px;
+    text-align: center;
+    background: #fff9f0;
+    color: #856404;
+    font-size: 0.85rem;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #f1f3f4;
+}
+.info-row:last-child { border-bottom: none; }
+.info-row strong { color: var(--text-sub); font-weight: 500; }
+.info-row span { color: var(--text-main); font-weight: 700; }
