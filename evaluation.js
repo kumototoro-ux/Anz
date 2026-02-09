@@ -10,10 +10,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
-    // --- تفعيل القائمة في الجوال ---
+    // --- تعريف العناصر أولاً ---
     const menuToggle = document.getElementById('menuToggle');
     const sideNav = document.querySelector('.side-nav');
+    const mainContent = document.querySelector('.main-content'); // يجب تعريفه هنا قبل استخدامه
 
+    // --- تفعيل القائمة في الجوال ---
     if (menuToggle && sideNav) {
         menuToggle.onclick = (e) => {
             e.stopPropagation();
@@ -21,19 +23,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         };
     }
 
+    // --- إغلاق القائمة عند الضغط على المحتوى (للجوال) ---
     if (mainContent && sideNav) {
         mainContent.addEventListener('click', () => {
             if (window.innerWidth <= 992) {
                 sideNav.classList.remove('active');
             }
         });
-    }
-    // إغلاق القائمة عند الضغط على المحتوى الرئيسي
-    const mainContent = document.querySelector('.main-content');
-    if (mainContent) {
-        mainContent.onclick = () => {
-            if (sideNav) sideNav.classList.remove('active');
-        };
     }
 
     // 2. التحقق من مادة التفكير الناقد (تم تصحيح المنطق)
