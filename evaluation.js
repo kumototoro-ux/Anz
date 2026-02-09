@@ -1,19 +1,69 @@
 import { getStudentData } from "./api.js";
 
-let comparisonChart; // متغير عالمي لحفظ الرسم البياني ومنع التكرار
+let comparisonChart; 
 
 document.addEventListener("DOMContentLoaded", async () => {
+    // 1. استرجاع بيانات الطالب
     const user = JSON.parse(localStorage.getItem("user"));
     if (!user || !user.ID) {
         window.location.href = "index.html";
         return;
     }
 
+    // --- اضف هذا الجزء هنا بالضبط لتفعيل القائمة في الجوال ---
+    const menuToggle = document.getElementById('menuToggle');
+    const sideNav = document.querySelector('.side-nav');
+
+    if (menuToggle) {
+        menuToggle.onclick = () => {
+            sideNav.classList.toggle('active'); // يضيف كلاس active لفتح القائمة
+        };
+    }
+
+    // إغلاق القائمة عند الضغط على المحتوى الرئيسي (للجوال)
+    document.querySelector('.main-content').onclick = () => {
+        sideNav.classList.remove('active');
+    };
+    // -------------------------------------------------------
+
+    // 2. التحقق من مادة التفكير الناقد
+    const level = user.StudentLevel ? String(user.StudentLevel) : "";
+    if (level.includes("ثالث") || level.includes("3")) {
+        const criticalOpt = document.getElementById('criticalOption');
+        if (criticalOpt && level.includes("متوسط")) {
+            criticalOpt.style.display = 'block';
+        }
+    }
+
+    initWeekSelector();
+    
+    document.getElementById("subjectSelect").onchange = loadData;
+    document.getElementById("weekSelect").onchange = loadData;
+
+    loadData();
+    setupLogout(); // دالة تسجيل الخروج
+});
+
+// دالة تسجيل الخروج
+function setupLogout() {
+    const logoutBtn = document.getElementById('logoutBtn');
+    if(logoutBtn) {
+        logoutBtn.onclick = () => {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        };
+    }
+}
+
     setupNavigation();
 
-    if (user.StudentLevel && user.StudentLevel.includes("ثالث متوسط")) {
-        document.getElementById('criticalOption').style.display = 'block';
+    const level = user.StudentLevel ? String(user.StudentLevel) : "";
+if (level.includes("ثالث") || level.includes("3")) {
+    const criticalOpt = document.getElementById('criticalOption');
+    if (criticalOpt && level.includes("متوسط")) {
+        criticalOpt.style.display = 'block';
     }
+}
 
     initWeekSelector();
     
