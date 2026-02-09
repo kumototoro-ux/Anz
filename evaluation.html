@@ -3,58 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>التقييمات | نظام مقياس</title>
+    <title>تقييم المواد | نظام مقياس</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="evaluation.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="home.css"> <link rel="stylesheet" href="evaluation.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
-    <main class="evaluation-container">
-        <header class="page-header animate-fade">
-            <h1>مركز التقييم الأكاديمي</h1>
-            <p>حلل أداءك، تتبع تقدمك، واصنع نجاحك</p>
+    <nav class="side-nav">
+        <div class="nav-logo">MQ</div>
+        <ul class="nav-links">
+            <li><a href="home.html"><i class="fas fa-home"></i> <span>الرئيسية</span></a></li>
+            <li><a href="profile.html"><i class="fas fa-user-circle"></i> <span>معلوماتي</span></a></li>
+            <li class="active"><a href="evaluation.html"><i class="fas fa-star"></i> <span>المواد</span></a></li>
+            <li><a href="attendance.html"><i class="fas fa-calendar-check"></i> <span>الغياب</span></a></li>
+            <li><a href="results.html"><i class="fas fa-poll-h"></i> <span>النتائج</span></a></li>
+        </ul>
+        <div class="nav-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> <span>تسجيل الخروج</span></div>
+    </nav>
+
+    <main class="main-content">
+        <header class="home-header">
+            <div class="user-info">
+                <h1>مركز التقييم الأكاديمي</h1>
+                <p>تتبع مستواك في كل مادة دراسية أسبوعاً بأسبوع</p>
+            </div>
         </header>
 
-        <section class="card stats-summary-card animate-slide-up">
-            <div class="card-controls">
-                <h3><i class="fas fa-chart-line"></i> التقييم العام لكل المواد</h3>
-                <select id="generalWeekSelect" class="google-select">
-                    </select>
+        <div class="card animate-up">
+            <div class="card-header">
+                <h3><i class="fas fa-sliders-h"></i> خيارات العرض</h3>
             </div>
-            <div class="chart-wrapper">
-                <canvas id="generalChart"></canvas>
-            </div>
-            <div id="generalFeedback" class="feedback-area"></div>
-        </section>
-
-        <section class="card subject-detail-card animate-slide-up" style="animation-delay: 0.2s;">
-            <div class="card-controls">
-                <h3><i class="fas fa-microscope"></i> التحليل التفصيلي للمادة</h3>
-                <div class="select-group">
+            <div class="selection-bar">
+                <div class="select-box">
+                    <label>اختر المادة:</label>
                     <select id="subjectSelect" class="google-select">
-                        <option value="quran">القرآن الكريم</option>
-                        <option value="math">الرياضيات</option>
-                        <option value="science">العلوم</option>
-                        </select>
-                    <select id="subjectWeekSelect" class="google-select"></select>
+                        <option value="Quran">القرآن الكريم</option>
+                        <option value="Islamic">الدراسات الإسلامية</option>
+                        <option value="Arabic">اللغة العربية</option>
+                        <option value="Social">الدراسات الاجتماعية</option>
+                        <option value="Math">الرياضيات</option>
+                        <option value="Science">العلوم</option>
+                        <option value="English">اللغة الإنجليزية</option>
+                        <option value="Digital">المهارات الرقمية</option>
+                        <option value="Art">التربية الفنية</option>
+                        <option value="PE">التربية البدنية</option>
+                        <option value="Life">المهارات الحياتية</option>
+                        <option value="Critical" id="criticalOption" style="display:none;">التفكير الناقد</option>
+                    </select>
+                </div>
+                <div class="select-box">
+                    <label>اختر الأسبوع:</label>
+                    <select id="weekSelect" class="google-select"></select>
                 </div>
             </div>
-            
-            <div class="detail-grid">
-                <div class="stats-viz">
-                    <canvas id="subjectChart"></canvas>
-                </div>
-                <div class="stats-cards" id="detailedScores">
-                    </div>
-            </div>
+        </div>
 
-            <div id="motivationalMessage" class="motivation-banner">
-                <i class="fas fa-lightbulb"></i>
-                <p id="motivationalText">اختر الأسبوع والمادة لعرض التحليل...</p>
+        <div class="card animate-up" id="scoresDisplayCard" style="display:none;">
+            <div class="card-header">
+                <h3 id="displaySubjectName">تفاصيل التقييم</h3>
             </div>
-        </section>
+            <div id="progressBarsContainer" class="progress-grid">
+                </div>
+        </div>
+
+        <div class="card animate-up" id="analysisCard" style="display:none; animation-delay: 0.2s;">
+            <div class="card-header">
+                <h3><i class="fas fa-chart-area"></i> تحليل الأداء (مقارنة بالأسابيع السابقة)</h3>
+            </div>
+            <div class="analysis-layout">
+                <div class="chart-container">
+                    <canvas id="comparisonChart"></canvas>
+                </div>
+                <div id="aiFeedback" class="ai-feedback-box">
+                    <i class="fas fa-robot"></i>
+                    <p id="feedbackText">جاري تحليل مستواك...</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="noDataMessage" class="card animate-up" style="display:none; text-align:center; color: var(--text-sub);">
+            <i class="fas fa-folder-open" style="font-size: 3rem; margin-bottom: 15px;"></i>
+            <h3>لا يوجد تقييم حالي لهذا الأسبوع</h3>
+            <p>المعلم لم يرصد الدرجات بعد أو أننا لم نصل لهذا الأسبوع الدراسي.</p>
+        </div>
+
     </main>
 
     <script type="module" src="evaluation.js"></script>
