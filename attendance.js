@@ -7,14 +7,16 @@ async function init() {
     const user = JSON.parse(localStorage.getItem("user"));
     if (!user) { window.location.href = 'index.html'; return; }
 
-    // جلب القائمة الجانبية هنا لضمان عملها في صفحة الغياب
+    // جلب القائمة الجانبية
     const sidebarRes = await fetch('sidebar.html');
     const sidebarData = await sidebarRes.text();
     document.getElementById('sidebar-container').innerHTML = sidebarData;
 
-    // تشغيل زر الجوال فوراً
+    // تأكد من المناداة بهذا الشكل
     if (typeof window.initSidebar === "function") {
         window.initSidebar();
+    } else {
+        console.warn("Sidebar function not global yet");
     }
 
     // جلب بيانات الغياب
