@@ -66,20 +66,18 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="module" src="attendance.js"></script>
 
-   <script>
+  <script>
     fetch('sidebar.html')
         .then(res => res.text())
         .then(data => {
             document.getElementById('sidebar-container').innerHTML = data;
             
-            // ننتظر قليلاً لضمان أن المتصفح أضاف العناصر للـ DOM
+            // ننتظر قليلاً للتأكد من أن المتصفح رسم العناصر
             setTimeout(() => {
                 if (typeof window.initSidebar === "function") {
                     window.initSidebar();
-                } else {
-                    console.error("دالة القائمة لم يتم العثور عليها في window");
                 }
-            }, 300);
+            }, 200);
         });
 </script>
 </body>
