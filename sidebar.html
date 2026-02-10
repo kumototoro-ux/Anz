@@ -6,13 +6,44 @@
         <h5 class="ms-2">نظام الانضباط</h5>
     </div>
     
-    <nav class="nav flex-column mt-4">
-        <a class="nav-link" href="home.html">🏠 الرئيسية</a>
-        <a class="nav-link" href="attendance.html">📊 سجل الغياب</a>
-        <a class="nav-link" href="results.html">📝 النتائج</a>
-        <a class="nav-link" href="evaluation.html">⭐ التقييم</a>
-        <a class="nav-link active" href="profile.html">👤 الملف الشخصي</a>
-        <hr class="text-white-50">
-        <a class="nav-link text-danger" href="index.html">🚪 تسجيل الخروج</a>
-    </nav>
-</div>
+    <nav class="side-nav" id="sideNav">
+    <div class="nav-logo">MQ</div>
+    <ul class="nav-links">
+        <li><a href="home.html"><i class="fas fa-home"></i> <span>الرئيسية</span></a></li>
+        <li><a href="profile.html"><i class="fas fa-user-circle"></i> <span>معلوماتي</span></a></li>
+        <li><a href="evaluation.html"><i class="fas fa-star"></i> <span>المواد</span></a></li>
+        <li><a href="attendance.html"><i class="fas fa-calendar-check"></i> <span>الغياب</span></a></li>
+        <li><a href="results.html"><i class="fas fa-poll-h"></i> <span>النتائج</span></a></li>
+    </ul>
+    <div class="nav-logout" onclick="logoutUser()">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>تسجيل الخروج</span>
+    </div>
+</nav>
+
+<script>
+    // دالة تسجيل الخروج
+    function logoutUser() {
+        localStorage.removeItem('user');
+        window.location.href = 'index.html';
+    }
+
+    // كود تشغيل المنيو في الجوال (يعمل تلقائياً في كل الصفحات)
+    const menuBtn = document.getElementById('menuToggle');
+    const sideNav = document.getElementById('sideNav');
+    const overlay = document.getElementById('sidebarOverlay');
+
+    if (menuBtn) {
+        menuBtn.onclick = () => {
+            sideNav.classList.add('active');
+            if(overlay) overlay.classList.add('active');
+        };
+    }
+
+    if (overlay) {
+        overlay.onclick = () => {
+            sideNav.classList.remove('active');
+            overlay.classList.remove('active');
+        };
+    }
+</script>
