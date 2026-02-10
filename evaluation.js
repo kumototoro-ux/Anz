@@ -44,6 +44,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 // 2. دالة إعداد القائمة الجانبية وتسجيل الخروج
+// استبدل دالة loadSidebar القديمة بهذه النسخة المحدثة
 async function loadSidebar() {
     try {
         const response = await fetch('sidebar.html');
@@ -54,6 +55,7 @@ async function loadSidebar() {
         const sideNav = document.getElementById('sideNav');
         const overlay = document.getElementById('sidebarOverlay');
 
+        // 1. تفعيل فتح وإغلاق القائمة
         if (menuToggle && sideNav && overlay) {
             menuToggle.onclick = () => {
                 sideNav.classList.toggle('active');
@@ -64,6 +66,16 @@ async function loadSidebar() {
                 overlay.classList.remove('active');
             };
         }
+
+        // 2. تفعيل زر تسجيل الخروج (هذا هو الجزء المضاف)
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.onclick = () => {
+                localStorage.clear(); // مسح بيانات الجلسة
+                window.location.href = 'index.html'; // العودة لصفحة تسجيل الدخول
+            };
+        }
+        
     } catch (err) {
         console.error("خطأ في تحميل القائمة:", err);
     }
