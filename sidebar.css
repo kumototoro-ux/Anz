@@ -33,16 +33,43 @@
     display: flex; align-items: center; gap: 15px; width: 100%; 
 }
 
-/* وضع الجوال */
+/* وضع الجوال - انسخ هذا واستبدل القديم */
 @media (max-width: 768px) {
     .side-nav {
         right: -285px !important; /* خارج الشاشة يميناً */
         width: 280px !important;
         transition: right 0.3s ease-in-out !important;
-        display: flex !important; /* لضمان عدم اختفائها */
+        display: flex !important; 
+        z-index: 9999 !important; /* لضمان ظهورها فوق المحتوى */
     }
 
     .side-nav.active {
-        right: 0 !important; /* تظهر في الشاشة */
+        right: 0 !important; /* تظهر عند إضافة class active */
     }
+
+    /* أضف هذه السطور لجعل الأيقونات والنصوص تظهر فوراً في الجوال */
+    .side-nav .nav-links li span {
+        opacity: 1 !important;
+        margin-right: 15px;
+    }
+
+    .side-nav .nav-links li a {
+        padding: 20px 25px; /* تكبير مساحة الضغط في الجوال */
+    }
+}
+
+/* أضف هذا الجزء أيضاً في نهاية الملف لضمان ظهور طبقة التغطية */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none; /* مخفية افتراضياً */
+    z-index: 9998;
+}
+
+.sidebar-overlay.active {
+    display: block; /* تظهر عند فتح القائمة */
 }
