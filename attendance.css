@@ -1,41 +1,35 @@
-.main-content {
-    margin-right: 250px;
-    padding: 20px;
-    background-color: #fcfcfc;
-}
-
-/* صندوق التنبيه الذكي */
 .alert-box {
     min-height: 250px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    border: 2px solid #eee;
-    transition: all 0.3s ease;
+    border: 1px solid #eee;
+    transition: all 0.4s ease-in-out;
 }
 
-/* حالة القائمة السوداء */
+/* حالة القائمة السوداء - تصميم قوي وحركي */
 .black-list-alert {
-    background-color: #1a1a1a !important;
-    color: #ff4d4d !important;
-    border-color: #ff0000 !important;
-    animation: flash-border 1.5s infinite;
+    background-color: #000 !important;
+    color: #ff3e3e !important;
+    border: 3px solid #ff0000 !important;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
+    animation: alert-pulse 1.5s infinite;
 }
 
-@keyframes flash-border {
-    50% { border-color: transparent; }
+@keyframes alert-pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
 }
 
 .btn-whatsapp {
     background-color: #25d366;
-    color: white;
-    border-radius: 20px;
+    color: white !important;
+    border-radius: 25px;
+    padding: 10px 20px;
     text-decoration: none;
-    padding: 8px 15px;
-    display: inline-block;
     font-weight: bold;
+    display: inline-block;
 }
 
-@media (max-width: 768px) {
-    .main-content { margin-right: 0; margin-top: 60px; }
-}
+.btn-whatsapp:hover { background-color: #1ebe57; }
