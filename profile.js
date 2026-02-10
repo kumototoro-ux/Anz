@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
-    // 2. تفعيل القائمة الجانبية
+    // 2. تفعيل القائمة الجانبية (هنا يتم الاستدعاء)
     await loadSidebar();
 
     // 3. طلب البيانات من api.js
@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 });
 
-// وظيفة تحميل القائمة الجانبية
+// --- استبدل الدالة القديمة بهذه الدالة المحدثة تماماً ---
 async function loadSidebar() {
     try {
         const response = await fetch('sidebar.html');
@@ -60,6 +60,15 @@ async function loadSidebar() {
             overlay.onclick = () => {
                 sideNav.classList.remove('active');
                 overlay.classList.remove('active');
+            };
+        }
+
+        // الجزء المسؤول عن تسجيل الخروج
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.onclick = () => {
+                localStorage.clear();
+                window.location.href = 'index.html';
             };
         }
     } catch (err) {
