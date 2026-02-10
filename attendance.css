@@ -1,6 +1,6 @@
 /* تنسيق المحتوى الرئيسي ليناسب الـ Sidebar */
 .main-content {
-    margin-right: 80px; /* غيرها من 250 إلى 80 لتناسب عرض السايدبار */
+    margin-right: 80px !important; /* لترك مساحة للقائمة الصغيرة */
     padding: 30px;
     background-color: #f8f9fc;
     min-height: 100vh;
@@ -67,9 +67,13 @@
 /* تنسيق الجوال */
 @media (max-width: 768px) {
     .main-content {
-        margin-right: 0 !important; /* إلغاء الإزاحة تماماً في الجوال */
+        margin-right: 0 !important;
+        margin-top: 80px !important; /* لإعطاء مساحة للبار العلوي */
         padding: 15px;
-        margin-top: 70px; /* مساحة كافية للبار العلوي (App Bar) */
+    }
+/* لضمان أن القائمة تظهر فوق كل شيء في الجوال */
+    .side-nav {
+        z-index: 9999 !important;
     }
 }
 
