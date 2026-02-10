@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>النتائج | نظام مقياس</title>
+    <title>نتائجي | نظام مِقياس</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="results.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -13,51 +13,37 @@
     <div id="sidebar-placeholder"></div>
     <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
-    <header class="main-header">
-        <div class="header-right">
-            <button id="menuToggle" class="menu-btn">
-                <i class="fas fa-bars"></i>
-            </button>
-            <div class="logo-area">
-                <img src="logo.png" alt="Logo" class="nav-logo">
-                <span class="system-name">نظام مِقياس</span>
-            </div>
-        </div>
-        <div class="header-left">
-            <span class="page-title">نتائجي</span>
-        </div>
+    <header class="app-header">
+        <a href="profile.html" class="profile-icon">
+            <i class="fas fa-user-circle"></i>
+        </a>
+        <div class="page-title-center">نتائجي</div>
+        <button id="menuToggle" class="menu-trigger">
+            <i class="fas fa-bars"></i>
+        </button>
     </header>
 
-    <main class="results-container">
-        <header class="welcome-section">
+    <main class="content-wrapper">
+        <section class="welcome-banner">
             <h1 id="userGreeting">مرحباً، ...</h1>
             <p>يمكنك استعراض وطباعة إشعارات درجات الفصول الدراسية من هنا.</p>
-        </header>
+        </section>
 
-        <div class="selection-box">
+        <div class="action-buttons">
             <button class="term-btn" data-term="notice_term1">إشعار الفصل الدراسي الأول</button>
             <button class="term-btn" data-term="notice_term2">إشعار الفصل الدراسي الثاني</button>
         </div>
 
-        <div id="certificateArea" class="certificate-wrapper hide">
-            <div class="certificate-card">
-                <div class="cert-header-internal">
-                    <h2>إشعار درجات الطالب</h2>
-                    <p id="certTermName"></p>
-                </div>
-                <table class="results-table">
+        <div id="certificateArea" class="certificate-box hide">
+            <div id="resultsContent">
+                 <table class="results-table">
                     <thead>
-                        <tr>
-                            <th>المادة</th>
-                            <th>التقييم / الدرجة</th>
-                        </tr>
+                        <tr><th>المادة</th><th>الدرجة</th></tr>
                     </thead>
                     <tbody id="resultsBody"></tbody>
                 </table>
             </div>
-            <button class="print-btn" onclick="window.print()">
-                <i class="fas fa-print"></i> طباعة الإشعار
-            </button>
+            <button class="print-btn" onclick="window.print()">طباعة الإشعار</button>
         </div>
     </main>
 
