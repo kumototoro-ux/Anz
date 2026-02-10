@@ -330,21 +330,6 @@ body {
     .app-name { font-weight: 800; font-size: 0.9rem; color: var(--primary); }
     #mobileUserName { font-size: 0.8rem; color: var(--text-sub); font-weight: 600; }
 
-    .side-nav {
-        position: fixed;
-        right: -285px;
-        top: 0;
-        width: 280px;
-        height: 100vh;
-        z-index: 2000;
-        transition: right 0.3s ease-in-out;
-        box-shadow: -10px 0 25px rgba(0,0,0,0.1);
-    }
-
-    .side-nav.active { right: 0; }
-
-    .nav-links li span { opacity: 1; display: inline-block; margin-right: 15px; }
-
     .main-content {
         margin-right: 0;
         width: 100%;
@@ -494,4 +479,29 @@ body {
 .nav-logout i {
     font-size: 20px;
     min-width: 30px;
+}
+
+/* --- إصلاح طبقات الجوال (Z-index) --- */
+@media (max-width: 768px) {
+    .main-content {
+        position: relative;
+        z-index: 1; 
+    }
+
+    .sidebar-overlay {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0, 0, 0, 0.5) !important;
+        z-index: 1500 !important;
+        display: none;
+    }
+
+    .sidebar-overlay.active {
+        display: block !important;
+    }
+
+    /* جعل القائمة القادمة من الملف الخارجي في الأعلى دائماً */
+    #sidebar-placeholder .side-nav {
+        z-index: 9999 !important;
+    }
 }
