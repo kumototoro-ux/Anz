@@ -9,7 +9,17 @@
     <link rel="stylesheet" href="attendance.css">
 </head>
 <body class="bg-light">
-
+    
+<header class="mobile-header d-lg-none bg-white border-bottom fixed-top">
+        <div class="container-fluid d-flex justify-content-between align-items-center py-2">
+            <div class="user-icon text-primary"><i class="fas fa-user-circle fa-lg"></i></div>
+            <div class="app-title fw-bold text-dark">نظام مقياس</div>
+            <button id="menuToggle" class="btn border-0 shadow-none text-primary">
+                <i class="fas fa-bars fa-lg"></i>
+            </button>
+        </div>
+    </header>
+    
     <div id="sidebar-container"></div>
 
     <main class="main-content">
@@ -66,18 +76,12 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="module" src="attendance.js"></script>
 
-  <script>
+ <script>
+    // جلب القائمة فقط، والتحكم بالتشغيل سيكون من attendance.js
     fetch('sidebar.html')
         .then(res => res.text())
         .then(data => {
             document.getElementById('sidebar-container').innerHTML = data;
-            
-            // ننتظر قليلاً للتأكد من أن المتصفح رسم العناصر
-            setTimeout(() => {
-                if (typeof window.initSidebar === "function") {
-                    window.initSidebar();
-                }
-            }, 200);
         });
 </script>
 </body>
