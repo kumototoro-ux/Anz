@@ -6,7 +6,7 @@
     <title>الرئيسية | نظام مقياس</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="sidebar.css"> <link rel="stylesheet" href="home.css">
 </head>
 <body>
 
@@ -141,15 +141,17 @@
 
 <script>
     fetch('sidebar.html')
-        .then(res => res.text())
+        .then(res => {
+            if (!res.ok) throw new Error('Sidebar file not found');
+            return res.text();
+        })
         .then(data => {
             document.getElementById('sidebar-placeholder').innerHTML = data;
-            
-            // التأكد من تشغيل المنيو بعد ثانية بسيطة لضمان تحميل العناصر
             setTimeout(() => {
                 if (typeof initSidebar === "function") {
                     initSidebar();
                 }
             }, 100);
-        });
+        })
+        .catch(err => console.error(err));
 </script>
