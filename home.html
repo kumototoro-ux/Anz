@@ -142,15 +142,18 @@
 </html>
 
 <script>
-    fetch('sidebar.html')
-        .then(res => res.text())
-        .then(data => {
-            document.getElementById('sidebar-placeholder').innerHTML = data;
-            // تشغيل الربط بعد تحميل القائمة بـ 100 ملي ثانية
-            setTimeout(() => {
-                if (typeof initSidebar === "function") {
-                    initSidebar();
-                }
-            }, 100);
-        });
+   fetch('sidebar.html')
+    .then(res => res.text())
+    .then(data => {
+        document.getElementById('sidebar-placeholder').innerHTML = data;
+        
+        // انتظر قليلاً ثم شغل الدالة
+        setTimeout(() => {
+            if (typeof initSidebar === "function") {
+                initSidebar(); 
+            } else {
+                console.log("الدالة غير موجودة بعد، جاري المحاولة مرة أخرى...");
+            }
+        }, 300);
+    });
 </script>
