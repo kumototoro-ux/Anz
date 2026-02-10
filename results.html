@@ -25,29 +25,62 @@
     </a>
 </header>
 
-    <main class="content-wrapper">
-        <section class="welcome-banner">
-            <h1 id="userGreeting">مرحباً، ...</h1>
-            <p>يمكنك استعراض وطباعة إشعارات درجات الفصول الدراسية من هنا.</p>
-        </section>
+    <header class="app-header">
+    <button id="menuToggle" class="menu-trigger"><i class="fas fa-bars"></i></button>
+    <div class="page-title-center">نتائجي</div>
+    <a href="profile.html" class="profile-icon"><i class="fas fa-user-circle"></i></a>
+</header>
 
-        <div class="action-buttons">
-            <button class="term-btn" data-term="notice_term1">إشعار الفصل الدراسي الأول</button>
-            <button class="term-btn" data-term="notice_term2">إشعار الفصل الدراسي الثاني</button>
-        </div>
+<div id="sidebar-placeholder"></div>
+<div id="sidebarOverlay" class="sidebar-overlay"></div>
 
-        <div id="certificateArea" class="certificate-box hide">
-            <div id="resultsContent">
-                 <table class="results-table">
-                    <thead>
-                        <tr><th>المادة</th><th>الدرجة</th></tr>
-                    </thead>
-                    <tbody id="resultsBody"></tbody>
-                </table>
+<main class="content-wrapper">
+    <section class="welcome-banner">
+        <h1 id="userGreeting">مرحباً</h1>
+        <p>يمكنك استعراض وطباعة إشعارات درجات الفصول الدراسية من هنا.</p>
+    </section>
+
+    <div class="action-buttons">
+        <button class="term-btn" data-term="Notice_Term1">إشعار الفصل الدراسي الأول</button>
+        <button class="term-btn" data-term="Notice_Term2">إشعار الفصل الدراسي الثاني</button>
+    </div>
+
+    <div id="certificateArea" class="certificate-wrapper hide">
+        <div class="certificate-card" id="printableArea">
+            <div class="cert-header">
+                <h2 id="certTermName">إشعار درجات الفصل</h2>
+                <p class="warning-note">هذا إشعار درجات فقط وليس شهادة نهائية معتمدة</p>
             </div>
-            <button class="print-btn" onclick="window.print()">طباعة الإشعار</button>
+
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th>المادة / Subject</th>
+                        <th>تفاصيل التقييم</th>
+                        <th style="text-align:center;">الدرجة</th>
+                        <th style="text-align:center;">التقدير / Grade</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsBody"></tbody>
+            </table>
+
+            <div class="cert-footer">
+                <div class="footer-item">المجموع العام: <strong id="totalScore">0</strong></div>
+                <div class="footer-item">المعدل: <strong id="averageScore">0</strong></div>
+                <div class="footer-item">المواظبة: <strong id="attVal">0</strong></div>
+                <div class="footer-item">السلوك: <strong id="behVal">0</strong></div>
+            </div>
         </div>
-    </main>
+
+        <button class="print-action-btn" onclick="window.print()">
+            <i class="fas fa-print"></i> طباعة هذا الإشعار
+        </button>
+    </div>
+
+    <div id="errorArea" class="error-card hide">
+        <p>عذراً، لا توجد بيانات متاحة لهذا الفصل.</p>
+    </div>
+</main>
 
     <script type="module" src="results.js"></script>
 </body>
