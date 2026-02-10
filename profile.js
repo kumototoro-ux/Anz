@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // 2. تفعيل القائمة الجانبية (نفس منطق الرئيسية)
-    setupNavigation();
+    await loadSidebar();
 
     // 3. طلب البيانات من api.js (من جدول students)
     try {
@@ -49,30 +49,29 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 // وظائف التنقل وتسجيل الخروج
-function setupNavigation() {
-    const menuToggle = document.getElementById('menuToggle');
-    const sideNav = document.querySelector('.side-nav');
-    const overlay = document.getElementById('sidebarOverlay');
-    const logoutBtn = document.getElementById('logoutBtn');
+async function loadSidebar() {
+    try {
+        const response = await fetch('sidebar.html');
+        const html = await response.text();
+        document.getElementById('sidebar-placeholder').innerHTML = html;
 
-    if (menuToggle) {
-        menuToggle.onclick = () => {
-            sideNav.classList.toggle('active');
-            overlay.classList.toggle('active');
-        };
-    }
+        // تفعيل زر الموبايل برمجياً بعد تحميل الملف
+        const menuToggle = document.getElementById('menuToggle');
+        const sideNav = document.getElementById('sideNav');
+        const overlay = document.getElementById('sidebarOverlay');
 
-    if (overlay) {
-        overlay.onclick = () => {
-            sideNav.classList.remove('active');
-            overlay.classList.remove('active');
-        };
+        if (menuToggle && sideNav && overlay) {
+            menuToggle.onclick = () => {
+                sideNav.classList.toggle('active');
+                overlay.classList.toggle('active');
+            };
+            overlay.onclick = () => {
+                sideNav.classList.remove('active');
+                overlay.classList.remove('active');
+            };
+        }
+    } catch (err) {
+        console.error("خطأ في تحميل القائمة الجانبية:", err);
     }
-
-    if (logoutBtn) {
-        logoutBtn.onclick = () => {
-            localStorage.clear();
-            window.location.href = 'index.html';
-        };
-    }
+}
 }
