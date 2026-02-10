@@ -11,13 +11,8 @@ async function init() {
     const sidebarRes = await fetch('sidebar.html');
     const sidebarData = await sidebarRes.text();
     document.getElementById('sidebar-container').innerHTML = sidebarData;
-
-    // تأكد من المناداة بهذا الشكل
-    if (typeof window.initSidebar === "function") {
-        window.initSidebar();
-    } else {
-        console.warn("Sidebar function not global yet");
-    }
+    
+    activateSidebar();
 
     // جلب بيانات الغياب
     const res = await getStudentData('AB', user.ID);
@@ -131,3 +126,23 @@ function updateChart(labels, values) {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+// تعريف دالة تشغيل القائمة داخل ملف الغياب نفسه
+function activateSidebar() {
+    const menuBtn = document.getElementById('menuToggle');
+    const sideNav = document.getElementById('sideNav');
+    const overlay = document.getElementById('sidebarOverlay');
+
+    if (menuBtn && sideNav) {
+        menuBtn.onclick = () => {
+            sideNav.classList.add('active');
+            if (overlay) overlay.classList.add('active');
+        };
+    }
+    if (overlay) {
+        overlay.onclick = () => {
+            sideNav.classList.remove('active');
+            overlay.classList.remove('active');
+        };
+    }
+}
