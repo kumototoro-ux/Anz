@@ -393,3 +393,28 @@ function renderAcademicCalendar() {
     }
     weekContainer.innerHTML = `<div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:8px;">${daysHtml}</div>`;
 }
+
+// أضف هذا الكود في نهاية ملف home.js
+export function initSidebar() {
+    const menuBtn = document.getElementById('menuToggle');
+    const sideNav = document.getElementById('sideNav');
+    const overlay = document.getElementById('sidebarOverlay');
+
+    if (menuBtn && sideNav) {
+        menuBtn.onclick = (e) => {
+            e.stopPropagation(); // منع انتشار الحدث
+            sideNav.classList.toggle('active');
+            if (overlay) overlay.classList.toggle('active');
+        };
+    }
+
+    if (overlay) {
+        overlay.onclick = () => {
+            sideNav.classList.remove('active');
+            overlay.classList.remove('active');
+        };
+    }
+}
+
+// جعل الدالة متاحة عالمياً ليراها السكريبت الموجود في HTML
+window.initSidebar = initSidebar;
