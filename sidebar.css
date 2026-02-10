@@ -1,12 +1,12 @@
-/* الإعدادات العامة للسايدبار */
+/* التصميم العام للقائمة - ثابت لليمين */
 .side-nav {
     width: 80px; height: 100vh; background: white; border-left: 1px solid #dadce0;
     display: flex; flex-direction: column; align-items: center;
-    position: fixed; right: 0; top: 0; transition: width 0.3s; z-index: 2000;
+    position: fixed; right: 0; top: 0; transition: width 0.3s ease; z-index: 2000;
     overflow: hidden;
 }
 
-/* عند مرور الماوس (للكمبيوتر) */
+/* التوسع عند مرور الماوس (للكمبيوتر) */
 .side-nav:hover { width: 220px; }
 
 .nav-logo { padding: 20px; font-size: 24px; font-weight: 800; color: #1a73e8; }
@@ -33,9 +33,9 @@
     display: flex; align-items: center; gap: 15px; width: 100%; 
 }
 
-/* تنسيق الجوال */
+/* وضع الجوال */
 @media (max-width: 768px) {
-    .side-nav { right: -285px; width: 280px; transition: right 0.3s ease; }
+    .side-nav { right: -285px; width: 280px; }
     .side-nav.active { right: 0; }
     .side-nav .nav-links li span { opacity: 1; }
 }
