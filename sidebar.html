@@ -26,11 +26,13 @@
         const sideNav = document.getElementById('sideNav');
         const overlay = document.getElementById('sidebarOverlay');
 
+        console.log("Sidebar Init Triggered"); // سيظهر في الكونسول للتأكد
+
         if (menuBtn && sideNav) {
             menuBtn.onclick = (e) => {
                 e.preventDefault();
-                sideNav.classList.add('active');
-                if (overlay) overlay.classList.add('active');
+                sideNav.classList.toggle('active'); // استخدمنا toggle بدل add لتفتح وتغلق
+                if (overlay) overlay.classList.toggle('active');
             };
         }
 
