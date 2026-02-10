@@ -6,9 +6,12 @@ let globalData = null;
 async function init() {
     const user = JSON.parse(localStorage.getItem("user"));
     if (!user) {
-        window.location.href = 'index.html'; // توجيه لتسجيل الدخول إذا لم يوجد مستخدم
+        window.location.href = 'index.html'; 
         return;
     }
+
+    // تفعيل زر القائمة الجانبية (Sidebar)
+    if (window.initSidebar) window.initSidebar();
 
     const res = await getStudentData('AB', user.ID);
     if (res.success) {
@@ -34,8 +37,8 @@ function renderAnalytics(data) {
         }
     }
 
-    updateChart(labels, values);
-    setSmartAlert(totalAbsent);
+    updateChart(labels, values); // هذه دالتك الأصلية
+    setSmartAlert(totalAbsent);  // هذه دالتك الأصلية التي تلون المربع
 }
 
 function setSmartAlert(total) {
@@ -123,3 +126,33 @@ function updateChart(labels, values) {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+// دالة لرسم الرسم البياني
+function setupChart(weeks) {
+    const ctx = document.getElementById('attendanceChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: weeks.map(w => `أسبوع ${w.week}`),
+            datasets: [{
+                label: 'الحضور',
+                data: weeks.map(w => w.present),
+                borderColor: '#1a73e8',
+                tension: 0.4
+            }]
+        }
+    });
+}
+
+// دالة لتلوين المربع حسب الغياب
+function generateSmartAlert(weeks) {
+    const lastWeek = weeks[weeks.length - 1]; 
+    const alertBox = document.getElementById('smart-alert');
+    if (lastWeek.absent >= 3) {
+        alertBox.className = "alert-box bg-danger text-white p-4 rounded-4";
+        alertBox.innerHTML = "<h5>تنبيه حرج!</h5><p>غيابك كثير، انتبه من الحرمان.</p>";
+    } else {
+        alertBox.className = "alert-box bg-success text-white p-4 rounded-4";
+        alertBox.innerHTML = "<h5>وضعك تمام</h5><p>استمر في الحضور يا بطل.</p>";
+    }
+}
