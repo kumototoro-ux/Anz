@@ -1,0 +1,42 @@
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    background: #4e73df;
+    background: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
+    position: fixed;
+    right: 0; /* للغة العربية */
+    top: 0;
+    color: white;
+    padding: 20px;
+    z-index: 1000;
+    transition: all 0.3s;
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.sidebar-logo { width: 40px; height: 40px; }
+
+.nav-link {
+    color: rgba(255,255,255,0.8) !important;
+    padding: 12px 15px;
+    border-radius: 10px;
+    margin-bottom: 5px;
+    transition: 0.3s;
+}
+
+.nav-link:hover, .nav-link.active {
+    background: rgba(255,255,255,0.1);
+    color: white !important;
+    transform: translateX(-5px); /* تأثير حركة لليسار بالعربي */
+}
+
+/* تنسيق الجوال */
+@media (max-width: 768px) {
+    .sidebar { width: 0; overflow: hidden; padding: 0; }
+    .sidebar.active { width: 250px; padding: 20px; }
+}
