@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>سجل الانضباط</title>
-    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-    
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="attendance.css">
 </head>
@@ -17,7 +15,7 @@
     <main class="main-content">
         <div class="container py-4">
             <h3 class="fw-bold mb-4">📊 سجل الانضباط الدراسي</h3>
-
+            
             <div class="row g-4">
                 <div class="col-lg-8">
                     <div class="card shadow-sm border-0 p-4">
@@ -39,20 +37,20 @@
                     <div class="card shadow-sm border-0 p-4">
                         <div class="row align-items-center">
                             <div class="col-md-4">
-                                <label class="fw-bold mb-2 small text-muted">تفاصيل الأسبوع:</label>
+                                <label class="fw-bold mb-2 small text-muted">عرض تفاصيل الأسبوع:</label>
                                 <select id="weekSelector" class="form-select border-primary shadow-none">
-                                    <option value="">-- اختر الأسبوع --</option>
+                                    <option value="">-- اختر الأسبوع الدراسي --</option>
                                 </select>
                             </div>
-                            <div class="col-md-8">
+                            <div class="col-md-8 text-center">
                                 <div id="week-detail-view" class="d-none">
-                                    <div class="row text-center mt-3 mt-md-0">
+                                    <div class="row">
                                         <div class="col-6 border-start">
-                                            <span class="text-muted small d-block">حضور</span>
+                                            <span class="text-muted small">حضور</span>
                                             <h2 id="week-present" class="fw-bold text-success">0</h2>
                                         </div>
                                         <div class="col-6">
-                                            <span class="text-muted small d-block">غياب</span>
+                                            <span class="text-muted small">غياب</span>
                                             <h2 id="week-absent" class="fw-bold text-danger">0</h2>
                                         </div>
                                     </div>
@@ -66,7 +64,14 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
     <script type="module" src="attendance.js"></script>
+
+    <script>
+        fetch('sidebar.html') // تأكد من اسم ملف القائمة الجانبية لديك
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('sidebar-container').innerHTML = data;
+            }).catch(err => console.error("خطأ في تحميل القائمة الجانبية"));
+    </script>
 </body>
 </html>
