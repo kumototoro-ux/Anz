@@ -28,15 +28,23 @@ async function loadSidebar() {
         const menuToggle = document.getElementById('menuToggle');
         const sideNav = document.getElementById('sideNav');
         const overlay = document.getElementById('sidebarOverlay');
-        const logoutBtn = document.getElementById('logoutBtn');
 
-        if (menuToggle && sideNav) {
+        // فتح القائمة
+        if (menuToggle && sideNav && overlay) {
             menuToggle.onclick = () => {
-                sideNav.classList.toggle('active');
-                if (overlay) overlay.classList.toggle('active');
+                sideNav.classList.add('active');
+                overlay.classList.add('active');
+            };
+
+            // إغلاق القائمة عند الضغط على المساحة المظلمة (هذا ما تطلبه)
+            overlay.onclick = () => {
+                sideNav.classList.remove('active');
+                overlay.classList.remove('active');
             };
         }
 
+        // زر تسجيل الخروج
+        const logoutBtn = document.getElementById('logoutBtn');
         if (logoutBtn) {
             logoutBtn.onclick = () => {
                 localStorage.clear();
@@ -44,7 +52,7 @@ async function loadSidebar() {
             };
         }
     } catch (err) {
-        console.error("خطأ في القائمة:", err);
+        console.error("خطأ في تحميل القائمة:", err);
     }
 }
 
