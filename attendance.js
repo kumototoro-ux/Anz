@@ -10,9 +10,11 @@ async function init() {
     // جلب القائمة الجانبية
     const sidebarRes = await fetch('sidebar.html');
     const sidebarData = await sidebarRes.text();
-    document.getElementById('sidebar-container').innerHTML = sidebarData;
+    // تأكد من أن الـ ID هنا يطابق ما هو موجود في HTML (غالباً sidebar-placeholder)
+    const placeholder = document.getElementById('sidebar-container') || document.getElementById('sidebar-placeholder');
+    if (placeholder) placeholder.innerHTML = sidebarData;
     
-    activateSidebar();
+    activateSidebar(); // استدعاء دالة التفعيل المحدثة بالأسفل
 
     // جلب بيانات الغياب
     const res = await getStudentData('AB', user.ID);
@@ -132,7 +134,9 @@ function activateSidebar() {
     const menuBtn = document.getElementById('menuToggle');
     const sideNav = document.getElementById('sideNav');
     const overlay = document.getElementById('sidebarOverlay');
+    const logoutBtn = document.getElementById('logoutBtn'); // إضافة الزر هنا
 
+    // تفعيل فتح وإغلاق القائمة
     if (menuBtn && sideNav) {
         menuBtn.onclick = () => {
             sideNav.classList.add('active');
@@ -143,6 +147,14 @@ function activateSidebar() {
         overlay.onclick = () => {
             sideNav.classList.remove('active');
             overlay.classList.remove('active');
+        };
+    }
+
+    // تفعيل زر تسجيل الخروج
+    if (logoutBtn) {
+        logoutBtn.onclick = () => {
+            localStorage.clear();
+            window.location.href = 'index.html';
         };
     }
 }
