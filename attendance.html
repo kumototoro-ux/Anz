@@ -66,21 +66,17 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="module" src="attendance.js"></script>
 
-    <script>
-        // بما أنك لا تملك ملف sidebar.html في الصورة
-        // سنقوم بسحب القائمة الجانبية من ملف home.html الموجود عندك
-        fetch('home.html') 
-            .then(response => response.text())
-            .then(data => {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(data, 'text/html');
-                // نبحث عن عنصر السايدبار داخل ملف home.html
-                // تأكد أن الكلاس في ملف home اسمه .sidebar
-                const sidebar = doc.querySelector('.sidebar') || doc.querySelector('#sidebar');
-                if (sidebar) {
-                    document.getElementById('sidebar-container').innerHTML = sidebar.outerHTML;
-                }
-            }).catch(err => console.error("لا يمكن العثور على القائمة في home.html"));
-    </script>
+   <script>
+    // استخدام نفس الطريقة الناجحة في الصفحة الرئيسية
+    fetch('sidebar.html')
+        .then(res => res.text())
+        .then(data => {
+            document.getElementById('sidebar-container').innerHTML = data;
+            // استدعاء الدالة العالمية التي نقلناها لـ home.js أو سنضعها في attendance.js
+            if (typeof window.initSidebar === "function") {
+                window.initSidebar();
+            }
+        });
+</script>
 </body>
 </html>
