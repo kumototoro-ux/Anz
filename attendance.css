@@ -1,9 +1,17 @@
 /* تنسيق المحتوى الرئيسي ليناسب الـ Sidebar */
 .main-content {
-    margin-right: 80px !important; 
-    padding: 20px;
+    margin-right: 80px !important; /* نفس عرض القائمة MQ */
+    padding: 30px;
     background-color: #f8f9fc;
     min-height: 100vh;
+    transition: all 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        margin-right: 0 !important;
+        margin-top: 60px !important; /* مساحة للبار العلوي */
+    }
 }
 
 /* بطاقات الإحصائيات */
@@ -62,19 +70,6 @@
 .btn-whatsapp:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
-}
-
-/* تنسيق الجوال */
-@media (max-width: 768px) {
-    .main-content {
-        margin-right: 0 !important;
-        margin-top: 70px !important; /* مساحة للبار العلوي */
-        padding: 15px;
-    }
-/* لضمان أن القائمة تظهر فوق كل شيء في الجوال */
-    .side-nav {
-        z-index: 9999 !important;
-    }
 }
 
 .sidebar-overlay {
