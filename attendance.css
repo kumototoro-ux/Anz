@@ -1,11 +1,11 @@
 /* تنسيق المحتوى الرئيسي ليناسب الـ Sidebar */
 .main-content {
-    margin-right: 80px !important; /* لترك مساحة للقائمة الصغيرة */
-    padding: 30px;
+    margin-right: 80px !important; 
+    padding: 20px;
     background-color: #f8f9fc;
     min-height: 100vh;
-    transition: all 0.3s ease;
 }
+
 /* بطاقات الإحصائيات */
 .card {
     border-radius: 15px;
@@ -68,7 +68,7 @@
 @media (max-width: 768px) {
     .main-content {
         margin-right: 0 !important;
-        margin-top: 80px !important; /* لإعطاء مساحة للبار العلوي */
+        margin-top: 70px !important; /* مساحة للبار العلوي */
         padding: 15px;
     }
 /* لضمان أن القائمة تظهر فوق كل شيء في الجوال */
