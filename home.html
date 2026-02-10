@@ -142,14 +142,31 @@
 </html>
 
 <script>
+    // 1. جلب محتوى القائمة
     fetch('sidebar.html')
         .then(res => res.text())
         .then(data => {
-            document.getElementById('sidebar-placeholder').innerHTML = data;
-            
-            // الآن الدالة موجودة في home.js وتم تعريفها عالمياً
-            if (typeof window.initSidebar === "function") {
-                window.initSidebar();
-            }
+            document.getElementById('sidebar-container').innerHTML = data;
+
+            // 2. تفعيل زر القائمة فوراً
+            setTimeout(() => {
+                const btn = document.getElementById('menuToggle');
+                const nav = document.getElementById('sideNav');
+                const over = document.getElementById('sidebarOverlay');
+
+                if (btn && nav) {
+                    btn.onclick = () => {
+                        nav.classList.add('active');
+                        if (over) over.classList.add('active');
+                    };
+                }
+                
+                if (over) {
+                    over.onclick = () => {
+                        nav.classList.remove('active');
+                        over.classList.remove('active');
+                    };
+                }
+            }, 100); // تأخير بسيط لضمان ظهور العناصر
         });
 </script>
