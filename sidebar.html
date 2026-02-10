@@ -22,24 +22,25 @@
     }
 
     // هذه الدالة التي يستدعيها ملف home.html
-    function initSidebar() {
-        const menuBtn = document.getElementById('menuToggle');
-        const sideNav = document.getElementById('sideNav');
-        const overlay = document.getElementById('sidebarOverlay');
+   function initSidebar() {
+    const menuBtn = document.getElementById('menuToggle');
+    const sideNav = document.getElementById('sideNav');
+    const overlay = document.getElementById('sidebarOverlay');
 
-        if (menuBtn && sideNav) {
-            menuBtn.onclick = (e) => {
-                e.preventDefault();
-                sideNav.classList.toggle('active');
-                if (overlay) overlay.classList.toggle('active');
-            };
-        }
-
-        if (overlay) {
-            overlay.onclick = () => {
-                sideNav.classList.remove('active');
-                overlay.classList.remove('active');
-            };
-        }
+    if (menuBtn && sideNav) {
+        console.log("تم تفعيل زر المنيو بنجاح"); // سيظهر في الكونسول للتأكد
+        menuBtn.onclick = (e) => {
+            e.preventDefault();
+            sideNav.classList.add('active');
+            if (overlay) overlay.classList.add('active');
+        };
     }
+
+    if (overlay) {
+        overlay.onclick = () => {
+            sideNav.classList.remove('active');
+            overlay.classList.remove('active');
+        };
+    }
+}
 </script>
