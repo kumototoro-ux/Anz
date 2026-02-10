@@ -138,3 +138,16 @@
     <script type="module" src="home.js"></script>
 </body>
 </html>
+
+<script>
+    fetch('sidebar.html')
+        .then(res => res.text())
+        .then(data => {
+            document.getElementById('sidebar-placeholder').innerHTML = data;
+            
+            // سطر إضافي: تشغيل المنيو بعد التحميل
+            if (typeof initSidebar === "function") {
+                initSidebar();
+            }
+        });
+</script>
