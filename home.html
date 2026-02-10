@@ -142,18 +142,14 @@
 </html>
 
 <script>
-   fetch('sidebar.html')
-    .then(res => res.text())
-    .then(data => {
-        document.getElementById('sidebar-placeholder').innerHTML = data;
-        
-        // انتظر قليلاً ثم شغل الدالة
-        setTimeout(() => {
-            if (typeof initSidebar === "function") {
-                initSidebar(); 
-            } else {
-                console.log("الدالة غير موجودة بعد، جاري المحاولة مرة أخرى...");
+    fetch('sidebar.html')
+        .then(res => res.text())
+        .then(data => {
+            document.getElementById('sidebar-placeholder').innerHTML = data;
+            
+            // الآن الدالة موجودة في home.js وتم تعريفها عالمياً
+            if (typeof window.initSidebar === "function") {
+                window.initSidebar();
             }
-        }, 300);
-    });
+        });
 </script>
