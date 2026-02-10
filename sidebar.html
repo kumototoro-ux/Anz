@@ -1,12 +1,6 @@
 <link rel="stylesheet" href="sidebar.css">
 
-<div class="sidebar">
-    <div class="sidebar-header">
-        <img src="logo.png" alt="Logo" class="sidebar-logo">
-        <h5 class="ms-2">نظام الانضباط</h5>
-    </div>
-    
-    <nav class="side-nav" id="sideNav">
+<nav class="side-nav" id="sideNav">
     <div class="nav-logo">MQ</div>
     <ul class="nav-links">
         <li><a href="home.html"><i class="fas fa-home"></i> <span>الرئيسية</span></a></li>
@@ -22,28 +16,32 @@
 </nav>
 
 <script>
-    // دالة تسجيل الخروج
     function logoutUser() {
         localStorage.removeItem('user');
         window.location.href = 'index.html';
     }
 
-    // كود تشغيل المنيو في الجوال (يعمل تلقائياً في كل الصفحات)
-    const menuBtn = document.getElementById('menuToggle');
-    const sideNav = document.getElementById('sideNav');
-    const overlay = document.getElementById('sidebarOverlay');
+    // دالة لتشغيل المنيو يتم استدعاؤها من الصفحة الرئيسية
+    function initSidebar() {
+        const menuBtn = document.getElementById('menuToggle');
+        const sideNav = document.getElementById('sideNav');
+        const overlay = document.getElementById('sidebarOverlay');
 
-    if (menuBtn) {
-        menuBtn.onclick = () => {
-            sideNav.classList.add('active');
-            if(overlay) overlay.classList.add('active');
-        };
+        if (menuBtn && sideNav) {
+            menuBtn.onclick = () => {
+                sideNav.classList.toggle('active');
+                if (overlay) overlay.classList.toggle('active');
+            };
+        }
+        
+        if (overlay) {
+            overlay.onclick = () => {
+                sideNav.classList.remove('active');
+                overlay.classList.remove('active');
+            };
+        }
     }
-
-    if (overlay) {
-        overlay.onclick = () => {
-            sideNav.classList.remove('active');
-            overlay.classList.remove('active');
-        };
-    }
+    
+    // تشغيل تلقائي في حال تحميل السايدبار
+    setTimeout(initSidebar, 100);
 </script>
