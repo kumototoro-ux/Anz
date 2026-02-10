@@ -141,17 +141,14 @@
 
 <script>
     fetch('sidebar.html')
-        .then(res => {
-            if (!res.ok) throw new Error('Sidebar file not found');
-            return res.text();
-        })
+        .then(res => res.text())
         .then(data => {
             document.getElementById('sidebar-placeholder').innerHTML = data;
+            // تشغيل الربط بعد تحميل القائمة بـ 100 ملي ثانية
             setTimeout(() => {
                 if (typeof initSidebar === "function") {
                     initSidebar();
                 }
             }, 100);
-        })
-        .catch(err => console.error(err));
+        });
 </script>
