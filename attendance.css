@@ -1,63 +1,75 @@
+/* تنسيق المحتوى الرئيسي ليناسب الـ Sidebar */
+.main-content {
+    margin-right: 250px; /* إزاحة القائمة الجانبية للكمبيوتر */
+    padding: 30px;
+    background-color: #f8f9fc;
+    min-height: 100vh;
+    transition: all 0.3s ease;
+}
+
+/* بطاقات الإحصائيات */
+.card {
+    border-radius: 15px;
+    border: none;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+    background-color: #ffffff;
+}
+
+/* صندوق التنبيه الذكي */
 .alert-box {
-    min-height: 250px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    border: 1px solid #eee;
-    transition: all 0.4s ease-in-out;
+    align-items: center;
+    border-radius: 20px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    min-height: 250px;
 }
 
-/* حالة القائمة السوداء - تصميم قوي وحركي */
-.black-list-alert {
-    background-color: #000 !important;
+/* حالات التنبيه الملونة */
+.bg-success { background: linear-gradient(135deg, #1cc88a 0%, #13855c 100%) !important; color: white; }
+.bg-warning { background: linear-gradient(135deg, #f6c23e 0%, #dda20a 100%) !important; color: #3a3b45; }
+.bg-danger { background: linear-gradient(135deg, #e74a3b 0%, #be2617 100%) !important; color: white; }
+
+/* تصميم القائمة السوداء (الوضع الحرج) */
+.status-critical {
+    background: #000000 !important;
     color: #ff3e3e !important;
-    border: 3px solid #ff0000 !important;
-    box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
-    animation: alert-pulse 1.5s infinite;
+    border: 3px solid #ff0000;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+    animation: alert-glow 1.5s infinite;
 }
 
-@keyframes alert-pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.02); }
-    100% { transform: scale(1); }
+@keyframes alert-glow {
+    0% { box-shadow: 0 0 5px #ff0000; }
+    50% { box-shadow: 0 0 25px #ff0000; }
+    100% { box-shadow: 0 0 5px #ff0000; }
 }
 
+/* زر الواتساب الاحترافي */
 .btn-whatsapp {
     background-color: #25d366;
     color: white !important;
-    border-radius: 25px;
-    padding: 10px 20px;
-    text-decoration: none;
+    border-radius: 50px;
+    padding: 12px 25px;
     font-weight: bold;
-    display: inline-block;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
 }
 
-.btn-whatsapp:hover { background-color: #1ebe57; }
-
-.main-content {
-    margin-right: 250px;
-    padding: 30px;
-    transition: all 0.3s;
+.btn-whatsapp:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
 }
 
-.alert-box {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    border: 1px solid #ddd;
-    min-height: 250px;
-}
-
-/* القائمة السوداء */
-.status-critical {
-    background-color: #000 !important;
-    color: #ff0000 !important;
-    border: 2px solid #ff0000;
-    box-shadow: 0 0 15px rgba(255,0,0,0.5);
-}
-
-.card { border-radius: 15px; }
-
+/* تنسيق الجوال */
 @media (max-width: 768px) {
-    .main-content { margin-right: 0; margin-top: 60px; }
+    .main-content {
+        margin-right: 0;
+        padding: 15px;
+        margin-top: 60px; /* مساحة لـ Mobile Navbar */
+    }
 }
