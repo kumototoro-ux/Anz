@@ -142,31 +142,36 @@
 </html>
 
 <script>
-    // 1. جلب محتوى القائمة
+    // جلب محتوى القائمة (تأكد من استخدام ID المطابق للـ HTML وهو sidebar-placeholder)
     fetch('sidebar.html')
         .then(res => res.text())
         .then(data => {
-            document.getElementById('sidebar-container').innerHTML = data;
+            const container = document.getElementById('sidebar-placeholder');
+            if (container) {
+                container.innerHTML = data;
 
-            // 2. تفعيل زر القائمة فوراً
-            setTimeout(() => {
-                const btn = document.getElementById('menuToggle');
-                const nav = document.getElementById('sideNav');
-                const over = document.getElementById('sidebarOverlay');
+                // تفعيل الزر (نستخدم setTimeout لضمان أن المتصفح تعرف على العناصر الجديدة)
+                setTimeout(() => {
+                    const btn = document.getElementById('menuToggle');
+                    const nav = document.getElementById('sideNav');
+                    const over = document.getElementById('sidebarOverlay');
 
-                if (btn && nav) {
-                    btn.onclick = () => {
-                        nav.classList.add('active');
-                        if (over) over.classList.add('active');
-                    };
-                }
-                
-                if (over) {
-                    over.onclick = () => {
-                        nav.classList.remove('active');
-                        over.classList.remove('active');
-                    };
-                }
-            }, 100); // تأخير بسيط لضمان ظهور العناصر
-        });
+                    if (btn && nav) {
+                        btn.onclick = (e) => {
+                            e.preventDefault();
+                            nav.classList.add('active');
+                            if (over) over.classList.add('active');
+                        };
+                    }
+                    
+                    if (over) {
+                        over.onclick = () => {
+                            nav.classList.remove('active');
+                            over.classList.remove('active');
+                        };
+                    }
+                }, 100);
+            }
+        })
+        .catch(err => console.error("خطأ في جلب القائمة:", err));
 </script>
