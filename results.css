@@ -122,3 +122,38 @@ body { background-color: #f8fafc; direction: rtl; }
     background: rgba(0,0,0,0.3); display: none; z-index: 1001;
 }
 .sidebar-overlay.active { display: block; }
+
+/* تنسيق الهيدر ليكون المنيو يسار والبروفايل يمين */
+.app-header {
+    height: 60px;
+    background: #ffffff;
+    display: flex;
+    justify-content: space-between; /* يوزع العناصر على الأطراف */
+    align-items: center;
+    padding: 0 15px;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    border-bottom: 1px solid #eee;
+}
+
+/* الطبقة المظلمة التي تسمح بالإغلاق عند الضغط عليها */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4); /* تعتيم خلف القائمة */
+    display: none; /* مخفية افتراضياً */
+    z-index: 1001; /* تحت القائمة وفوق المحتوى */
+}
+
+.sidebar-overlay.active {
+    display: block; /* تظهر فقط عند تفعيل القائمة */
+}
+
+/* تأكد أن القائمة الجانبية (sideNav) لديها z-index أعلى من 1001 */
+#sideNav {
+    z-index: 1002;
+}
