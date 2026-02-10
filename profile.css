@@ -4,15 +4,7 @@
     --soft-shadow: 0 10px 30px rgba(0,0,0,0.08);
 }
 
-body {
-    background-color: #f8f9fa;
-    font-family: 'Tajawal', sans-serif;
-    margin: 0;
-    direction: rtl;
-}
-
 .profile-container {
-    margin-right: 80px; /* لمراعاة القائمة الجانبية */
     padding: 50px;
     display: flex;
     flex-direction: column;
@@ -109,4 +101,19 @@ body {
 @keyframes slideUp {
     from { transform: translateY(50px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
+}
+
+/* التعديلات الجديدة للربط الموحد */
+@media (max-width: 768px) {
+    .main-content {
+        padding-top: 90px !important; /* لترك مساحة لشريط الجوال العلوي */
+        margin-right: 0 !important;
+    }
+}
+
+/* تنسيق النصوص لتظهر بوضوح جهة اليسار */
+.info-row span {
+    float: left;
+    color: var(--primary-blue);
+    font-weight: 700;
 }
