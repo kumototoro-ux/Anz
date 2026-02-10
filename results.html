@@ -16,7 +16,7 @@
 
     <main class="results-container">
         <header class="results-header">
-            <h1 id="userGreeting">مرحباً بك</h1>
+            <h1 id="userGreeting">مرحباً</h1>
             <p>يمكنك استعراض وطباعة إشعارات درجات الفصول الدراسية من هنا.</p>
         </header>
 
@@ -27,29 +27,14 @@
 
         <div id="certificateArea" class="certificate-wrapper hide">
             <div class="certificate-card">
-                <div class="cert-header">
-                    <div class="cert-title">
-                        <h2>إشعار درجات الطالب</h2>
-                        <p id="certTermName"></p>
-                    </div>
-                </div>
                 <table class="results-table">
                     <thead>
                         <tr><th>المادة</th><th>التقييم / الدرجة</th></tr>
                     </thead>
                     <tbody id="resultsBody"></tbody>
                 </table>
-                <div class="cert-summary">
-                    <div class="summary-item"><span>المجموع:</span> <strong id="totalScore">-</strong></div>
-                    <div class="summary-item"><span>المعدل:</span> <strong id="averageScore">-</strong></div>
-                </div>
             </div>
             <button class="print-btn" onclick="window.print()"><i class="fas fa-print"></i> طباعة الإشعار</button>
-        </div>
-
-        <div id="errorArea" class="error-card hide">
-            <h3>عذراً، غير مسموح بعرض الإشعار</h3>
-            <p>بياناتك لم تكتمل بعد.</p>
         </div>
     </main>
 
