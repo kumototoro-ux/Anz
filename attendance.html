@@ -1,63 +1,49 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سجل الغياب - منصة الطالب</title>
-    <link rel="stylesheet" href="css/bootstrap.rtl.min.css">
-    <link rel="stylesheet" href="css/style.css"> <link rel="stylesheet" href="css/attendance.css">
-</head>
-<body>
+<main class="main-content">
+    <div class="container py-4">
+        <h3 class="mb-4 fw-bold">📊 سجل الانضباط الدراسي</h3>
 
-    <div id="sidebar-container"></div> 
-
-    <main class="main-content">
-        <div class="container py-4">
-            <h3 class="mb-4 fw-bold text-dark">📊 تحليل الانضباط والغياب</h3>
-
-            <div class="card shadow-sm mb-4 border-0 p-4">
-                <div class="row align-items-center">
-                    <div class="col-lg-8">
-                        <h6 class="fw-bold mb-3">مؤشر حضور الحصص الأسبوعي (15 حصة/أسبوع)</h6>
-                        <div style="height: 300px;">
-                            <canvas id="attendanceChart"></canvas>
-                        </div>
+        <div class="card shadow-sm mb-4 border-0 p-4">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h6 class="fw-bold mb-3">مستوى الحضور الأسبوعي (من 15 حصة)</h6>
+                    <div style="height: 300px; position: relative;">
+                        <canvas id="attendanceChart"></canvas>
                     </div>
-                    <div class="col-lg-4">
-                        <div id="smart-alert" class="alert-box rounded-4 p-4 text-center">
-                            </div>
+                </div>
+                <div class="col-lg-4">
+                    <div id="smart-alert" class="alert-box rounded-4 p-4 text-center shadow-sm">
+                        جاري تحليل بياناتك...
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div class="card shadow-sm border-0 p-4">
-                <h6 class="fw-bold mb-3">تفاصيل الحصص لكل أسبوع</h6>
-                <div class="row g-3 align-items-center">
-                    <div class="col-md-5">
-                        <select id="weekSelector" class="form-select border-primary shadow-none">
-                            <option value="">-- اختر الأسبوع الدراسي --</option>
-                        </select>
-                    </div>
-                    <div class="col-md-7">
-                        <div id="week-detail-view" class="p-3 bg-light rounded-3 d-none">
-                            <div class="row text-center">
-                                <div class="col-6 border-start">
-                                    <small class="text-muted d-block">حضر</small>
-                                    <span id="week-present" class="h4 fw-bold text-success">0</span>
-                                </div>
-                                <div class="col-6">
-                                    <small class="text-muted d-block">غاب</small>
-                                    <span id="week-absent" class="h4 fw-bold text-danger">0</span>
-                                </div>
+        <div class="card shadow-sm border-0 p-4">
+            <h6 class="fw-bold mb-3">تفاصيل الحصص للأسبوع المختار</h6>
+            <div class="row g-3 align-items-center">
+                <div class="col-md-5">
+                    <label class="small text-muted mb-1">اختر الأسبوع لمشاهدة التفاصيل</label>
+                    <select id="weekSelector" class="form-select border-primary shadow-none">
+                        <option value="">-- اختر الأسبوع --</option>
+                    </select>
+                </div>
+                <div class="col-md-7">
+                    <div id="week-detail-view" class="p-3 bg-light rounded-3 d-none animate__animated animate__fadeIn">
+                        <div class="row text-center">
+                            <div class="col-6 border-start">
+                                <small class="text-muted d-block">عدد حصص الحضور</small>
+                                <span id="week-present" class="h4 fw-bold text-success">0</span>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted d-block">عدد حصص الغياب</small>
+                                <span id="week-absent" class="h4 fw-bold text-danger">0</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </main>
+    </div>
+</main>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script type="module" src="js/attendance.js"></script>
-</body>
-</html>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
