@@ -35,7 +35,14 @@
 
 /* وضع الجوال */
 @media (max-width: 768px) {
-    .side-nav { right: -285px; width: 280px; }
-    .side-nav.active { right: 0; }
-    .side-nav .nav-links li span { opacity: 1; }
+    .side-nav {
+        right: -285px !important; /* خارج الشاشة يميناً */
+        width: 280px !important;
+        transition: right 0.3s ease-in-out !important;
+        display: flex !important; /* لضمان عدم اختفائها */
+    }
+
+    .side-nav.active {
+        right: 0 !important; /* تظهر في الشاشة */
+    }
 }
