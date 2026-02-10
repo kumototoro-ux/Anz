@@ -21,19 +21,20 @@
         window.location.href = 'index.html';
     }
 
-    // دالة لتشغيل المنيو يتم استدعاؤها من الصفحة الرئيسية
+    // هذه الدالة التي يستدعيها ملف home.html
     function initSidebar() {
         const menuBtn = document.getElementById('menuToggle');
         const sideNav = document.getElementById('sideNav');
         const overlay = document.getElementById('sidebarOverlay');
 
         if (menuBtn && sideNav) {
-            menuBtn.onclick = () => {
+            menuBtn.onclick = (e) => {
+                e.preventDefault();
                 sideNav.classList.toggle('active');
                 if (overlay) overlay.classList.toggle('active');
             };
         }
-        
+
         if (overlay) {
             overlay.onclick = () => {
                 sideNav.classList.remove('active');
@@ -41,7 +42,4 @@
             };
         }
     }
-    
-    // تشغيل تلقائي في حال تحميل السايدبار
-    setTimeout(initSidebar, 100);
 </script>
