@@ -393,19 +393,3 @@ function renderAcademicCalendar() {
     }
     weekContainer.innerHTML = `<div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:8px;">${daysHtml}</div>`;
 }
-
-// دالة تسجيل الخروج
-const logoutBtn = document.getElementById('logoutBtn');
-
-if (logoutBtn) {
-    logoutBtn.addEventListener('click', () => {
-        // 1. مسح بيانات المستخدم من المتصفح
-        localStorage.removeItem('user');
-        
-        // 2. اختيارية: إذا كنت تستخدم sessionStorage امسحه أيضاً
-        // sessionStorage.clear();
-
-        // 3. التوجيه لصفحة الدخول (تأكد من اسم الملف لديك، مثلاً index.html)
-        window.location.href = 'index.html'; 
-    });
-}
