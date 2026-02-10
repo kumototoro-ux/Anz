@@ -74,3 +74,18 @@
     </script>
 </body>
 </html>
+
+<script>
+    // نسحب المحتوى من home.html بدلاً من ملف غير موجود
+    fetch('home.html') 
+        .then(res => res.text())
+        .then(data => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(data, 'text/html');
+            // ابحث عن الجزء الذي يحتوي على القائمة (Sidebar) في ملف home
+            const sidebar = doc.querySelector('.sidebar') || doc.querySelector('#sidebar');
+            if(sidebar) {
+                document.getElementById('sidebar-container').innerHTML = sidebar.outerHTML;
+            }
+        }).catch(err => console.error("لا يوجد ملف بهذا الاسم"));
+</script>
