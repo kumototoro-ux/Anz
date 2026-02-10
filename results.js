@@ -1,27 +1,24 @@
 import { getStudentData } from "./api.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
-    // 1. الأمان: إذا لم يسجل دخول يرجعه للرئيسية
+    // 1. التحقق من الدخول
     const user = JSON.parse(localStorage.getItem("user"));
-    if (!user) {
-        window.location.href = "index.html";
-        return;
-    }
+    if (!user) { window.location.href = "index.html"; return; }
 
-    // 2. تحميل القائمة الجانبية (هذا الجزء هو الأهم)
+    // 2. تحميل القائمة الجانبية فوراً (كما في الصفحات السابقة)
     await loadSidebar();
 
-    // 3. عرض اسم الطالب
+    // 3. عرض ترحيب الطالب
     document.getElementById("userGreeting").innerText = `مرحباً، ${user.Name_AR || 'الطالب'}`;
 
-    // 4. ربط أزرار الفصول الدراسية
+    // 4. ربط أزرار الفصول
     const buttons = document.querySelectorAll(".term-btn");
     buttons.forEach(btn => {
         btn.addEventListener("click", () => fetchResults(btn.getAttribute("data-term"), user.ID));
     });
 });
 
-// دالة تحميل القائمة وتفعيل زر تسجيل الخروج
+// دالة تحميل القائمة وتفعيل زر الخروج
 async function loadSidebar() {
     try {
         const response = await fetch('sidebar.html');
@@ -33,19 +30,13 @@ async function loadSidebar() {
         const overlay = document.getElementById('sidebarOverlay');
         const logoutBtn = document.getElementById('logoutBtn');
 
-        // تفعيل فتح وإغلاق القائمة للجوال
-        if (menuToggle && sideNav && overlay) {
+        if (menuToggle && sideNav) {
             menuToggle.onclick = () => {
                 sideNav.classList.toggle('active');
-                overlay.classList.toggle('active');
-            };
-            overlay.onclick = () => {
-                sideNav.classList.remove('active');
-                overlay.classList.remove('active');
+                if (overlay) overlay.classList.toggle('active');
             };
         }
 
-        // تفعيل زر تسجيل الخروج
         if (logoutBtn) {
             logoutBtn.onclick = () => {
                 localStorage.clear();
@@ -53,41 +44,27 @@ async function loadSidebar() {
             };
         }
     } catch (err) {
-        console.error("خطأ في تحميل القائمة الجانبية:", err);
+        console.error("خطأ في القائمة:", err);
     }
 }
 
-// دالة جلب النتائج (كما هي في كودك)
+// دالة جلب البيانات (النتائج)
 async function fetchResults(tableName, studentId) {
     document.getElementById("certificateArea").classList.add("hide");
-    document.getElementById("errorArea").classList.add("hide");
-
     const res = await getStudentData(tableName, studentId);
     if (res.success && res.data) {
-        showCertificate(res.data, tableName);
-    } else {
-        document.getElementById("errorArea").classList.remove("hide");
+        showCertificate(res.data);
     }
 }
 
-function showCertificate(data, term) {
+function showCertificate(data) {
     const tbody = document.getElementById("resultsBody");
     tbody.innerHTML = "";
-    document.getElementById("certTermName").innerText = (term === "notice_term1") ? "الفصل الدراسي الأول" : "الفصل الدراسي الثاني";
-
-    let total = 0, count = 0;
     Object.entries(data).forEach(([key, value]) => {
-        const exclude = ["id", "student_id", "created_at", "ID", "Student_ID"];
+        const exclude = ["id", "student_id", "created_at", "ID"];
         if (!exclude.includes(key)) {
             tbody.innerHTML += `<tr><td>${key}</td><td>${value || '---'}</td></tr>`;
-            if(value && !isNaN(value)) {
-                total += parseFloat(value);
-                count++;
-            }
         }
     });
-
-    document.getElementById("totalScore").innerText = total;
-    document.getElementById("averageScore").innerText = count > 0 ? (total / count).toFixed(2) : "-";
     document.getElementById("certificateArea").classList.remove("hide");
 }
