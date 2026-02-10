@@ -21,26 +21,24 @@
         window.location.href = 'index.html';
     }
 
-    function initSidebar() {
-        const menuBtn = document.getElementById('menuToggle');
-        const sideNav = document.getElementById('sideNav');
-        const overlay = document.getElementById('sidebarOverlay');
+   function initSidebar() {
+    const menuBtn = document.getElementById('menuToggle'); // الزر الموجود في الهيدر
+    const sideNav = document.getElementById('sideNav');   // القائمة الجانبية
+    const overlay = document.getElementById('sidebarOverlay'); // الطبقة المظلمة
 
-        console.log("Sidebar Init Triggered"); // سيظهر في الكونسول للتأكد
-
-        if (menuBtn && sideNav) {
-            menuBtn.onclick = (e) => {
-                e.preventDefault();
-                sideNav.classList.toggle('active'); // استخدمنا toggle بدل add لتفتح وتغلق
-                if (overlay) overlay.classList.toggle('active');
-            };
-        }
-
-        if (overlay) {
-            overlay.onclick = () => {
-                sideNav.classList.remove('active');
-                overlay.classList.remove('active');
-            };
-        }
+    if (menuBtn && sideNav) {
+        menuBtn.onclick = () => {
+            sideNav.classList.toggle('active');
+            if (overlay) overlay.classList.toggle('active');
+        };
     }
+
+    // إغلاق القائمة عند الضغط على الطبقة المظلمة
+    if (overlay) {
+        overlay.onclick = () => {
+            sideNav.classList.remove('active');
+            overlay.classList.remove('active');
+        };
+    }
+}
 </script>
