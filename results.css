@@ -1,139 +1,202 @@
-/* profile.css */
-
-.profile-card {
-    max-width: 800px;
-    margin: 0 auto;
-    background: white;
-    border-radius: 20px;
-    border: 1px solid var(--border);
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+/* المتغيرات العامة للألوان والهوية */
+:root {
+    --primary: #2563eb;         /* اللون الأزرق الموضح في الصورة */
+    --primary-hover: #1d4ed8;
+    --bg-light: #f8fafc;
+    --text-main: #1e293b;
+    --text-sub: #64748b;
+    --white: #ffffff;
+    --border: #e2e8f0;
+    --sidebar-width: 280px;
 }
 
-.profile-hero {
-    background: linear-gradient(135deg, #f8faff 0%, #e8f0fe 100%);
-    padding: 40px 20px;
+/* تنسيقات أساسية للموقع */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Tajawal', sans-serif;
+}
+
+body {
+    background-color: var(--bg-light);
+    color: var(--text-main);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* --- الهيد (Header) وزر المنيو كما في الصورة --- */
+
+.mobile-menu-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px; /* يظهر في الجهة اليسرى كما في الصورة */
+    z-index: 1001;
+    background: var(--primary);
+    color: var(--white);
+    border: none;
+    width: 45px;
+    height: 45px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    transition: transform 0.2s;
+}
+
+.mobile-menu-btn:active {
+    transform: scale(0.9);
+}
+
+/* --- الحاوية الرئيسية للنتائج --- */
+
+.results-container {
+    max-width: 1000px;
+    margin: 80px auto 40px; /* مساحة علوية للزر */
+    padding: 20px;
+    transition: margin-right 0.3s ease;
+}
+
+.results-header {
     text-align: center;
+    margin-bottom: 40px;
+}
+
+.results-header h1 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--text-main);
+    margin-bottom: 10px;
+}
+
+.results-header p {
+    color: var(--text-sub);
+    font-size: 1rem;
+}
+
+/* --- أزرار اختيار الفصول --- */
+
+.selection-box {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.term-btn {
+    padding: 12px 25px;
+    border: 1px solid var(--border);
+    background: var(--white);
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+
+.term-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: #eff6ff;
+}
+
+/* --- عرض الشهادة والجدول --- */
+
+.certificate-wrapper {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 30px;
+    border: 1px solid var(--border);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.results-table th {
+    background: #f1f5f9;
+    padding: 15px;
+    text-align: right;
+    font-weight: 700;
+    border-bottom: 2px solid var(--border);
+}
+
+.results-table td {
+    padding: 15px;
     border-bottom: 1px solid var(--border);
 }
 
-.avatar-wrapper {
-    position: relative;
-    width: 120px;
-    height: 120px;
-    margin: 0 auto 15px;
+.results-table tr:hover {
+    background: #f8fafc;
 }
 
-#userAvatar {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    border: 4px solid white;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
+/* --- أزرار الطباعة والواتساب --- */
 
-.status-indicator {
-    position: absolute;
-    bottom: 5px;
-    left: 5px;
-    width: 20px;
-    height: 20px;
-    background: var(--success);
-    border: 3px solid white;
-    border-radius: 50%;
-}
-
-.student-label {
-    background: var(--primary);
-    color: white;
-    padding: 4px 15px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: bold;
-}
-
-.info-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    padding: 30px;
-}
-
-.info-item {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    padding: 15px;
-    background: #f8f9fa;
-    border-radius: 12px;
-    border: 1px solid #f0f0f0;
-}
-
-.info-item i {
-    font-size: 1.5rem;
-    color: var(--primary);
-    width: 40px;
-}
-
-.info-content label {
+.print-btn {
     display: block;
-    font-size: 0.75rem;
-    color: var(--text-sub);
-    margin-bottom: 2px;
-}
-
-.info-content p {
-    margin: 0;
-    font-weight: 700;
-    color: var(--text-main);
-}
-
-.profile-footer {
-    padding: 20px;
-    text-align: center;
-    background: #fff9f0;
-    color: #856404;
-    font-size: 0.85rem;
-}
-
-.info-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 12px 0;
-    border-bottom: 1px solid #f1f3f4;
-}
-.info-row:last-child { border-bottom: none; }
-.info-row strong { color: var(--text-sub); font-weight: 500; }
-.info-row span { color: var(--text-main); font-weight: 700; }
-
-/* تنسيق أساسي لإظهار وإخفاء المحتوى */
-.hide { display: none !important; }
-
-/* زر القائمة للجوال */
-.mobile-menu-btn {
-    position: fixed;
-    top: 15px;
-    right: 15px;
-    z-index: 1000;
-    background: #1a73e8;
+    width: 100%;
+    margin-top: 25px;
+    padding: 15px;
+    background: var(--text-main);
     color: white;
     border: none;
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
+    border-radius: 12px;
+    font-weight: bold;
     cursor: pointer;
-    display: none; /* يظهر في الجوال فقط */
 }
 
-/* تنسيق الشاشات الكبيرة */
+.error-card {
+    text-align: center;
+    padding: 40px;
+    background: #fff5f5;
+    border: 1px solid #feb2b2;
+    border-radius: 20px;
+    color: #c53030;
+}
+
+/* --- تنسيقات القائمة الجانبية (للتوافق) --- */
+
+.sidebar-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(2px);
+    display: none;
+    z-index: 999;
+}
+
+.sidebar-overlay.active { display: block; }
+
+.hide { display: none !important; }
+
+/* --- Responsive (التجاوب) --- */
+
 @media (min-width: 992px) {
     .results-container {
-        margin-right: 280px; /* يترك مساحة للقائمة الجانبية */
+        margin-right: var(--sidebar-width);
+        margin-top: 40px;
     }
+    .mobile-menu-btn { display: none; }
 }
 
-/* تنسيق الجوال */
-@media (max-width: 991px) {
-    .mobile-menu-btn { display: flex; align-items: center; justify-content: center; }
-    .results-container { margin-right: 0; padding: 20px; }
+@media (max-width: 768px) {
+    .results-header h1 { font-size: 1.5rem; }
+    .term-btn { width: 100%; }
+}
+
+/* تحسين الطباعة */
+@media print {
+    .mobile-menu-btn, .selection-box, .print-btn, #sidebar-placeholder {
+        display: none !important;
+    }
+    .results-container { margin: 0; padding: 0; width: 100%; }
+    .certificate-wrapper { border: none; box-shadow: none; }
 }
