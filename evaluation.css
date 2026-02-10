@@ -1,7 +1,6 @@
-/* evaluation.css - الإصلاح المتوافق مع صفحة معلوماتي */
+/* evaluation.css - النسخة النهائية الموحدة */
 
 :root {
-    --side-width: 260px;
     --primary: #1a73e8;
     --bg-light: #f8f9fa;
     --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
@@ -14,61 +13,28 @@ body {
     direction: rtl;
 }
 
-/* --- المحتوى الرئيسي: يبتعد عن القائمة بمارجن ثابت في الكمبيوتر --- */
+/* ضبط المسافات للكمبيوتر (يتماشى مع السايدبار النحيف 80px) */
 .main-content {
-    margin-right: var(--side-width) !important;
+    margin-right: 80px;
     padding: 40px;
     min-height: 100vh;
-    box-sizing: border-box;
     transition: all 0.3s ease;
 }
 
-/* --- القائمة الجانبية (نفس خصائص الهوم ومعلوماتي) --- */
-.side-nav {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: var(--side-width);
-    height: 100vh;
-    background: #fff;
-    border-left: 1px solid #eee;
-    z-index: 2000;
-    display: flex;
-    flex-direction: column;
-}
-
-/* --- الـ Overlay (مطابق لملف معلوماتي) --- */
-.sidebar-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.4);
-    z-index: 1800;
-}
-.sidebar-overlay.active { display: block; }
-
-/* --- استجابة الجوال --- */
+/* استجابة الجوال الموحدة */
 @media (max-width: 992px) {
     .main-content {
         margin-right: 0 !important;
         padding: 20px;
-        padding-top: 80px;
+        padding-top: 95px !important; /* مساحة للهيدر العلوي */
     }
 
-    .side-nav {
-        transform: translateX(100%);
-        transition: transform 0.3s ease;
-    }
-
-    .side-nav.active {
-        transform: translateX(0);
+    .selection-bar {
+        flex-direction: column; /* القوائم تحت بعض في الجوال */
     }
 
     .evaluation-grid {
-        grid-template-columns: 1fr !important;
+        grid-template-columns: 1fr !important; /* كروت التقييم تحت بعض */
     }
 }
 
