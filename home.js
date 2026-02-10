@@ -7,6 +7,7 @@ import { getStudentData } from './api.js';
 
 document.addEventListener("DOMContentLoaded", async () => {
     
+    await loadSidebar();
     // تأكد من وجود هذين السطرين (أنت غالباً حذفتهم بالخطأ)
     const userData = JSON.parse(localStorage.getItem("user"));
     const studentId = userData.ID;
@@ -395,26 +396,37 @@ function renderAcademicCalendar() {
 }
 
 // أضف هذا الكود في نهاية ملف home.js
-export function initSidebar() {
-    const menuBtn = document.getElementById('menuToggle');
-    const sideNav = document.getElementById('sideNav');
-    const overlay = document.getElementById('sidebarOverlay');
+async function loadSidebar() {
+    try {
+        const response = await fetch('sidebar.html');
+        const html = await response.text();
+        document.getElementById('sidebar-placeholder').innerHTML = html;
 
-    if (menuBtn && sideNav) {
-        menuBtn.onclick = (e) => {
-            e.stopPropagation(); // منع انتشار الحدث
-            sideNav.classList.toggle('active');
-            if (overlay) overlay.classList.toggle('active');
-        };
-    }
+        const menuToggle = document.getElementById('menuToggle');
+        const sideNav = document.getElementById('sideNav');
+        const overlay = document.getElementById('sidebarOverlay');
 
-    if (overlay) {
-        overlay.onclick = () => {
-            sideNav.classList.remove('active');
-            overlay.classList.remove('active');
-        };
+        // تفعيل القائمة الجانبية
+        if (menuToggle && sideNav && overlay) {
+            menuToggle.onclick = () => {
+                sideNav.classList.toggle('active');
+                overlay.classList.toggle('active');
+            };
+            overlay.onclick = () => {
+                sideNav.classList.remove('active');
+                overlay.classList.remove('active');
+            };
+        }
+
+        // --- تفعيل زر تسجيل الخروج ---
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.onclick = () => {
+                localStorage.clear();
+                window.location.href = 'index.html';
+            };
+        }
+    } catch (err) {
+        console.error("خطأ في تحميل القائمة الجانبية:", err);
     }
 }
-
-// جعل الدالة متاحة عالمياً ليراها السكريبت الموجود في HTML
-window.initSidebar = initSidebar;
