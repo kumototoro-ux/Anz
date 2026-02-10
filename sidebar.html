@@ -13,7 +13,7 @@
         <i class="fas fa-sign-out-alt"></i>
         <span>تسجيل الخروج</span>
     </div>
-</nav> 
+</nav>
 
 <script>
     function logoutUser() {
@@ -21,26 +21,24 @@
         window.location.href = 'index.html';
     }
 
-    // هذه الدالة التي يستدعيها ملف home.html
-   function initSidebar() {
-    const menuBtn = document.getElementById('menuToggle');
-    const sideNav = document.getElementById('sideNav');
-    const overlay = document.getElementById('sidebarOverlay');
+    function initSidebar() {
+        const menuBtn = document.getElementById('menuToggle');
+        const sideNav = document.getElementById('sideNav');
+        const overlay = document.getElementById('sidebarOverlay');
 
-    if (menuBtn && sideNav) {
-        console.log("تم تفعيل زر المنيو بنجاح"); // سيظهر في الكونسول للتأكد
-        menuBtn.onclick = (e) => {
-            e.preventDefault();
-            sideNav.classList.add('active');
-            if (overlay) overlay.classList.add('active');
-        };
-    }
+        if (menuBtn && sideNav) {
+            menuBtn.onclick = (e) => {
+                e.preventDefault();
+                sideNav.classList.add('active');
+                if (overlay) overlay.classList.add('active');
+            };
+        }
 
-    if (overlay) {
-        overlay.onclick = () => {
-            sideNav.classList.remove('active');
-            overlay.classList.remove('active');
-        };
+        if (overlay) {
+            overlay.onclick = () => {
+                sideNav.classList.remove('active');
+                overlay.classList.remove('active');
+            };
+        }
     }
-}
 </script>
