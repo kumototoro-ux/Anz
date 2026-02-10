@@ -1,93 +1,124 @@
 :root {
-    --primary: #2563eb;
-    --bg-light: #f8fafc;
+    --primary-blue: #2563eb;
+    --text-dark: #1e293b;
+    --gray-light: #f1f5f9;
     --white: #ffffff;
-    --text-main: #1e293b;
-    --border: #e2e8f0;
-    --header-height: 70px;
+    --header-h: 60px;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
 
-body { background-color: var(--bg-light); direction: rtl; }
+body { background-color: #f8fafc; direction: rtl; }
 
-/* --- الـ Header العلوي الموحد --- */
-.main-header {
-    height: var(--header-height);
+/* الـ Header النحيف (نفس الصورة الثانية) */
+.app-header {
+    height: var(--header-h);
     background: var(--white);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 20px;
+    padding: 0 15px;
     position: fixed;
     top: 0; left: 0; right: 0;
     z-index: 1000;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    border-bottom: 1px solid #eee;
 }
 
-.header-right { display: flex; align-items: center; gap: 15px; }
+.profile-icon {
+    font-size: 1.8rem;
+    color: var(--primary-blue);
+    text-decoration: none;
+}
 
-.menu-btn {
-    background: var(--primary);
-    color: white;
-    border: none;
-    width: 40px; height: 40px;
-    border-radius: 8px;
-    cursor: pointer;
+.page-title-center {
+    font-weight: 700;
     font-size: 1.1rem;
+    color: var(--text-dark);
 }
 
-.logo-area { display: flex; align-items: center; gap: 10px; }
-.nav-logo { height: 40px; }
-.system-name { font-weight: 800; font-size: 1.2rem; color: var(--primary); }
-.page-title { font-weight: 600; color: var(--text-main); }
+.menu-trigger {
+    background: none;
+    border: none;
+    color: var(--primary-blue);
+    font-size: 1.5rem;
+    cursor: pointer;
+}
 
-/* --- المحتوى الرئيسي --- */
-.results-container {
-    margin-top: calc(var(--header-height) + 30px);
-    padding: 20px;
-    max-width: 900px;
+/* المحتوى تحت الهيدر */
+.content-wrapper {
+    margin-top: calc(var(--header-h) + 20px);
+    padding: 15px;
+    max-width: 800px;
     margin-left: auto;
     margin-right: auto;
 }
 
-/* تكييف المساحة عند وجود السايدبار في الشاشات الكبيرة */
-@media (min-width: 992px) {
-    .results-container { margin-right: 300px; }
-    .menu-btn { display: none; }
+.welcome-banner {
+    text-align: center;
+    margin-bottom: 30px;
 }
 
-.welcome-section { text-align: center; margin-bottom: 30px; }
-.welcome-section h1 { font-size: 1.6rem; color: var(--text-main); }
+.welcome-banner h1 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
 
-.selection-box { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
 .term-btn {
-    padding: 12px 20px;
-    border: 1px solid var(--border);
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #ddd;
     background: white;
-    border-radius: 10px;
-    cursor: pointer;
+    border-radius: 8px;
     font-weight: 600;
+    cursor: pointer;
 }
 
-.term-btn:hover { background: #f1f5f9; border-color: var(--primary); }
-
-.certificate-wrapper {
+.certificate-box {
     background: white;
-    border-radius: 15px;
-    padding: 25px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
-.results-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
 .results-table th, .results-table td {
-    padding: 12px; border-bottom: 1px solid var(--border); text-align: right;
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    text-align: right;
+}
+
+.print-btn {
+    width: 100%;
+    margin-top: 20px;
+    padding: 12px;
+    background: var(--text-dark);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
 }
 
 .hide { display: none !important; }
 
+/* السايدبار */
+@media (min-width: 992px) {
+    .content-wrapper { margin-right: 280px; }
+    .menu-trigger { display: none; }
+}
+
 .sidebar-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.4); display: none; z-index: 1001;
+    background: rgba(0,0,0,0.3); display: none; z-index: 1001;
 }
 .sidebar-overlay.active { display: block; }
