@@ -1,16 +1,24 @@
 /* تنسيق المحتوى الرئيسي ليناسب الـ Sidebar */
 .main-content {
-    margin-right: 80px !important; /* نفس عرض القائمة MQ */
-    padding: 30px;
+    margin-right: 80px !important; /* مساحة ثابتة للقائمة الجانبية الصغيرة */
+    padding: 40px;
     background-color: #f8f9fc;
     min-height: 100vh;
-    transition: all 0.3s ease;
 }
 
-@media (max-width: 768px) {
+/* تنسيق الجوال */
+@media (max-width: 991px) {
     .main-content {
         margin-right: 0 !important;
-        margin-top: 60px !important; /* مساحة للبار العلوي */
+        margin-top: 75px !important; /* مسافة كافية تحت الهيدر الجديد */
+        padding: 20px;
+    }
+    
+    .mobile-header {
+        height: 70px;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     }
 }
 
