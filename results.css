@@ -105,3 +105,35 @@
 .info-row:last-child { border-bottom: none; }
 .info-row strong { color: var(--text-sub); font-weight: 500; }
 .info-row span { color: var(--text-main); font-weight: 700; }
+
+/* تنسيق أساسي لإظهار وإخفاء المحتوى */
+.hide { display: none !important; }
+
+/* زر القائمة للجوال */
+.mobile-menu-btn {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 1000;
+    background: #1a73e8;
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: none; /* يظهر في الجوال فقط */
+}
+
+/* تنسيق الشاشات الكبيرة */
+@media (min-width: 992px) {
+    .results-container {
+        margin-right: 280px; /* يترك مساحة للقائمة الجانبية */
+    }
+}
+
+/* تنسيق الجوال */
+@media (max-width: 991px) {
+    .mobile-menu-btn { display: flex; align-items: center; justify-content: center; }
+    .results-container { margin-right: 0; padding: 20px; }
+}
