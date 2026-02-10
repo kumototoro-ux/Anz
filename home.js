@@ -7,6 +7,10 @@ import { getStudentData } from './api.js';
 
 document.addEventListener("DOMContentLoaded", async () => {
     
+    // تأكد من وجود هذين السطرين (أنت غالباً حذفتهم بالخطأ)
+    const userData = JSON.parse(localStorage.getItem("user"));
+    const studentId = userData.ID;
+    
     // 3. تحديث الواجهة والترحيب والاسم الأول
     updateDateTime();
     renderDailySchedule();
