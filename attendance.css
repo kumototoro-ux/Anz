@@ -86,3 +86,21 @@
 .sidebar-overlay.active {
     display: block;
 }
+
+/* تنسيق الهيدر العلوي للجوال فقط */
+.mobile-header {
+    background-color: #fff;
+    border-bottom: 1px solid #eee;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+/* إخفاء الهيدر في الشاشات الكبيرة */
+@media (min-width: 992px) {
+    .mobile-header {
+        display: none !important;
+    }
+}
