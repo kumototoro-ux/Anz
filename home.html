@@ -145,9 +145,11 @@
         .then(data => {
             document.getElementById('sidebar-placeholder').innerHTML = data;
             
-            // سطر إضافي: تشغيل المنيو بعد التحميل
-            if (typeof initSidebar === "function") {
-                initSidebar();
-            }
+            // التأكد من تشغيل المنيو بعد ثانية بسيطة لضمان تحميل العناصر
+            setTimeout(() => {
+                if (typeof initSidebar === "function") {
+                    initSidebar();
+                }
+            }, 100);
         });
 </script>
