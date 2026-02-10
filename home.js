@@ -7,35 +7,6 @@ import { getStudentData } from './api.js';
 
 document.addEventListener("DOMContentLoaded", async () => {
     
-    // 1. التحقق من المستخدم
-    const userData = JSON.parse(localStorage.getItem("user"));
-    if (!userData || !userData.ID) { 
-        window.location.href = "index.html"; 
-        return; 
-    }
-
-    const studentId = userData.ID;
-
-    // 2. تفعيل المنيو
-    const menuBtn = document.getElementById('menuToggle');
-    const sideNav = document.querySelector('.side-nav');
-    const overlay = document.getElementById('sidebarOverlay');
-
-    if (menuBtn && sideNav && overlay) {
-        menuBtn.onclick = (e) => {
-            e.preventDefault();
-            sideNav.classList.add('active');
-            overlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        };
-
-        overlay.onclick = () => {
-            sideNav.classList.remove('active');
-            overlay.classList.remove('active');
-            document.body.style.overflow = '';
-        };
-    }
-
     // 3. تحديث الواجهة والترحيب والاسم الأول
     updateDateTime();
     renderDailySchedule();
