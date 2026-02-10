@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // تفعيل القائمة الجانبية (نفس منطق صفحة معلوماتي)
-    setupNavigation();
+   await loadSidebar();
     
     try {
         const response = await getStudentData('students', user.ID);
@@ -44,29 +44,28 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 // 2. دالة إعداد القائمة الجانبية وتسجيل الخروج
-function setupNavigation() {
-    const menuToggle = document.getElementById('menuToggle');
-    const sideNav = document.querySelector('.side-nav');
-    const overlay = document.getElementById('sidebarOverlay');
-    const logoutBtn = document.getElementById('logoutBtn');
+async function loadSidebar() {
+    try {
+        const response = await fetch('sidebar.html');
+        const html = await response.text();
+        document.getElementById('sidebar-placeholder').innerHTML = html;
 
-    if (menuToggle && sideNav && overlay) {
-        menuToggle.onclick = () => {
-            sideNav.classList.toggle('active');
-            overlay.classList.toggle('active');
-        };
+        const menuToggle = document.getElementById('menuToggle');
+        const sideNav = document.getElementById('sideNav');
+        const overlay = document.getElementById('sidebarOverlay');
 
-        overlay.onclick = () => {
-            sideNav.classList.remove('active');
-            overlay.classList.remove('active');
-        };
-    }
-
-    if(logoutBtn) {
-        logoutBtn.onclick = () => {
-            localStorage.clear();
-            window.location.href = 'index.html';
-        };
+        if (menuToggle && sideNav && overlay) {
+            menuToggle.onclick = () => {
+                sideNav.classList.toggle('active');
+                overlay.classList.toggle('active');
+            };
+            overlay.onclick = () => {
+                sideNav.classList.remove('active');
+                overlay.classList.remove('active');
+            };
+        }
+    } catch (err) {
+        console.error("خطأ في تحميل القائمة:", err);
     }
 }
 
