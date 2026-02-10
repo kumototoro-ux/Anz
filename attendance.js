@@ -1,102 +1,117 @@
 import { getStudentData } from './api.js';
 
-let studentAbData = null;
-const WEEKLY_LIMIT = 15; // السقف الأعلى للحصص في الأسبوع
+const MAX_SESSIONS = 15;
+let globalData = null;
 
-async function initializeAttendance() {
+async function init() {
     const user = JSON.parse(localStorage.getItem("user"));
-    if (!user) return;
+    if (!user) {
+        window.location.href = 'index.html'; // توجيه لتسجيل الدخول إذا لم يوجد مستخدم
+        return;
+    }
 
-    // جلب البيانات من جدول AB
-    const response = await getStudentData('AB', user.ID);
-    
-    if (response.success) {
-        studentAbData = response.data;
-        processStats(studentAbData);
-        fillWeekSelector(studentAbData);
+    const res = await getStudentData('AB', user.ID);
+    if (res.success) {
+        globalData = res.data;
+        renderAnalytics(globalData);
+        populateSelector(globalData);
+    } else {
+        document.getElementById('smart-alert').innerHTML = "تعذر جلب البيانات. تأكد من اتصالك.";
     }
 }
 
-function processStats(data) {
-    let weeksLabels = [];
-    let presenceValues = [];
-    let cumulativeAbsence = 0;
+function renderAnalytics(data) {
+    let labels = [];
+    let values = [];
+    let totalAbsent = 0;
 
-    // فحص الأعمدة من 1 إلى 14
     for (let i = 1; i <= 14; i++) {
-        let val = data[i];
-        // الذكاء: لا يدخل ضمن المقارنة إلا إذا وجد رقم (درجة)
-        if (val !== null && val !== undefined && val !== "") {
-            let present = parseInt(val);
-            weeksLabels.push(`أسبوع ${i}`);
-            presenceValues.push(present);
-            
-            // حساب الغياب التراكمي
-            cumulativeAbsence += (WEEKLY_LIMIT - present);
+        if (data[i] !== null && data[i] !== undefined && data[i] !== "") {
+            let present = parseInt(data[i]);
+            labels.push(`أسبوع ${i}`);
+            values.push(present);
+            totalAbsent += (MAX_SESSIONS - present);
         }
     }
 
-    drawChart(weeksLabels, presenceValues);
-    updateSmartUI(cumulativeAbsence);
+    updateChart(labels, values);
+    setSmartAlert(totalAbsent);
 }
 
-function updateSmartUI(total) {
+function setSmartAlert(total) {
     const box = document.getElementById('smart-alert');
-    let title = "الوضع الدراسي";
-    let message = "";
-    let className = "bg-white";
-    let whatsappBtn = "";
+    let title, msg, cssClass, btn = "";
 
-    // منطق التنبيهات المتدرج الذي طلبته
     if (total >= 80) {
-        title = "🛑 القائمة السوداء";
-        message = "تم نقل اسمك لقسم الانتساب للمراجعة. تواصل مع المشرف العام فوراً.";
-        className = "black-list-alert";
-        whatsappBtn = `<a href="https://wa.me/966XXXXXXXXX" class="btn-whatsapp mt-3">تواصل مع المشرف العام</a>`;
+        title = "القائمة السوداء";
+        msg = "سيتم نقلك للانتساب. تواصل مع المشرف العام فوراً.";
+        cssClass = "status-critical";
+        btn = `<a href="https://wa.me/966XXXXXXXXX" class="btn btn-light w-100 mt-3 fw-bold">واتساب المشرف</a>`;
     } else if (total >= 40) {
-        title = "⚠️ تنبيه نهائي";
-        message = "غيابك تجاوز 40 حصة. تواصل مع المشرف العام قبل اتخاذ إجراءات فصلك.";
-        className = "bg-danger text-white";
-        whatsappBtn = `<a href="https://wa.me/966XXXXXXXXX" class="btn-whatsapp mt-3">تواصل الآن</a>`;
-    } else if (total >= 30) {
-        title = "📢 إنذار قوي";
-        message = "تجاوزت 30 حصة غياب! سيتم استدعاء ولي أمرك للمناقشة.";
-        className = "bg-warning text-dark";
+        title = "إنذار ثالث";
+        msg = "تجاوزت 40 حصة غياب. تواصل مع الإدارة.";
+        cssClass = "bg-danger text-white";
+        btn = `<a href="https://wa.me/966XXXXXXXXX" class="btn btn-outline-light w-100 mt-3">تواصل الآن</a>`;
     } else if (total >= 20) {
-        title = "🔔 تنبيه حضور";
-        message = "غيابك وصل لـ 20 حصة. نأمل منك الالتزام بالحضور لتحسين مستواك.";
-        className = "bg-info text-dark";
+        title = "تنبيه غياب";
+        msg = "وصل غيابك لـ 20 حصة، يرجى الالتزام.";
+        cssClass = "bg-warning text-dark";
     } else {
-        title = "✅ مستوى متميز";
-        message = "حضورك وانضباطك يعكسان حرصك على النجاح. استمر!";
-        className = "bg-success text-white";
+        title = "حضور متميز";
+        msg = "أداؤك ممتاز في الحضور، استمر!";
+        cssClass = "bg-success text-white";
     }
 
-    box.className = `alert-box rounded-4 p-4 text-center ${className}`;
+    box.className = `alert-box rounded-4 p-4 text-center ${cssClass}`;
     box.innerHTML = `
-        <h5 class="fw-bold">${title}</h5>
-        <div class="display-6 fw-bold mb-2">${total}</div>
+        <h4 class="fw-bold">${title}</h4>
+        <div class="display-5 fw-bold">${total}</div>
         <p class="small">إجمالي الحصص الغائبة</p>
         <hr>
-        <p class="small mb-0">${message}</p>
-        ${whatsappBtn}
+        <p class="small mb-0">${msg}</p>
+        ${btn}
     `;
 }
 
-function drawChart(labels, values) {
+function populateSelector(data) {
+    const select = document.getElementById('weekSelector');
+    // إضافة الأسابيع التي تحتوي بيانات فقط
+    for (let i = 1; i <= 14; i++) {
+        if (data[i] !== null && data[i] !== "") {
+            let opt = document.createElement('option');
+            opt.value = i;
+            opt.textContent = `الأسبوع الدراسي ${i}`;
+            select.appendChild(opt);
+        }
+    }
+
+    select.addEventListener('change', (e) => {
+        const week = e.target.value;
+        const view = document.getElementById('week-detail-view');
+        if (week) {
+            const p = parseInt(data[week]);
+            document.getElementById('week-present').innerText = p;
+            document.getElementById('week-absent').innerText = MAX_SESSIONS - p;
+            view.classList.remove('d-none');
+        } else {
+            view.classList.add('d-none');
+        }
+    });
+}
+
+function updateChart(labels, values) {
     const ctx = document.getElementById('attendanceChart').getContext('2d');
     new Chart(ctx, {
         type: 'line',
         data: {
             labels: labels,
             datasets: [{
-                label: 'حصص الحضور',
+                label: 'عدد حصص الحضور',
                 data: values,
                 borderColor: '#4e73df',
                 backgroundColor: 'rgba(78, 115, 223, 0.1)',
-                borderWidth: 3,
-                tension: 0.4,
-                fill: true
+                fill: true,
+                tension: 0.3
             }]
         },
         options: {
@@ -107,29 +122,4 @@ function drawChart(labels, values) {
     });
 }
 
-function fillWeekSelector(data) {
-    const select = document.getElementById('weekSelector');
-    for (let i = 1; i <= 14; i++) {
-        if (data[i] !== null && data[i] !== "") {
-            let opt = document.createElement('option');
-            opt.value = i;
-            opt.textContent = `الأسبوع ${i}`;
-            select.appendChild(opt);
-        }
-    }
-
-    select.onchange = (e) => {
-        const val = e.target.value;
-        const view = document.getElementById('week-detail-view');
-        if (val) {
-            const present = parseInt(data[val]);
-            document.getElementById('week-present').innerText = present;
-            document.getElementById('week-absent').innerText = WEEKLY_LIMIT - present;
-            view.classList.remove('d-none');
-        } else {
-            view.classList.add('d-none');
-        }
-    };
-}
-
-document.addEventListener('DOMContentLoaded', initializeAttendance);
+document.addEventListener('DOMContentLoaded', init);
