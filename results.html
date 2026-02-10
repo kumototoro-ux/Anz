@@ -11,12 +11,26 @@
 <body>
 
     <div id="sidebar-placeholder"></div>
-    <button id="menuToggle" class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
     <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
+    <header class="main-header">
+        <div class="header-right">
+            <button id="menuToggle" class="menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="logo-area">
+                <img src="logo.png" alt="Logo" class="nav-logo">
+                <span class="system-name">نظام مِقياس</span>
+            </div>
+        </div>
+        <div class="header-left">
+            <span class="page-title">نتائجي</span>
+        </div>
+    </header>
+
     <main class="results-container">
-        <header class="results-header">
-            <h1 id="userGreeting">مرحباً</h1>
+        <header class="welcome-section">
+            <h1 id="userGreeting">مرحباً، ...</h1>
             <p>يمكنك استعراض وطباعة إشعارات درجات الفصول الدراسية من هنا.</p>
         </header>
 
@@ -27,14 +41,23 @@
 
         <div id="certificateArea" class="certificate-wrapper hide">
             <div class="certificate-card">
+                <div class="cert-header-internal">
+                    <h2>إشعار درجات الطالب</h2>
+                    <p id="certTermName"></p>
+                </div>
                 <table class="results-table">
                     <thead>
-                        <tr><th>المادة</th><th>التقييم / الدرجة</th></tr>
+                        <tr>
+                            <th>المادة</th>
+                            <th>التقييم / الدرجة</th>
+                        </tr>
                     </thead>
                     <tbody id="resultsBody"></tbody>
                 </table>
             </div>
-            <button class="print-btn" onclick="window.print()"><i class="fas fa-print"></i> طباعة الإشعار</button>
+            <button class="print-btn" onclick="window.print()">
+                <i class="fas fa-print"></i> طباعة الإشعار
+            </button>
         </div>
     </main>
 
