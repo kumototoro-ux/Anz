@@ -90,7 +90,7 @@
                 <p class="footer-note">• قياس معتمد على الأسابيع المنقضية (<span id="passedWeeksCount">0</span> من أصل 14)</p>
             </div>
 
-            <div class="card evaluation-card animate-up">
+           <div class="card evaluation-card animate-up">
     <div class="card-header">
         <h3>التقييم العام للمواد</h3>
         <span id="lastWeekLabel" class="footer-note">الأسبوع الحالي</span>
@@ -98,7 +98,10 @@
     
     <div class="main-status-box">
         <div class="main-value-row">
-            <div class="huge-number" id="generalGrade">0%</div>
+            <div id="generalGrade">
+                <div class="huge-number">0.0</div>
+            </div>
+            
             <div class="stat-group">
                 <span class="stat-label">المعدل التراكمي</span>
                 <span class="completion-badge" id="performanceChange">
@@ -111,16 +114,15 @@
     <div class="cumulative-stats">
         <div class="stat-group">
             <span class="stat-label">أداء آخر أسبوع</span>
-            <span class="stat-val" id="lastWeekAvg">0%</span>
+            <div id="lastWeekAvg">0%</div>
         </div>
         <div class="stat-group">
             <span class="stat-label">المتوسط الذكي</span>
-            <span class="stat-val green" id="smartGeneralAvg">0%</span>
+            <div id="smartGeneralAvg">0%</div>
         </div>
     </div>
 
-    <div id="subjectsGradesContainer">
-        </div>
+    <div id="subjectsGradesContainer"></div>
 </div>
 
             <div class="card calendar-card animate-up">
