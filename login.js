@@ -6,22 +6,24 @@ const CONFIG = {
     contact: "9665XXXXXXXX"
 };
 
+// 1. تعريف عداد المحاولات خارج الـ EventListener ليبقى مستمراً
+let attemptCount = 0; 
+
 document.addEventListener("DOMContentLoaded", () => {
-    // تعبئة البيانات الأساسية
     const systemNameEl = document.getElementById("system-name");
     const supportNumEl = document.getElementById("support-number");
     const errorDiv = document.getElementById("errorMessage");
+    const loginForm = document.getElementById("loginForm");
+    const loginCard = document.querySelector(".login-card"); // تحديد البطاقة للأنيميشن
 
     if (systemNameEl) systemNameEl.innerText = CONFIG.systemName;
     if (supportNumEl) supportNumEl.innerText = CONFIG.contact;
 
-    const loginForm = document.getElementById("loginForm");
-
     loginForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         
-        // مسح بيانات الجلسة القديمة لضمان دخول نظيف
-        localStorage.removeItem("user");
+        // 2. تصفير حالة الأنيميشن السابقة عند كل ضغطة زر
+        loginCard.classList.remove("shake-error");
         if (errorDiv) errorDiv.style.display = 'none';
         
         const id = document.getElementById("studentId").value.trim();
@@ -37,17 +39,27 @@ document.addEventListener("DOMContentLoaded", () => {
             const response = await loginUser(id, pass);
             
             if (response.found) {
-                // حفظ بيانات الطالب كاملة (التي تحتوي على ID و Name_AR)
                 localStorage.setItem("user", JSON.stringify(response.student));
                 window.location.href = "home.html";
             } else {
-                // إظهار رسالة الخطأ في العنصر المخصص بدلاً من الـ Alert
+                // 3. هنا منطق "الخطأ" وتكرار المحاولات
+                attemptCount++; 
+                
+                // تشغيل أنيميشن الاهتزاز (Shake)
+                // نستخدم setTimeout بسيط لضمان إعادة تشغيل الأنيميشن إذا ضغط المستخدم مرة أخرى
+                setTimeout(() => loginCard.classList.add("shake-error"), 10);
+
                 if (errorDiv) {
-                    errorDiv.innerText = "رقم الهوية أو كلمة المرور غير صحيحة";
+                    if (attemptCount >= 3) {
+                        // 4. تفعيل أنيميشن النبض الأحمر بعد 3 محاولات
+                        loginCard.classList.add("too-many-attempts");
+                        errorDiv.innerText = "تنبيه: لقد تجاوزت 3 محاولات خاطئة! يرجى التأكد من بياناتك أو التواصل مع الدعم.";
+                    } else {
+                        errorDiv.innerText = "رقم الهوية أو كلمة المرور غير صحيحة";
+                    }
                     errorDiv.style.display = 'block';
-                } else {
-                    alert("تأكد من بيانات الدخول");
                 }
+                
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             }
